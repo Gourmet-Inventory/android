@@ -8,3 +8,7 @@ import com.example.gourmet_inventory_mobile.R
 val JostBold = FontFamily(
     Font(R.font.jost_bold, FontWeight.Bold),
 )
+
+val JostRegular = FontFamily(
+    Font(R.font.jost, FontWeight.Normal),
+)

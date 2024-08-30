@@ -4,15 +4,18 @@ package com.example.gourmet_inventory_mobile
 
 import android.graphics.Color.WHITE
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,16 +36,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
-import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 
 class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,63 +69,44 @@ class RegisterActivity : ComponentActivity() {
 fun RegisterScreen() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var text by remember { mutableStateOf("") }
-
-//    Row(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(bottom = 170.dp, start = 50.dp, end = 25.dp),
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 340.dp),
-////            verticalArrangement = Arrangement.Center,
-//        ) {
-//            Text(
-//                text = "BEM VINDO AO SEU ESTOQUE!",
-//                style = TextStyle(
-//                    fontWeight = FontWeight.Bold,
-//                    fontSize = 20.sp,
-//                    color = Color(WHITE)
-//                ),
-//                fontWeight = FontWeight.Bold,
-//                fontSize = 20.sp,
-//                color = Color(WHITE)
-//            )
-//        }
-//    }
-
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .padding(top = 340.dp),
-    ) {
-        Text(
-            text = "BEM VINDO AO SEU ESTOQUE!",
-            style = TextStyle(
-                fontWeight = FontWeight.Bold,
-//                fontStyle = JostBold,
-                fontSize = 20.sp,
-                color = Color(WHITE)
-            ),
-            fontSize = 20.sp,
-            color = Color(WHITE)
-        )
-    }
 
     Column(
         modifier = Modifier
 //            .heightIn(100.dp)
 //            .fillMaxSize()
-//            .fillMaxWidth()
-            .padding(bottom = 120.dp, start = 25.dp, end = 25.dp),
-        verticalArrangement = Arrangement.Bottom
-    ) {
+            .fillMaxHeight()
+            .padding(bottom = 110.dp, start = 25.dp, end = 25.dp, top = 50.dp),
+        verticalArrangement = Arrangement.Bottom,
+        ) {
+
+        MinhaImagemVetorial()
+        Row(
+            modifier = Modifier
+                .padding(bottom = 90.dp, start = 35.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "BEM VINDO AO SEU ESTOQUE!",
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color(WHITE)
+                ),
+
+            )
+        }
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
-            placeholder = { Text("Email", color = GI_AzulMarinho) },
+            placeholder = {
+                Text(
+                    text = "Email",
+                    color = GI_AzulMarinho,
+                    fontSize = 18.sp
+//                    fontFamily = JostRegular
+                )
+                          },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
@@ -139,7 +128,13 @@ fun RegisterScreen() {
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            placeholder = { Text("Senha", color = GI_AzulMarinho) },
+            placeholder = {
+                Text(
+                    text = "Senha",
+                    color = GI_AzulMarinho,
+                    fontSize = 18.sp
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
@@ -157,8 +152,12 @@ fun RegisterScreen() {
         )
         Spacer(modifier = Modifier.height(60.dp))
 
+        val context = LocalContext.current
+
         Button(
-            onClick = {},
+            onClick = {
+                Toast.makeText(context, "Cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(55.dp)
@@ -168,10 +167,18 @@ fun RegisterScreen() {
                 contentColor = colorResource(id = R.color.white)
             )
         ) {
-            Text("Cadastrar", color = GI_AzulMarinho)
+            Text(
+                text = "Cadastrar",
+                color = GI_AzulMarinho,
+                fontSize = 18.sp
+            )
         }
     }
 }
+
+//fun TextStyle(fontWeight: FontWeight, fontSize: TextUnit, color: Color, fontStyle: FontFamily): TextStyle {
+//    return TextStyle(fontWeight, fontSize, color, fontStyle)
+//}
 
 @Preview(showBackground = true)
 @Composable
@@ -180,3 +187,23 @@ fun RegisterScreenPreview() {
         RegisterScreen()
     }
 }
+
+@Composable
+fun MinhaImagemVetorial() {
+    Image(
+//        painter = painterResource(),
+        painter = painterResource(id = R.drawable.login_image),
+        contentDescription = "Logo",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(250.dp)
+            .padding(bottom = 65.dp)
+    )
+}
+
+//@Preview
+//@Composable
+//fun PreviewMinhaImagemVetorial() {
+//    MinhaImagemVetorial()
+//}
