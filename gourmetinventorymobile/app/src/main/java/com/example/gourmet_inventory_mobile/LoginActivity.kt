@@ -40,138 +40,143 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
+import com.example.gourmet_inventory_mobile.ui.theme.JostRegular
+import com.example.gourmet_inventory_mobile.ui.theme.Typography
+import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme as GourmetinventorymobileTheme1
 
-class RegisterActivity : ComponentActivity() {
+class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            RegisterScreen()
-            Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
-                RegisterScreen()
+            GourmetinventorymobileTheme1 {
+                LoginScreen()
             }
         }
     }
 }
 
 @Composable
-fun RegisterScreen() {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun LoginScreen() {
+    Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
 
-    Column(
-        modifier = Modifier
+
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+
+        Column(
+            modifier = Modifier
 //            .heightIn(100.dp)
 //            .fillMaxSize()
-            .fillMaxHeight()
-            .padding(bottom = 110.dp, start = 25.dp, end = 25.dp, top = 50.dp),
-        verticalArrangement = Arrangement.Bottom,
+                .fillMaxHeight()
+                .padding(bottom = 110.dp, start = 25.dp, end = 25.dp, top = 50.dp),
+            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
         ) {
 
-        MinhaImagemVetorial()
-        Row(
-            modifier = Modifier
-                .padding(bottom = 90.dp, start = 35.dp),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "BEM VINDO AO SEU ESTOQUE!",
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = Color(WHITE)
-                ),
-
-            )
-        }
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            placeholder = {
+            MinhaImagemVetorial()
+            Row(
+                modifier = Modifier
+                    .padding(bottom = 90.dp, start = 0.dp),
+            ) {
                 Text(
-                    text = "Email",
+                    text = "BEM VINDO AO SEU ESTOQUE!",
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = Color(WHITE),
+                        fontFamily = JostBold,
+                    ),
+                    )
+            }
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                placeholder = {
+                    Text(
+                        text = "Email",
+                        color = GI_AzulMarinho,
+                        fontSize = 18.sp,
+//                        fontFamily = JostRegular
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
+                    .border(
+                        width = 20.dp,
+                        color = Color.Transparent,
+                        shape = RoundedCornerShape(25.dp)
+                    ),
+                shape = RoundedCornerShape(20.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = GI_AzulMarinho,
+                    unfocusedBorderColor = GI_AzulMarinho,
+                    cursorColor = GI_AzulMarinho,
+                )
+            )
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                placeholder = {
+                    Text(
+                        text = "Senha",
+                        color = GI_AzulMarinho,
+                        fontSize = 18.sp
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
+                    .border(
+                        width = 20.dp,
+                        color = Color.Transparent,
+                        shape = RoundedCornerShape(25.dp)
+                    ),
+                shape = RoundedCornerShape(20.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = GI_AzulMarinho,
+                    unfocusedBorderColor = GI_AzulMarinho,
+                    cursorColor = GI_AzulMarinho,
+                )
+            )
+            Spacer(modifier = Modifier.height(60.dp))
+
+            val context = LocalContext.current
+
+            Button(
+                onClick = {
+                    Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(55.dp)
+                    .padding(start = 70.dp, end = 70.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = GI_Orange,
+                    contentColor = colorResource(id = R.color.white)
+                )
+            ) {
+                Text(
+                    text = "Entrar",
                     color = GI_AzulMarinho,
                     fontSize = 18.sp
-//                    fontFamily = JostRegular
                 )
-                          },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
-                .border(
-                    width = 20.dp,
-                    color = Color.Transparent,
-                    shape = RoundedCornerShape(25.dp)
-                ),
-            shape = RoundedCornerShape(20.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = GI_AzulMarinho,
-                unfocusedBorderColor = GI_AzulMarinho,
-                cursorColor = GI_AzulMarinho,
-            )
-        )
-
-        Spacer(modifier = Modifier.height(40.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            placeholder = {
-                Text(
-                    text = "Senha",
-                    color = GI_AzulMarinho,
-                    fontSize = 18.sp
-                )
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
-                .border(
-                    width = 20.dp,
-                    color = Color.Transparent,
-                    shape = RoundedCornerShape(25.dp)
-                ),
-            shape = RoundedCornerShape(20.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = GI_AzulMarinho,
-                unfocusedBorderColor = GI_AzulMarinho,
-                cursorColor = GI_AzulMarinho,
-            )
-        )
-        Spacer(modifier = Modifier.height(60.dp))
-
-        val context = LocalContext.current
-
-        Button(
-            onClick = {
-                Toast.makeText(context, "Cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(55.dp)
-                .padding(start = 70.dp, end = 70.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = GI_Orange,
-                contentColor = colorResource(id = R.color.white)
-            )
-        ) {
-            Text(
-                text = "Cadastrar",
-                color = GI_AzulMarinho,
-                fontSize = 18.sp
-            )
+            }
         }
     }
 }
@@ -183,9 +188,7 @@ fun RegisterScreen() {
 @Preview(showBackground = true)
 @Composable
 fun RegisterScreenPreview() {
-    Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
-        RegisterScreen()
-    }
+    LoginScreen()
 }
 
 @Composable
@@ -202,8 +205,3 @@ fun MinhaImagemVetorial() {
     )
 }
 
-//@Preview
-//@Composable
-//fun PreviewMinhaImagemVetorial() {
-//    MinhaImagemVetorial()
-//}
