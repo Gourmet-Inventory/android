@@ -69,8 +69,6 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginScreen() {
     Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
-
-
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
 
@@ -97,7 +95,7 @@ fun LoginScreen() {
                         color = Color(WHITE),
                         fontFamily = JostBold,
                     ),
-                    )
+                )
             }
 
             OutlinedTextField(
@@ -160,7 +158,8 @@ fun LoginScreen() {
 
             Button(
                 onClick = {
-                    Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT)
+                        .show()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -194,7 +193,6 @@ fun RegisterScreenPreview() {
 @Composable
 fun MinhaImagemVetorial() {
     Image(
-//        painter = painterResource(),
         painter = painterResource(id = R.drawable.login_image),
         contentDescription = "Logo",
         contentScale = ContentScale.Crop,
