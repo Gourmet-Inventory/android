@@ -111,13 +111,13 @@ fun LoginScreen() {
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
+                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(5.dp))
                     .border(
                         width = 20.dp,
                         color = Color.Transparent,
                         shape = RoundedCornerShape(25.dp)
                     ),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(5.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = GI_AzulMarinho,
                     unfocusedBorderColor = GI_AzulMarinho,
@@ -139,13 +139,13 @@ fun LoginScreen() {
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(30.dp))
+                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(5.dp))
                     .border(
                         width = 20.dp,
                         color = Color.Transparent,
                         shape = RoundedCornerShape(25.dp)
                     ),
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(5.dp),
                 colors = TextFieldDefaults.outlinedTextFieldColors(
                     focusedBorderColor = GI_AzulMarinho,
                     unfocusedBorderColor = GI_AzulMarinho,
@@ -164,7 +164,8 @@ fun LoginScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(55.dp)
-                    .padding(start = 70.dp, end = 70.dp),
+                    .padding(start = 85.dp, end = 85.dp),
+                shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = GI_Orange,
                     contentColor = colorResource(id = R.color.white)
