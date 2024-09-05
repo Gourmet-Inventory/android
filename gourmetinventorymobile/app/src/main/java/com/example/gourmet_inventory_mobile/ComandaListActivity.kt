@@ -35,7 +35,6 @@ import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.ui.theme.JostRegular
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
 class ComandaListActivity : ComponentActivity() {

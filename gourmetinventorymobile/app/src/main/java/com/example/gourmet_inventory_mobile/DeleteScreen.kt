@@ -39,7 +39,6 @@ import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.ui.theme.JostRegular
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
 class DeleteActivity : ComponentActivity() {
@@ -88,12 +87,10 @@ fun DeleteScreen() {
     }
 }
 
-@Composable
 @Preview
+@Composable
 fun DeleteScreenPreview() {
-    GourmetinventorymobileTheme {
-        DeleteScreen()
-    }
+    DeleteScreen()
 }
 
 
@@ -111,8 +108,8 @@ fun InputCadastro() {
                 modifier = Modifier.padding(top = 10.dp),
                 text = "Nome",
                 color = White,
-                fontSize = 24.sp,
-                fontFamily = JostRegular
+                fontSize = 24.sp
+//                fontFamily = JostRegular
             )
             OutlinedTextField(
                 value = nome,
@@ -144,7 +141,7 @@ fun DownBarDeleteScreen() {
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.db1),
+            painter = painterResource(id = R.drawable.notes_icon),
             contentDescription = "Ação 1",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -163,5 +160,5 @@ fun DownBarDeleteScreen() {
 @Preview
 @Composable
 fun DownBarDeleteScreenPreview() {
-    DownBar()
+    DownBarDeleteScreen()
 }
