@@ -90,7 +90,6 @@ fun LoginScreen() {
                 Text(
                     text = "BEM VINDO AO SEU ESTOQUE!",
                     style = TextStyle(
-                        fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = Color(WHITE),
                         fontFamily = JostBold,

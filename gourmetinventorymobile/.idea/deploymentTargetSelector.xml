@@ -13,21 +13,18 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ComandaListActivity">
+      <SelectionState runConfigName="EscolhaPerfilScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-03T00:42:06.843776104Z">
+        <DropdownSelection timestamp="2024-09-01T00:57:22.540956900Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="FirebaseDirectAccess" identifier="reservation=projects/teste-35e5a/deviceSessions/session-46qfmxh4lw7wa" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\luanr\.android\avd\Pixel_Fold_API_35.avd" />
             </handle>
-            <template>
-              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=e1q/34" />
-            </template>
           </Target>
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="DeleteActivity">
+      <SelectionState runConfigName="ComandaListActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
