@@ -7,24 +7,26 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -35,9 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
+import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.JostRegular
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
@@ -57,7 +58,6 @@ class DeleteActivity : ComponentActivity() {
 @Composable
 fun DeleteScreen() {
     Surface(modifier = Modifier.fillMaxSize()) {
-    val context = LocalContext.current
 
         Column(
             modifier = Modifier
@@ -70,7 +70,7 @@ fun DeleteScreen() {
                     .fillMaxWidth()
                     .height(120.dp),
 //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+               // horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
                 Text(
@@ -82,13 +82,14 @@ fun DeleteScreen() {
                     )
                 )
             }
-            inputCadastro()
+            InputCadastro()
+            DownBarDeleteScreen()
         }
     }
 }
 
-@Preview
 @Composable
+@Preview
 fun DeleteScreenPreview() {
     GourmetinventorymobileTheme {
         DeleteScreen()
@@ -97,20 +98,36 @@ fun DeleteScreenPreview() {
 
 
 @Composable
-fun inputCadastro() {
-    val context = LocalContext.current
+fun InputCadastro() {
+    var nome by remember { mutableStateOf("") }
     Row (
         horizontalArrangement = Arrangement.Start,
         modifier = Modifier
-            .size(width = 80.dp, height = 30.dp)
+            .size(width = 320.dp, height = 100.dp)
+            .background(Black)
     ){
-        Text(
-            modifier = Modifier.padding(top = 10.dp),
-            text = "Nome",
-            color = Black,
-            fontSize = 24.sp,
-            fontFamily = JostBold
-        )
+        Column{
+            Text(
+                modifier = Modifier.padding(top = 10.dp),
+                text = "Nome",
+                color = White,
+                fontSize = 24.sp,
+                fontFamily = JostRegular
+            )
+            OutlinedTextField(
+                value = nome,
+                onValueChange =  { nome = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(5.dp))
+                    .border(
+                        width = 20.dp,
+                        color = Color.Black
+                    )
+
+            )
+        }
+
     }
 }
 
@@ -143,7 +160,7 @@ fun DownBarDeleteScreen() {
     }
 }
 
-@Preview()
+@Preview
 @Composable
 fun DownBarDeleteScreenPreview() {
     DownBar()
