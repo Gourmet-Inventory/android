@@ -18,7 +18,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,27 +30,30 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
-import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-class DeleteActivity : ComponentActivity() {
+class CadastroActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             GourmetinventorymobileTheme {
-                DeleteScreen()
+                CadastroScreen()
 
             }
         }
@@ -55,8 +61,23 @@ class DeleteActivity : ComponentActivity() {
 }
 
 @Composable
-fun DeleteScreen() {
-    Surface(modifier = Modifier.fillMaxSize()) {
+fun CadastroScreen() {
+    var nome by remember {
+        mutableStateOf("")
+    }
+    var lote by remember {
+        mutableStateOf("")
+    }
+    var categoria by remember {
+        mutableStateOf("")
+    }
+    var localArmazenamento by remember {
+        mutableStateOf("")
+    }
+
+    Surface(modifier = Modifier
+        .fillMaxSize()
+        .background(color = Color.White)) {
 
         Column(
             modifier = Modifier
@@ -69,56 +90,101 @@ fun DeleteScreen() {
                     .fillMaxWidth()
                     .height(120.dp),
 //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-               // horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Cadastrar Item:",
                     modifier = Modifier,
                     color = Black,
-                    style = androidx.compose.ui.text.TextStyle(
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
                         fontSize = 35.sp
                     )
                 )
             }
-            InputCadastro()
-            DownBarDeleteScreen()
+            InputCadastro(titulo = "Nome",valorCampo = nome, mudaValor = { novoValor ->
+                        nome = novoValor })
+
+            InputCadastro(titulo = "Lote",valorCampo = lote, mudaValor = { novoValor ->
+                lote = novoValor })
+
+            InputCadastro(titulo = "Categoria",valorCampo = categoria, mudaValor = { novoValor ->
+                categoria = novoValor })
+
+            InputCadastro(titulo = "Local Armazenamento",valorCampo = localArmazenamento, mudaValor = { novoValor ->
+                localArmazenamento = novoValor })
+
+            Button(
+                onClick = { /*TODO*/ },
+                modifier = Modifier
+                    .height(55.dp)
+                    .width(155.dp),
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = GI_AzulMarinho,
+                    contentColor = colorResource(id = R.color.white)
+                )
+            ) {
+                Text(
+                    text = "Próximo",
+                    color = White,
+                    fontSize = 18.sp
+                )
+            }
+
+//            DownBarDeleteScreen()
         }
     }
 }
 
 @Preview
 @Composable
-fun DeleteScreenPreview() {
-    DeleteScreen()
+fun CadastroScreenPreview() {
+    CadastroScreen()
 }
 
 
 @Composable
-fun InputCadastro() {
-    var nome by remember { mutableStateOf("") }
+fun InputCadastro(
+    titulo: String,
+    valorCampo: String,
+    mudaValor: (String) -> Unit
+) {
+
     Row (
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.Center,
         modifier = Modifier
-            .size(width = 320.dp, height = 100.dp)
-            .background(Black)
+            .fillMaxWidth()
+            .height(120.dp)
+
     ){
-        Column{
+        Column(
+            modifier = Modifier
+                .size(width = 350.dp, height = 100.dp)
+
+        ){
             Text(
-                modifier = Modifier.padding(top = 10.dp),
-                text = "Nome",
-                color = White,
-                fontSize = 24.sp
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(30.dp),
+                text = "$titulo:",
+                color = Black,
+                fontSize = 22.sp
 //                fontFamily = JostRegular
             )
             OutlinedTextField(
-                value = nome,
-                onValueChange =  { nome = it },
+
+                value = valorCampo,
+                onValueChange = { novoValorDoCampo ->
+                mudaValor(novoValorDoCampo)
+                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = GI_BrancoSujo, shape = RoundedCornerShape(5.dp))
+                    .height(50.dp)
+                    .fillMaxSize()
+                    .background(color = White, shape = RoundedCornerShape(5.dp))
                     .border(
-                        width = 20.dp,
+                        width = 1.dp,
                         color = Color.Black
                     )
 
