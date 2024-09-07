@@ -44,16 +44,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-class CadastroActivity : ComponentActivity() {
+class Cadastro2Activity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             GourmetinventorymobileTheme {
-                CadastroScreen()
+                Cadastro2Screen()
 
             }
         }
@@ -61,17 +62,20 @@ class CadastroActivity : ComponentActivity() {
 }
 
 @Composable
-fun CadastroScreen() {
-    var nome by remember {
+fun Cadastro2Screen() {
+    var qtdUnitaria by remember {
         mutableStateOf("")
     }
-    var lote by remember {
+    var tipoMedida by remember {
         mutableStateOf("")
     }
-    var categoria by remember {
+    var valorMedida by remember {
         mutableStateOf("")
     }
-    var localArmazenamento by remember {
+    var dataCadastro by remember {
+        mutableStateOf("")
+    }
+    var dataAviso by remember {
         mutableStateOf("")
     }
 
@@ -79,12 +83,14 @@ fun CadastroScreen() {
         .fillMaxSize()
         .background(color = Color.White)) {
 
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 80.dp),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,37 +109,75 @@ fun CadastroScreen() {
                     )
                 )
             }
-            InputCadastro(titulo = "Nome",valorCampo = nome, mudaValor = { novoValor ->
-                        nome = novoValor })
-
-            InputCadastro(titulo = "Lote",valorCampo = lote, mudaValor = { novoValor ->
-                lote = novoValor })
-
-            InputCadastro(titulo = "Categoria",valorCampo = categoria, mudaValor = { novoValor ->
-                categoria = novoValor })
-
-            InputCadastro(titulo = "Local Armazenamento",valorCampo = localArmazenamento, mudaValor = { novoValor ->
-                localArmazenamento = novoValor })
-
-            ImagemPasso1()
-
-            Button(
-                onClick = { /*TODO*/ },
+            Row (
                 modifier = Modifier
-                    .height(55.dp)
-                    .width(155.dp),
-                shape = RoundedCornerShape(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = GI_AzulMarinho,
-                    contentColor = colorResource(id = R.color.white)
-                )
-            ) {
+                    .width(350.dp)
+                    .height(120.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically){
+
                 Text(
-                    text = "Próximo",
-                    color = White,
-                    fontSize = 18.sp
+                    fontSize = 22.sp,
+                    modifier = Modifier
+                        .width(160.dp),
+                    text = "Quantidade Unitária:"
+                )
+
+                OutlinedTextField(
+                    value = qtdUnitaria,
+                    onValueChange = {qtdUnitaria = it},
+                    modifier = Modifier
+                        .background(color = White, shape = RoundedCornerShape(5.dp))
+                        .border(
+                            width = 1.dp,
+                            color = Color.Black
+                        )
+                        .width(180.dp)
                 )
             }
+            Row {
+                InputCadastro2(titulo = "Tipo Medida", placeholder = "", valorCampo = tipoMedida, mudaValor = { novoValor ->
+                    tipoMedida = novoValor })
+
+                InputCadastro2(titulo = "Valor Medida", placeholder = "", valorCampo = valorMedida, mudaValor = { novoValor ->
+                    valorMedida = novoValor })
+            }
+
+            Row {
+                InputCadastro2(titulo = "Data Cadastro", placeholder = "dd/mm/aaaa", valorCampo = dataCadastro, mudaValor = { novoValor ->
+                    dataCadastro = novoValor })
+
+                InputCadastro2(titulo = "Data Aviso", placeholder = "dd/mm/aaaa", valorCampo = dataAviso, mudaValor = { novoValor ->
+                    dataAviso = novoValor })
+            }
+
+            Column( 
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 20.dp),
+                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+            ) {
+                ImagemPasso2()
+
+                Button(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier
+                        .height(55.dp)
+                        .width(155.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Orange,
+                        contentColor = colorResource(id = R.color.white)
+                    )
+                ) {
+                    Text(
+                        text = "Cadastrar",
+                        color = Black,
+                        fontSize = 18.sp
+                    )
+                }
+            }
+
 
 //            DownBarDeleteScreen()
         }
@@ -142,29 +186,31 @@ fun CadastroScreen() {
 
 @Preview
 @Composable
-fun CadastroScreenPreview() {
-    CadastroScreen()
+fun Cadastro2ScreenPreview() {
+    Cadastro2Screen()
 }
 
 
 @Composable
-fun InputCadastro(
+fun InputCadastro2(
     titulo: String,
+    placeholder: String,
     valorCampo: String,
     mudaValor: (String) -> Unit
 ) {
 
     Row (
         horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth()
-            .height(120.dp)
+            .width(180.dp)
+            .height(160.dp)
 
     ){
         Column(
             modifier = Modifier
-                .size(width = 350.dp, height = 100.dp)
-
+                .size(width = 350.dp, height = 100.dp),
+            
         ){
             Text(
                 modifier = Modifier
@@ -182,13 +228,19 @@ fun InputCadastro(
                 mudaValor(novoValorDoCampo)
                  },
                 modifier = Modifier
-                    .height(50.dp)
-                    .fillMaxSize()
+                    .height(55.dp)
+                    .width(160.dp)
                     .background(color = White, shape = RoundedCornerShape(5.dp))
                     .border(
                         width = 1.dp,
                         color = Color.Black
+                    ),
+                placeholder = {
+                    Text(
+                        text = placeholder,
+                        fontSize = 18.sp,
                     )
+                }
 
             )
         }
@@ -197,7 +249,7 @@ fun InputCadastro(
 }
 
 @Composable
-fun DownBarDeleteScreen() {
+fun DownBarDeleteScreen2() {
     val context = LocalContext.current
     Row(
         modifier = Modifier
@@ -227,14 +279,15 @@ fun DownBarDeleteScreen() {
 
 @Preview
 @Composable
-fun DownBarDeleteScreenPreview() {
-    DownBarDeleteScreen()
+fun DownBarDeleteScreenPreview2() {
+    DownBarDeleteScreen2()
 }
 
+
 @Composable
-fun ImagemPasso1() {
+fun ImagemPasso2() {
     Image(
-        painter = painterResource(id = R.drawable.bolinha1),
+        painter = painterResource(id = R.drawable.bolinha2),
         contentDescription = "Bolinha",
         contentScale = ContentScale.Crop,
         modifier = Modifier
