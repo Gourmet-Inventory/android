@@ -35,6 +35,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 
 class ComandaActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,7 +99,7 @@ fun Comanda() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(250.dp)
-                    .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                    .background(GI_Orange.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
                     .padding(16.dp)
             ) {
                 items(pedidos) { pedido ->
