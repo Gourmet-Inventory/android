@@ -8,19 +8,24 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -39,6 +44,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -47,10 +54,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.Comanda
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
@@ -80,45 +89,58 @@ fun ComandaList() {
         var searchText by remember { mutableStateOf("") }
         var selectedOptionIndex by remember { mutableStateOf(-1) }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = androidx.compose.ui.Alignment.Top
-        ) {
-            OutlinedButton(
-                onClick = {
-                    Toast.makeText(context, "Ação", Toast.LENGTH_SHORT)
-                        .show()
-                },
-                modifier = Modifier
-                    .width(160.dp)
-                    .height(45.dp)
-                    .align(androidx.compose.ui.Alignment.Top),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = GI_Orange,
-                    contentColor = White
-                )
-            ) {
-                Text(
-                    text = "Mudar Perfil",
-                    color = Black,
-                    fontSize = 18.sp
-                )
-            }
+        val comandas = listOf(
+            Comanda("Mesa 1", "João Silva", "Comanda 123"),
+            Comanda("Mesa 2", "Maria Oliveira", "Comanda 456"),
+            Comanda("Mesa 3", "Pedro Souza", "Comanda 789"),
+            Comanda("Mesa 4", "Ana Pereira", "Comanda 101"),
+            Comanda("Mesa 5", "Carlos Rodrigues", "Comanda 112"),
+            Comanda("Mesa 6", "Fábio Teixiera", "Comanda 111"),
+            Comanda("Mesa 7", "Gislaino Portoloto", "Comanda 01"),
+        )
+
+        // Filtra a lista com base no texto da pesquisa
+        val filteredComandas = comandas.filter {
+            it.mesa.contains(searchText, ignoreCase = true) ||
+                    it.nomeCliente.contains(searchText, ignoreCase = true) ||
+                    it.nomeComanda.contains(searchText, ignoreCase = true)
         }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 130.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = androidx.compose.ui.Alignment.Start
+                .padding(top = 45.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.Top
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        Toast.makeText(context, "Ação", Toast.LENGTH_SHORT)
+                            .show()
+                    },
+                    modifier = Modifier
+                        .width(160.dp)
+                        .height(45.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Orange,
+                        contentColor = White
+                    )
+                ) {
+                    Text(
+                        text = "Mudar Perfil",
+                        color = Black,
+                        fontSize = 18.sp
+                    )
+                }
+            }
             Text(
                 text = "Comandas: ",
                 modifier = Modifier
-                    .padding(start = 26.dp),
+                    .padding(start = 26.dp, top = 70.dp),
                 style = TextStyle(
                     fontSize = 30.sp,
                     color = Black
@@ -132,11 +154,13 @@ fun ComandaList() {
                     searchText = novoValorCampo
                 }
             )
-            //Bot]pes de filtro
+            //Botões de filtro
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().padding(4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp)
             ) {
                 RadioButton(
                     selected = selectedOptionIndex == 1,
@@ -150,13 +174,62 @@ fun ComandaList() {
                 )
                 Text(text = "Mnhas", fontSize = 16.sp)
             }
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(start = 26.dp, end = 26.dp)
+            ) {
+                items(filteredComandas) { comanda ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .background(White.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
+                            .border(1.dp, Black, RoundedCornerShape(8.dp)),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(GI_AzulMarinho, RoundedCornerShape(8.dp)),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = comanda.nomeComanda,
+                                    fontSize = 20.sp,
+                                    style = TextStyle(
+                                        fontFamily = JostBold,
+                                        color = White
+                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 10.dp, bottom = 10.dp),
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                Text(text = comanda.mesa, fontSize = 18.sp)
+                                Text(text = comanda.nomeCliente, fontSize = 18.sp)
+                            }
+                        }
+                    }
+                }
+            }
         }
-
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 100.dp),
-            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
+                .fillMaxSize(),
+            contentAlignment = Alignment.BottomCenter
         ) {
             DownBar()
         }
@@ -198,7 +271,7 @@ fun SearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
                 contentDescription = "Ícone de pesquisa"
             )
         },
-        shape = RoundedCornerShape(8.dp), // Define o formato arredondado
+        shape = RoundedCornerShape(5.dp),
 //        colors = TextFieldDefaults.outlinedTextFieldColors(
 //            focusedBorderColor = Color.Blue, // Cor da borda quando em foco
 //            unfocusedBorderColor = Color.Gray, // Cor da borda quando não está em foco
