@@ -10,5 +10,9 @@ val JostBold = FontFamily(
 )
 
 val JostRegular = FontFamily(
-    Font(R.font.jost, FontWeight.Normal),
+    Font(R.font.jost_regular, FontWeight.Normal),
+)
+
+val JostLight = FontFamily(
+    Font(R.font.jost_light, FontWeight.Light),
 )

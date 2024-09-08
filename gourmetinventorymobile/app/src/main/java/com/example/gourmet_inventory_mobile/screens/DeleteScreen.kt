@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
 import android.os.Bundle
 import android.widget.Toast
@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
@@ -69,7 +70,6 @@ fun DeleteScreen() {
                     .fillMaxWidth()
                     .height(120.dp),
 //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-               // horizontalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
                 verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
             ) {
                 Text(
