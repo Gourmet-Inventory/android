@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
 import android.os.Bundle
 import android.widget.Toast
@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 
@@ -203,7 +204,7 @@ fun ComandaDownBar(modifier: Modifier = Modifier) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.db1),
+            painter = painterResource(id = R.drawable.notes_icon),
             contentDescription = "Ação 1",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -215,7 +216,7 @@ fun ComandaDownBar(modifier: Modifier = Modifier) {
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.db2),
+            painter = painterResource(id = R.drawable.book_icon),
             contentDescription = "Ação 2",
             contentScale = ContentScale.Crop,
             modifier = Modifier

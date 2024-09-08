@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
 import android.os.Bundle
 import android.widget.Toast
@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -29,49 +28,41 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import androidx.compose.ui.Alignment
+import androidx.compose.material3.Checkbox
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
-class ListaFornecedoresActivity : ComponentActivity() {
+class ListaComprasActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             GourmetinventorymobileTheme {
-                ListaFornecedores()
+                ListaCompras()
             }
         }
     }
 }
 
 @Composable
-fun ListaFornecedores() {
+fun ListaCompras() {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
 
         // Estado para o texto do campo de pesquisa
         var texto by remember { mutableStateOf("") }
 
-        // Lista de fornecedores
-        val fornecedores = listOf(
-            "Kibon" to Pair("(11)96574-2849", "Bom-bom"),
-            "Garoto" to Pair("(11)4543-9854", "Chocolate"),
-            "Nestlé" to Pair("(11)4002-8922", "Doces"),
-            "Hershey's" to Pair("(11)91234-5678", "Chocolate"),
-            "Cacau Show" to Pair("(11)99876-5432", "Doces"),
-            "Frutap" to Pair("(11)98765-4321", "Frutas"),
-            "Bauducco" to Pair("(11)12345-6789", "Biscoitos"),
-            "Perdigão" to Pair("(11)23456-7890", "Carnes"),
-            "Panco" to Pair("(11)34567-8901", "Pães"),
-            "Sadia" to Pair("(11)45678-9012", "Carnes")
-        )
+        // Lista de itens
+        val items = listOf("Molho de tomate", "Molho de XYZ", "Tomate", "Azeite de oliva", "Azeite", "Sal grosso", "Sal", "Cebolinha", "Pimenta", "Cebola")
+
+        // Estado da checkbox
+        val checkedState = remember { mutableStateListOf(*Array(items.size) { false }) }
 
         // Filtra a lista com base no texto da pesquisa
-        val filteredFornecedores = fornecedores.filter {
-            it.first.contains(texto, ignoreCase = true) ||
-                    it.second.first.contains(texto) ||
-                    it.second.second.contains(texto, ignoreCase = true)
-        }
+        val filteredItems = items.filter { it.contains(texto, ignoreCase = true) }
 
         Box(modifier = Modifier.fillMaxSize()) {
             Column(modifier = Modifier
@@ -97,7 +88,7 @@ fun ListaFornecedores() {
                 }
 
                 // Título
-                Text(text = "Fornecedor:", fontSize = 34.sp, modifier = Modifier.padding(bottom = 16.dp))
+                Text(text = "Lista de Compras", fontSize = 34.sp, modifier = Modifier.padding(bottom = 16.dp))
 
                 // Campo de Pesquisa
                 TextField(
@@ -109,21 +100,35 @@ fun ListaFornecedores() {
                     shape = RoundedCornerShape(8.dp)
                 )
 
-                // Lista de Fornecedores Filtrada
+                // Cabeçalho da Lista
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Item", fontSize = 16.sp)
+                    Text(text = "Qt. Média", fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Lista de Itens Filtrada
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                    items(filteredFornecedores) { fornecedor ->
+                    items(filteredItems.indices.toList()) { index ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp)
-                                .background(GI_Orange.copy(alpha = 0.2f), RoundedCornerShape(8.dp)),
-                            verticalAlignment = Alignment.CenterVertically
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically // Alinha verticalmente
                         ) {
-                            Column(modifier = Modifier.weight(1f).padding(8.dp)) {
-                                Text(text = fornecedor.first, fontSize = 20.sp)
-                                Text(text = "Telefone: ${fornecedor.second.first}", fontSize = 14.sp)
-                                Text(text = "Categoria: ${fornecedor.second.second}", fontSize = 14.sp)
-                            }
+                            Checkbox(
+                                checked = checkedState[index], // Estado da checkbox
+                                onCheckedChange = { isChecked ->
+                                    checkedState[index] = isChecked // Atualiza o estado
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = filteredItems[index], modifier = Modifier.weight(1f))
+                            Text(text = "20Kg")
                         }
                     }
                 }
@@ -133,41 +138,43 @@ fun ListaFornecedores() {
 
             // Barra Inferior Fixa
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                ListaFornecedorDownBar()
+                ListaComprasDownBar()
             }
         }
     }
 }
 
 @Composable
-fun ListaFornecedorDownBar() {
+fun ListaComprasDownBar() {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = GI_AzulMarinho)
-            .heightIn(75.dp),
+            .heightIn(80.dp),
+//        horizontalArrangement = Arrangement.SpaceEvenly,
         horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.db1),
+            painter = painterResource(id = R.drawable.fornecedores_db),
             contentDescription = "Ação 1",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(35.dp)
+                .height(30.dp)
                 .clickable {
                     Toast
                         .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
                         .show()
                 }
         )
+//        Spacer(modifier = Modifier.height(60.dp))
         Image(
-            painter = painterResource(id = R.drawable.db2),
+            painter = painterResource(id = R.drawable.opened_box),
             contentDescription = "Ação 2",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(35.dp)
+                .height(30.dp)
                 .clickable {
                     Toast
                         .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
@@ -175,14 +182,26 @@ fun ListaFornecedorDownBar() {
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.account_icon),
+            painter = painterResource(id = R.drawable.carrinho_de_compraspng),
             contentDescription = "Ação 3",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    Toast
+                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.account_icon),
+            contentDescription = "Ação 4",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
                     Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
+                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
                         .show()
                 }
         )
@@ -191,6 +210,6 @@ fun ListaFornecedorDownBar() {
 
 @Preview
 @Composable
-fun ListaFornecedoresPreview() {
-    ListaFornecedores()
+fun ListaComprasPreview() {
+    ListaCompras()
 }

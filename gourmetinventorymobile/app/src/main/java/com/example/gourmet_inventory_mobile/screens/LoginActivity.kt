@@ -1,13 +1,9 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
 import android.graphics.Color.WHITE
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,33 +37,21 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
-import com.example.gourmet_inventory_mobile.ui.theme.JostRegular
-import com.example.gourmet_inventory_mobile.ui.theme.Typography
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme as GourmetinventorymobileTheme1
 
-class LoginActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme1 {
-                LoginScreen()
-            }
-        }
-    }
-}
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onLoginClick: (String) -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
@@ -90,7 +74,6 @@ fun LoginScreen() {
                 Text(
                     text = "BEM VINDO AO SEU ESTOQUE!",
                     style = TextStyle(
-                        fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
                         color = Color(WHITE),
                         fontFamily = JostBold,
@@ -158,6 +141,7 @@ fun LoginScreen() {
 
             Button(
                 onClick = {
+                    onLoginClick(email)
                     Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT)
                         .show()
                 },
@@ -181,14 +165,12 @@ fun LoginScreen() {
     }
 }
 
-//fun TextStyle(fontWeight: FontWeight, fontSize: TextUnit, color: Color, fontStyle: FontFamily): TextStyle {
-//    return TextStyle(fontWeight, fontSize, color, fontStyle)
-//}
-
 @Preview(showBackground = true)
 @Composable
-fun RegisterScreenPreview() {
-    LoginScreen()
+fun LoginScreenPreview() {
+    LoginScreen(
+        onLoginClick = { }
+    )
 }
 
 @Composable
