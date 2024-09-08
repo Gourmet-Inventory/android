@@ -5,7 +5,9 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,6 +28,9 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
 class ListaEstoqueActivity : ComponentActivity() {
@@ -128,62 +133,76 @@ fun ListaEstoque() {
             }
 
 //            // Barra Inferior Fixa
-//            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-//                ListaFornecedorDownBar()
-//            }
+            Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+                ListaEstoquerDownBar()
+            }
         }
     }
 }
 
-//@Composable
-//fun ListaFornecedorDownBar() {
-//    val context = LocalContext.current
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(color = GI_AzulMarinho)
-//            .heightIn(75.dp),
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = Alignment.CenterVertically,
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.notes_icon),
-//            contentDescription = "Ação 1",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.book_icon),
-//            contentDescription = "Ação 2",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.account_icon),
-//            contentDescription = "Ação 3",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//    }
-//}
+@Composable
+fun ListaEstoquerDownBar() {
+    val context = LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = GI_AzulMarinho)
+            .heightIn(80.dp),
+//        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.fornecedores_db),
+            contentDescription = "Ação 1",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    Toast
+                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        )
+//        Spacer(modifier = Modifier.height(60.dp))
+        Image(
+            painter = painterResource(id = R.drawable.opened_box),
+            contentDescription = "Ação 2",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    Toast
+                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.carrinho_de_compraspng),
+            contentDescription = "Ação 3",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    Toast
+                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.account_icon),
+            contentDescription = "Ação 4",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(35.dp)
+                .clickable {
+                    Toast
+                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        )
+    }
+}
 
 @Preview
 @Composable
