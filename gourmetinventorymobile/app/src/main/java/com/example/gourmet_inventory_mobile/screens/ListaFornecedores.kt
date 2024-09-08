@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
 import android.os.Bundle
 import android.widget.Toast
@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,6 +30,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import com.example.gourmet_inventory_mobile.R
 
 class ListaFornecedoresActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,7 +151,7 @@ fun ListaFornecedorDownBar() {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.db1),
+            painter = painterResource(id = R.drawable.notes_icon),
             contentDescription = "Ação 1",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -163,7 +163,7 @@ fun ListaFornecedorDownBar() {
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.db2),
+            painter = painterResource(id = R.drawable.book_icon),
             contentDescription = "Ação 2",
             contentScale = ContentScale.Crop,
             modifier = Modifier

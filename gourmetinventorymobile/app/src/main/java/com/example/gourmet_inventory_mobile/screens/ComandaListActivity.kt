@@ -29,6 +29,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -76,6 +78,7 @@ fun ComandaList() {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
         var searchText by remember { mutableStateOf("") }
+        var selectedOptionIndex by remember { mutableStateOf(-1) }
 
         Row(
             modifier = Modifier
@@ -122,12 +125,31 @@ fun ComandaList() {
                 )
             )
 
-//            SearchBox(
-//                searchText = searchText,
-//                mudaValorCampo = { novoValorCampo: String ->
-//                    searchText = novoValorCampo
-//                }
-//            )
+            // Campo de Pesquisa
+            SearchBox(
+                searchText = searchText,
+                mudaValorCampo = { novoValorCampo: String ->
+                    searchText = novoValorCampo
+                }
+            )
+            //Bot]pes de filtro
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(4.dp)
+            ) {
+                RadioButton(
+                    selected = selectedOptionIndex == 1,
+                    onClick = { selectedOptionIndex = 1 }
+                )
+                Text(text = "Todas", fontSize = 16.sp, modifier = Modifier.padding(end = 4.dp))
+
+                RadioButton(
+                    selected = selectedOptionIndex == 0,
+                    onClick = { selectedOptionIndex = 0 }
+                )
+                Text(text = "Mnhas", fontSize = 16.sp)
+            }
         }
 
         Box(
@@ -203,7 +225,6 @@ fun DownBar() {
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
-        if (true)
         Image(
             painter = painterResource(id = R.drawable.notes_icon),
             contentDescription = "Ação 1",
