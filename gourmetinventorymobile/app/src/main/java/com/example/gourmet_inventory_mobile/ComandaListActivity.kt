@@ -121,6 +121,7 @@ fun DownBar() {
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
+        if (true)
         Image(
             painter = painterResource(id = R.drawable.db1),
             contentDescription = "Ação 1",
