@@ -147,7 +147,7 @@ fun ListaFornecedorDownBar() {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = GI_AzulMarinho)
-            .heightIn(75.dp),
+            .heightIn(70.dp),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
     ) {

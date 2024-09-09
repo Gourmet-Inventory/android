@@ -222,7 +222,7 @@ fun DownBarVizuScreen() {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = GI_AzulMarinho)
-            .heightIn(80.dp),
+            .heightIn(70.dp),
 //        horizontalArrangement = Arrangement.SpaceEvenly,
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically

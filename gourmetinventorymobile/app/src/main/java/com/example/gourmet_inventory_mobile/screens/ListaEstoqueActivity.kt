@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +29,12 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SmallFloatingActionButton
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.gourmet_inventory_mobile.R
@@ -75,9 +82,10 @@ fun ListaEstoque() {
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
                 // Botão Mudar Perfil
                 Row(
@@ -90,21 +98,40 @@ fun ListaEstoque() {
                         onClick = {
                             Toast.makeText(context, "Mudar Perfil", Toast.LENGTH_SHORT).show()
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = GI_Orange, contentColor = White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_Orange,
+                            contentColor = White
+                        ),
                         modifier = Modifier.padding(top = 16.dp)
                     ) {
                         Text(text = "Mudar Perfil", color = Black)
                     }
                 }
 
-                // Título
-                Text(text = "Estoque:", fontSize = 34.sp, modifier = Modifier.padding(bottom = 16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Título
+                    Text(
+                        text = "Estoque:",
+                        fontSize = 34.sp,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    AddButton(onClick = {
+                        Toast.makeText(context, "Adicionar Estoque", Toast.LENGTH_SHORT).show()
+                    })
+                }
 
                 // Campo de Pesquisa
                 TextField(
                     value = texto,
                     onValueChange = { novoTexto -> texto = novoTexto },
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
                     label = { Text("Pesquisar") },
                     placeholder = { Text("") },
                     shape = RoundedCornerShape(8.dp)
@@ -117,13 +144,26 @@ fun ListaEstoque() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
-                                .background(GI_AzulMarinho.copy(alpha = 0.2f), RoundedCornerShape(8.dp)),
+                                .background(
+                                    GI_AzulMarinho.copy(alpha = 0.2f),
+                                    RoundedCornerShape(8.dp)
+                                ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(modifier = Modifier.weight(1f).padding(8.dp)) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                            ) {
                                 Text(text = fornecedor.first, fontSize = 20.sp)
-                                Text(text = "Data de Aviso: ${fornecedor.second.first}", fontSize = 14.sp)
-                                Text(text = "Quantidade: ${fornecedor.second.second}", fontSize = 14.sp)
+                                Text(
+                                    text = "Data de Aviso: ${fornecedor.second.first}",
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Quantidade: ${fornecedor.second.second}",
+                                    fontSize = 14.sp
+                                )
                             }
                         }
                     }
@@ -147,7 +187,7 @@ fun ListaEstoquerDownBar() {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = GI_AzulMarinho)
-            .heightIn(80.dp),
+            .heightIn(70.dp),
 //        horizontalArrangement = Arrangement.SpaceEvenly,
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
@@ -208,4 +248,18 @@ fun ListaEstoquerDownBar() {
 @Composable
 fun ListaEstoquePreview() {
     ListaEstoque()
+}
+
+@Composable
+fun AddButton(onClick: () -> Unit) {
+    val context = LocalContext.current
+    SmallFloatingActionButton(
+        onClick = { onClick() },
+        containerColor = GI_AzulMarinho,
+        contentColor = White,
+        modifier = Modifier.width(70.dp),
+        shape = RoundedCornerShape(20.dp),
+    ) {
+        Icon(Icons.Filled.Add, "Small floating action button.")
+    }
 }
