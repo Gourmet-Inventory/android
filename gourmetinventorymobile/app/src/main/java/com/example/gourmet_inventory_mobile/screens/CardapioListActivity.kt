@@ -60,20 +60,25 @@ import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-class CardapioListActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                CardapioListScreen()
-            }
-        }
-    }
-}
+//class CardapioListActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            GourmetinventorymobileTheme {
+//                CardapioListScreen()
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun CardapioListScreen() {
+fun CardapioListScreen(
+    onCardapioClickMudarPerfil: () -> Unit,
+    onCardapioClickAcao1: () -> Unit,
+    onCardapioClickAcao2: () -> Unit,
+    onCardapioClickAcao3: () -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
         var searchText by remember { mutableStateOf("") }
@@ -113,7 +118,8 @@ fun CardapioListScreen() {
             ) {
                 OutlinedButton(
                     onClick = {
-                        Toast.makeText(context, "Ação", Toast.LENGTH_SHORT)
+                        onCardapioClickMudarPerfil()
+                        Toast.makeText(context, "Mudar Perfil", Toast.LENGTH_SHORT)
                             .show()
                     },
                     modifier = Modifier
@@ -211,7 +217,11 @@ fun CardapioListScreen() {
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            CardapioDownBar()
+            CardapioDownBar(
+                onCardapioClickAcao1 = onCardapioClickAcao1,
+                onCardapioClickAcao2 = onCardapioClickAcao2,
+                onCardapioClickAcao3 = onCardapioClickAcao3
+            )
         }
     }
 }
@@ -220,7 +230,12 @@ fun CardapioListScreen() {
 @Composable
 fun CardapioListPreview() {
     GourmetinventorymobileTheme {
-        CardapioListScreen()
+        CardapioListScreen(
+            onCardapioClickMudarPerfil = {},
+            onCardapioClickAcao1 = {},
+            onCardapioClickAcao2 = {},
+            onCardapioClickAcao3 = {}
+        )
     }
 }
 
@@ -267,7 +282,11 @@ fun CardapioSearchBoxPreview() {
 }
 
 @Composable
-fun CardapioDownBar() {
+fun CardapioDownBar(
+    onCardapioClickAcao1: () -> Unit,
+    onCardapioClickAcao2: () -> Unit,
+    onCardapioClickAcao3: () -> Unit
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
@@ -285,9 +304,7 @@ fun CardapioDownBar() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
+                    onCardapioClickAcao1()
                 }
         )
 //        Spacer(modifier = Modifier.height(60.dp))
@@ -298,9 +315,7 @@ fun CardapioDownBar() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-                        .show()
+                    onCardapioClickAcao2()
                 }
         )
         Image(
@@ -310,9 +325,7 @@ fun CardapioDownBar() {
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-                        .show()
+                    onCardapioClickAcao3()
                 }
         )
     }
@@ -321,5 +334,9 @@ fun CardapioDownBar() {
 @Preview()
 @Composable
 fun CardapioDownBarPreview() {
-    CardapioDownBar()
+    CardapioDownBar(
+        onCardapioClickAcao1 = {},
+        onCardapioClickAcao2 = {},
+        onCardapioClickAcao3 = {}
+    )
 }

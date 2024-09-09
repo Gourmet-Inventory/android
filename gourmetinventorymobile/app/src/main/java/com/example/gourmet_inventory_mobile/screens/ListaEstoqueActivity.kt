@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,29 +31,31 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
-class ListaEstoqueActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                ListaEstoque()
-
-            }
-        }
-    }
-}
+//class ListaEstoqueActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            GourmetinventorymobileTheme {
+//                ListaEstoqueScreen(
+//
+//                )
+//
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun ListaEstoque() {
+fun ListaEstoqueScreen(
+    onCardapioClickMudarPerfil: () -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
 
@@ -96,6 +97,7 @@ fun ListaEstoque() {
                 ) {
                     Button(
                         onClick = {
+                            onCardapioClickMudarPerfil()
                             Toast.makeText(context, "Mudar Perfil", Toast.LENGTH_SHORT).show()
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -247,7 +249,9 @@ fun ListaEstoquerDownBar() {
 @Preview
 @Composable
 fun ListaEstoquePreview() {
-    ListaEstoque()
+    ListaEstoqueScreen(
+        onCardapioClickMudarPerfil = { }
+    )
 }
 
 @Composable
