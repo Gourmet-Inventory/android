@@ -68,11 +68,17 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 //}
 
 @Composable
-fun ComandaListScreen() {
+fun ComandaListScreen(
+    onComandaClickMudarPerfil: () -> Unit,
+    onComandaClickAcao1: () -> Unit,
+    onComandaClickAcao2: () -> Unit,
+    onComandaClickAcao3: () -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
         var searchText by remember { mutableStateOf("") }
         var selectedOptionIndex by remember { mutableStateOf(-1) }
+
 
         val comandas = listOf(
             Comanda("Mesa 1", "João Silva", "Comanda 123"),
@@ -104,8 +110,7 @@ fun ComandaListScreen() {
             ) {
                 OutlinedButton(
                     onClick = {
-                        Toast.makeText(context, "Ação", Toast.LENGTH_SHORT)
-                            .show()
+                        onComandaClickMudarPerfil()
                     },
                     modifier = Modifier
                         .width(170.dp)
@@ -124,7 +129,7 @@ fun ComandaListScreen() {
                 }
             }
             Text(
-                text = "Cardápio: ",
+                text = "Comanda: ",
                 modifier = Modifier
                     .padding(start = 26.dp, top = 70.dp),
                 style = TextStyle(
@@ -217,7 +222,11 @@ fun ComandaListScreen() {
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            DownBar()
+            DownBar(
+                onComandaClickAcao1 = onComandaClickAcao1,
+                onComandaClickAcao2 = onComandaClickAcao2,
+                onComandaClickAcao3 = onComandaClickAcao3
+            )
         }
     }
 }
@@ -226,7 +235,12 @@ fun ComandaListScreen() {
 @Composable
 fun ComandaListPreview() {
     GourmetinventorymobileTheme {
-        ComandaListScreen()
+        ComandaListScreen(
+            onComandaClickMudarPerfil = {} ,
+            onComandaClickAcao1 = {},
+            onComandaClickAcao2 = {},
+            onComandaClickAcao3 = {}
+        )
     }
 }
 
@@ -273,7 +287,11 @@ fun SearchBoxPreview() {
 }
 
 @Composable
-fun DownBar() {
+fun DownBar(
+    onComandaClickAcao1: () -> Unit ,
+    onComandaClickAcao2: () -> Unit ,
+    onComandaClickAcao3: () -> Unit
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
@@ -291,9 +309,7 @@ fun DownBar() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
+                    onComandaClickAcao1()
                 }
         )
 //        Spacer(modifier = Modifier.height(60.dp))
@@ -304,9 +320,7 @@ fun DownBar() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-                        .show()
+                    onComandaClickAcao2()
                 }
         )
         Image(
@@ -316,9 +330,7 @@ fun DownBar() {
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-                        .show()
+                    onComandaClickAcao3()
                 }
         )
     }
@@ -327,5 +339,9 @@ fun DownBar() {
 @Preview()
 @Composable
 fun DownBarPreview() {
-    DownBar()
+    DownBar(
+        onComandaClickAcao1 = {},
+        onComandaClickAcao2 = {},
+        onComandaClickAcao3 = {}
+    )
 }

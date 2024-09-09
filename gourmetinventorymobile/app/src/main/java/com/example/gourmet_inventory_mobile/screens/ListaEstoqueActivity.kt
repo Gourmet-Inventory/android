@@ -1,10 +1,6 @@
 package com.example.gourmet_inventory_mobile.screens
 
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +31,6 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
 //class ListaEstoqueActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +49,11 @@ import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
 @Composable
 fun ListaEstoqueScreen(
-    onCardapioClickMudarPerfil: () -> Unit
+    onListaEstoqueClickMudarPerfil: () -> Unit,
+    onListaEstoqueClickAcao1: () -> Unit,
+    onListaEstoqueClickAcao2: () -> Unit,
+    onListaEstoqueClickAcao3: () -> Unit,
+    onListaEstoqueClickAcao4: () -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
@@ -97,7 +96,7 @@ fun ListaEstoqueScreen(
                 ) {
                     Button(
                         onClick = {
-                            onCardapioClickMudarPerfil()
+                            onListaEstoqueClickMudarPerfil()
                             Toast.makeText(context, "Mudar Perfil", Toast.LENGTH_SHORT).show()
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -176,14 +175,24 @@ fun ListaEstoqueScreen(
 
 //            // Barra Inferior Fixa
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                ListaEstoquerDownBar()
+                ListaEstoquerDownBar(
+                    onListaEstoqueClickAcao1 = onListaEstoqueClickAcao1,
+                    onListaEstoqueClickAcao2 =  onListaEstoqueClickAcao2,
+                    onListaEstoqueClickAcao3 =  onListaEstoqueClickAcao3,
+                    onListaEstoqueClickAcao4 =  onListaEstoqueClickAcao4
+                )
             }
         }
     }
 }
 
 @Composable
-fun ListaEstoquerDownBar() {
+fun ListaEstoquerDownBar(
+    onListaEstoqueClickAcao1: () -> Unit,
+    onListaEstoqueClickAcao2: () -> Unit,
+    onListaEstoqueClickAcao3: () -> Unit,
+    onListaEstoqueClickAcao4: () -> Unit
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
@@ -201,9 +210,7 @@ fun ListaEstoquerDownBar() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaEstoqueClickAcao1()
                 }
         )
 //        Spacer(modifier = Modifier.height(60.dp))
@@ -214,9 +221,7 @@ fun ListaEstoquerDownBar() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaEstoqueClickAcao2()
                 }
         )
         Image(
@@ -226,9 +231,7 @@ fun ListaEstoquerDownBar() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaEstoqueClickAcao3()
                 }
         )
         Image(
@@ -238,9 +241,7 @@ fun ListaEstoquerDownBar() {
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaEstoqueClickAcao4()
                 }
         )
     }
@@ -250,7 +251,11 @@ fun ListaEstoquerDownBar() {
 @Composable
 fun ListaEstoquePreview() {
     ListaEstoqueScreen(
-        onCardapioClickMudarPerfil = { }
+        onListaEstoqueClickMudarPerfil = {},
+        onListaEstoqueClickAcao1 = {},
+        onListaEstoqueClickAcao2 = {},
+        onListaEstoqueClickAcao3 = {},
+        onListaEstoqueClickAcao4 = {}
     )
 }
 
