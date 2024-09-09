@@ -147,28 +147,30 @@ fun ListaFornecedorDownBar() {
         modifier = Modifier
             .fillMaxWidth()
             .background(color = GI_AzulMarinho)
-            .heightIn(75.dp),
+            .heightIn(80.dp),
+//      horizontalArrangement = Arrangement.SpaceEvenly,
         horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.notes_icon),
+            painter = painterResource(id = R.drawable.fornecedores_db),
             contentDescription = "Ação 1",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(35.dp)
+                .height(30.dp)
                 .clickable {
                     Toast
                         .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
                         .show()
                 }
         )
+//        Spacer(modifier = Modifier.height(60.dp))
         Image(
-            painter = painterResource(id = R.drawable.book_icon),
+            painter = painterResource(id = R.drawable.opened_box),
             contentDescription = "Ação 2",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(35.dp)
+                .height(30.dp)
                 .clickable {
                     Toast
                         .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
@@ -176,14 +178,26 @@ fun ListaFornecedorDownBar() {
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.account_icon),
+            painter = painterResource(id = R.drawable.carrinho_de_compraspng),
             contentDescription = "Ação 3",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    Toast
+                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
+                        .show()
+                }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.account_icon),
+            contentDescription = "Ação 4",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
                     Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
+                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
                         .show()
                 }
         )
