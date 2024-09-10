@@ -18,3 +18,4 @@ val GI_AzulClaro = Color(0xFFD2D3D3) // Sem componente alfa
 val GI_CianoClaro = Color(0xFFB0D2D3)
 val GI_Verde = Color(0xFF53915D)
 val GI_Vermelho = Color(0xFFED5656)
+val GI_BrancoFundo = Color(0xFFE3EDED)

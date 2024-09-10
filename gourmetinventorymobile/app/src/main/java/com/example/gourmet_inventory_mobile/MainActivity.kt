@@ -21,6 +21,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
+import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
 import com.example.gourmet_inventory_mobile.screens.ListaEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaFornecedoresScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
@@ -80,12 +81,11 @@ class MainActivity : ComponentActivity() {
                         composable("perfil/{user}") { entry ->
                             entry.arguments?.getString("user")?.let { user ->
                                 EscolhaPerfilScreen(user, onPerfilClick = { perfil ->
-                                    val destination =
-                                        if (perfil == "Garçom") {
-                                            "cardapio"
-                                        } else {
-                                            "estoque"
-                                        }
+                                    val destination = if (perfil == "Garçom") {
+                                        "cardapio"
+                                    } else {
+                                        "estoque"
+                                    }
                                     navController.navigate(destination)
                                     destination
                                 })
@@ -94,75 +94,57 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         composable("login") {
-                            LoginScreen(
-                                onLoginClick = { user ->
-                                    navController.navigate("perfil/$user")
-                                }
-                            )
+                            LoginScreen(onLoginClick = { user ->
+                                navController.navigate("perfil/$user")
+                            })
                         }
                         composable("cardapio") {
-                            CardapioListScreen(
-                                onCardapioClickMudarPerfil = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
-                                },
-                                onCardapioClickAcao1 = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("comanda")
-                                },
-                                onCardapioClickAcao2 = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("cardapio")
-                                },
-                                onCardapioClickAcao3 = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("viewPerfil")
-                                }
-                            )
+                            CardapioListScreen(onCardapioClickMudarPerfil = {
+                                clickedAction = "Mudar Perfil"
+                                navController.navigate("perfil/Teste")
+                            }, onCardapioClickAcao1 = {
+                                clickedAction = "Ação 1"
+                                navController.navigate("comanda")
+                            }, onCardapioClickAcao2 = {
+                                clickedAction = "Ação 2"
+                                navController.navigate("cardapio")
+                            }, onCardapioClickAcao3 = {
+                                clickedAction = "Ação 3"
+                                navController.navigate("viewPerfil")
+                            })
                         }
                         composable("estoque") {
-                            ListaEstoqueScreen(
-                                onListaEstoqueClickMudarPerfil = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
-                                },
-                                onListaEstoqueClickAcao1 = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                                onListaEstoqueClickAcao2 = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onListaEstoqueClickAcao3 = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
-                                },
-                                onListaEstoqueClickAcao4 =  {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
-                                }
-                            )
+                            ListaEstoqueScreen(onListaEstoqueClickMudarPerfil = {
+                                clickedAction = "Mudar Perfil"
+                                navController.navigate("perfil/Teste")
+                            }, onListaEstoqueClickAcao1 = {
+                                clickedAction = "Ação 1"
+                                navController.navigate("listaFornecedor")
+                            }, onListaEstoqueClickAcao2 = {
+                                clickedAction = "Ação 2"
+                                navController.navigate("listaEstoque")
+                            }, onListaEstoqueClickAcao3 = {
+                                clickedAction = "Ação 3"
+                                navController.navigate("listaCompras")
+                            }, onListaEstoqueClickAcao4 = {
+                                clickedAction = "Ação 4"
+                                navController.navigate("viewPerfil")
+                            })
                         }
                         composable("comanda") {
-                            ComandaListScreen (
-                                onComandaClickMudarPerfil = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
-                                },
-                                onComandaClickAcao1 = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("comanda")
-                                },
-                                onComandaClickAcao2 = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("cardapio")
-                                },
-                                onComandaClickAcao3 = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("viewPerfil")
-                                }
-                            )
+                            ComandaListScreen(onComandaClickMudarPerfil = {
+                                clickedAction = "Mudar Perfil"
+                                navController.navigate("perfil/Teste")
+                            }, onComandaClickAcao1 = {
+                                clickedAction = "Ação 1"
+                                navController.navigate("comanda")
+                            }, onComandaClickAcao2 = {
+                                clickedAction = "Ação 2"
+                                navController.navigate("listaCompras")
+                            }, onComandaClickAcao3 = {
+                                clickedAction = "Ação 3"
+                                navController.navigate("viewPerfil")
+                            })
                         }
                         composable("viewPerfil") {
                             ViewPerfilScreen(
@@ -185,48 +167,59 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("listaFornecedor") {
-                            ListaFornecedoresScreen(
-                            onListaFornecedorClickMudarPerfil = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
-                                },
-                            onListaFornecedorClickAcao1 = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                            onListaFornecedorClickAcao2 = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("listaEstoque")
-                                },
-                            onListaFornecedorClickAcao3 = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
-                                },
-                                onListaFornecedorClickAcao4 =  {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
-                                }
-                            )
+                            ListaFornecedoresScreen(onListaFornecedorClickMudarPerfil = {
+                                clickedAction = "Mudar Perfil"
+                                navController.navigate("perfil/Teste")
+                            }, onListaFornecedorClickAcao1 = {
+                                clickedAction = "Ação 1"
+//                                    navController.navigate("listaFornecedor")
+                            }, onListaFornecedorClickAcao2 = {
+                                clickedAction = "Ação 2"
+                                navController.navigate("listaEstoque")
+                            }, onListaFornecedorClickAcao3 = {
+                                clickedAction = "Ação 3"
+                                navController.navigate("listaCompras")
+                            }, onListaFornecedorClickAcao4 = {
+                                clickedAction = "Ação 4"
+                                navController.navigate("viewPerfil")
+                            })
                         }
                         composable("listaEstoque") {
-                            ListaFornecedoresScreen(
-                                onListaFornecedorClickMudarPerfil = {
+                            ListaEstoqueScreen(onListaEstoqueClickMudarPerfil = {
+                                clickedAction = "Mudar Perfil"
+                                navController.navigate("perfil/Teste")
+                            }, onListaEstoqueClickAcao1 = {
+                                clickedAction = "Ação 1"
+                                navController.navigate("listaFornecedor")
+                            }, onListaEstoqueClickAcao2 = {
+                                clickedAction = "Ação 2"
+//                                    navController.navigate("listaEstoque")
+                            }, onListaEstoqueClickAcao3 = {
+                                clickedAction = "Ação 3"
+                                navController.navigate("listaCompras")
+                            }, onListaEstoqueClickAcao4 = {
+                                clickedAction = "Ação 4"
+                                navController.navigate("viewPerfil")
+                            })
+                        }
+                        composable("listaCompras") {
+                            ListaComprasScreen(
+                                onListaComprasMudarPerfilClick = {
                                     clickedAction = "Mudar Perfil"
                                     navController.navigate("perfil/Teste")
                                 },
-                                onListaFornecedorClickAcao1 = {
+                                onListaComprasAcao1Click = {
                                     clickedAction = "Ação 1"
                                     navController.navigate("listaFornecedor")
                                 },
-                                onListaFornecedorClickAcao2 = {
+                                onListaComprasAcao2Click = {
                                     clickedAction = "Ação 2"
                                     navController.navigate("listaEstoque")
                                 },
-                                onListaFornecedorClickAcao3 = {
+                                onListaComprasAcao3Click = {
                                     clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
                                 },
-                                onListaFornecedorClickAcao4 =  {
+                                onListaComprasAcao4Click = {
                                     clickedAction = "Ação 4"
                                     navController.navigate("viewPerfil")
                                 }
