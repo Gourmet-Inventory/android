@@ -187,7 +187,10 @@ fun ComandaListScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(GI_AzulMarinho, RoundedCornerShape(8.dp)),
+                                    .background(
+                                        GI_AzulMarinho,
+                                        RoundedCornerShape(bottomEnd = 0.dp, bottomStart = 0.dp, topEnd = 8.dp, topStart = 8.dp)
+                                    ),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
@@ -236,7 +239,7 @@ fun ComandaListScreen(
 fun ComandaListPreview() {
     GourmetinventorymobileTheme {
         ComandaListScreen(
-            onComandaClickMudarPerfil = {} ,
+            onComandaClickMudarPerfil = {},
             onComandaClickAcao1 = {},
             onComandaClickAcao2 = {},
             onComandaClickAcao3 = {}
@@ -288,8 +291,8 @@ fun SearchBoxPreview() {
 
 @Composable
 fun DownBar(
-    onComandaClickAcao1: () -> Unit ,
-    onComandaClickAcao2: () -> Unit ,
+    onComandaClickAcao1: () -> Unit,
+    onComandaClickAcao2: () -> Unit,
     onComandaClickAcao3: () -> Unit
 ) {
     val context = LocalContext.current
