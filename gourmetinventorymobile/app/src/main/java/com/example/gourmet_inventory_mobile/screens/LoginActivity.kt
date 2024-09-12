@@ -158,7 +158,7 @@ fun LoginScreen(
                 Text(
                     text = "Entrar",
                     color = GI_AzulMarinho,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
                 )
             }
         }

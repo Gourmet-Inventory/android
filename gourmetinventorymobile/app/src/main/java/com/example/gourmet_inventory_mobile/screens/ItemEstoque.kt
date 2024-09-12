@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
 class ItemEstoque : ComponentActivity() {
@@ -59,7 +60,10 @@ class ItemEstoque : ComponentActivity() {
 @Composable
 fun Item() {
     Column(Modifier.fillMaxSize()) {
-        Row { IconButton(onClick = {
+        Row (
+            modifier = Modifier.fillMaxWidth().padding(top = 30.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ){ IconButton(onClick = {
         }) {
             Icon(
                 painter = painterResource(id = R.drawable.back),
@@ -96,7 +100,7 @@ fun Item() {
             Button(
                 onClick = {
                 },
-                colors = ButtonDefaults.buttonColors(containerColor = GI_Orange, contentColor = Color.White),
+                colors = ButtonDefaults.buttonColors(containerColor = GI_Verde, contentColor = Color.White),
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)

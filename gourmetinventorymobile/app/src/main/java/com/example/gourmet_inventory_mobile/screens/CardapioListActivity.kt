@@ -141,7 +141,7 @@ fun CardapioListScreen(
             Text(
                 text = "Cardápio: ",
                 modifier = Modifier
-                    .padding(start = 26.dp, top = 70.dp),
+                    .padding(start = 26.dp, top = 35.dp),
                 style = TextStyle(
                     fontSize = 30.sp,
                     color = Black

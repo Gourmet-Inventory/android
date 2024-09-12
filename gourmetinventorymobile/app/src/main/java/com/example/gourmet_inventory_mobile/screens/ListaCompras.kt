@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,12 +31,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 
 //class ListaComprasActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,32 +96,54 @@ fun ListaComprasScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 5.dp, end = 16.dp),
+                        .padding(top = 20.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Button(
+
+                    OutlinedButton(
                         onClick = {
                             onListaComprasMudarPerfilClick()
                         },
+                        modifier = Modifier
+                            .width(170.dp)
+                            .height(40.dp)
+                            .padding(end = 10.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = GI_Orange,
                             contentColor = White
-                        ),
-                        modifier = Modifier.padding(top = 16.dp, bottom = 20.dp)
+                        )
                     ) {
-                        Text(text = "Mudar Perfil", color = Black)
+                        Text(
+                            text = "Mudar Perfil",
+                            color = Black,
+                            fontSize = 18.sp
+                        )
                     }
+//                    Button(
+//                        onClick = {
+//                            onListaComprasMudarPerfilClick()
+//                        },
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = GI_Orange,
+//                            contentColor = White
+//                        ),
+//                        modifier = Modifier.padding(top = 16.dp, bottom = 20.dp)
+//                    ) {
+//                        Text(text = "Mudar Perfil", color = Black)
+//                    }
                 }
 
                 // Título
                 Row (
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(top = 25.dp),
+                    horizontalArrangement = Arrangement.Center,
+//                    verticalAlignment = Alignment.CenterVertically
                 ){
                     Text(
                         text = "Lista de Compras",
                         fontSize = 34.sp,
-                        modifier = Modifier.padding(bottom = 10.dp)
+                        modifier = Modifier.padding(bottom = 5.dp)
                     )
                 }
 
@@ -167,7 +192,7 @@ fun ListaComprasScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                                .padding(vertical = 5.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Checkbox(

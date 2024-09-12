@@ -2,7 +2,6 @@
 
 package com.example.gourmet_inventory_mobile.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -69,10 +68,11 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 
 @Composable
 fun ComandaListScreen(
-    onComandaClickMudarPerfil: () -> Unit,
-    onComandaClickAcao1: () -> Unit,
-    onComandaClickAcao2: () -> Unit,
-    onComandaClickAcao3: () -> Unit
+    onComandaListClickMudarPerfil: () -> Unit,
+    onComandaListClickAcao1: () -> Unit,
+    onComandaListClickAcao2: () -> Unit,
+    onComandaListClickAcao3: () -> Unit,
+    onComandaListComandaView: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
@@ -110,7 +110,7 @@ fun ComandaListScreen(
             ) {
                 OutlinedButton(
                     onClick = {
-                        onComandaClickMudarPerfil()
+                        onComandaListClickMudarPerfil()
                     },
                     modifier = Modifier
                         .width(170.dp)
@@ -131,7 +131,7 @@ fun ComandaListScreen(
             Text(
                 text = "Comanda: ",
                 modifier = Modifier
-                    .padding(start = 26.dp, top = 70.dp),
+                    .padding(start = 26.dp, top = 35.dp),
                 style = TextStyle(
                     fontSize = 30.sp,
                     color = Black
@@ -168,6 +168,7 @@ fun ComandaListScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(bottom = 70.dp)
                     .weight(1f)
                     .padding(start = 26.dp, end = 26.dp)
             ) {
@@ -177,7 +178,10 @@ fun ComandaListScreen(
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
                             .background(White.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-                            .border(1.dp, Black, RoundedCornerShape(8.dp)),
+                            .border(1.dp, Black, RoundedCornerShape(8.dp))
+                            .clickable {
+                                onComandaListComandaView()
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
@@ -226,9 +230,9 @@ fun ComandaListScreen(
             contentAlignment = Alignment.BottomCenter
         ) {
             DownBar(
-                onComandaClickAcao1 = onComandaClickAcao1,
-                onComandaClickAcao2 = onComandaClickAcao2,
-                onComandaClickAcao3 = onComandaClickAcao3
+                onComandaListClickAcao1 = onComandaListClickAcao1,
+                onComandaListClickAcao2 = onComandaListClickAcao2,
+                onComandaListClickAcao3 = onComandaListClickAcao3
             )
         }
     }
@@ -239,10 +243,11 @@ fun ComandaListScreen(
 fun ComandaListPreview() {
     GourmetinventorymobileTheme {
         ComandaListScreen(
-            onComandaClickMudarPerfil = {},
-            onComandaClickAcao1 = {},
-            onComandaClickAcao2 = {},
-            onComandaClickAcao3 = {}
+            onComandaListClickMudarPerfil = {},
+            onComandaListClickAcao1 = {},
+            onComandaListClickAcao2 = {},
+            onComandaListClickAcao3 = {},
+            onComandaListComandaView = {}
         )
     }
 }
@@ -291,9 +296,9 @@ fun SearchBoxPreview() {
 
 @Composable
 fun DownBar(
-    onComandaClickAcao1: () -> Unit,
-    onComandaClickAcao2: () -> Unit,
-    onComandaClickAcao3: () -> Unit
+    onComandaListClickAcao1: () -> Unit,
+    onComandaListClickAcao2: () -> Unit,
+    onComandaListClickAcao3: () -> Unit
 ) {
     val context = LocalContext.current
     Row(
@@ -312,7 +317,7 @@ fun DownBar(
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    onComandaClickAcao1()
+                    onComandaListClickAcao1()
                 }
         )
 //        Spacer(modifier = Modifier.height(60.dp))
@@ -323,7 +328,7 @@ fun DownBar(
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    onComandaClickAcao2()
+                    onComandaListClickAcao2()
                 }
         )
         Image(
@@ -333,7 +338,7 @@ fun DownBar(
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    onComandaClickAcao3()
+                    onComandaListClickAcao3()
                 }
         )
     }
@@ -343,8 +348,8 @@ fun DownBar(
 @Composable
 fun DownBarPreview() {
     DownBar(
-        onComandaClickAcao1 = {},
-        onComandaClickAcao2 = {},
-        onComandaClickAcao3 = {}
+        onComandaListClickAcao1 = {},
+        onComandaListClickAcao2 = {},
+        onComandaListClickAcao3 = {}
     )
 }
