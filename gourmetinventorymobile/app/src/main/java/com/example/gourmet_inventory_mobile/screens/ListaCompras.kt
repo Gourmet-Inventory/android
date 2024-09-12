@@ -268,7 +268,7 @@ fun ListaComprasDownBar(
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.carrinho_de_compraspng),
+            painter = painterResource(id = R.drawable.cart),
             contentDescription = "Ação 3",
             contentScale = ContentScale.Crop,
             modifier = Modifier

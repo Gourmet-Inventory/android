@@ -271,7 +271,7 @@ fun ComandaDownBar(
             contentDescription = "Ação 1",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(35.dp)
+                .height(30.dp)
                 .clickable {
                     onComandaViewAcao1Click()
                 })
@@ -279,7 +279,7 @@ fun ComandaDownBar(
             contentDescription = "Ação 2",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(35.dp)
+                .height(30.dp)
                 .clickable {
                     onComandaViewAcao2Click()
                 })
