@@ -2,6 +2,11 @@
 
 package com.example.gourmet_inventory_mobile.screens
 
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,11 +27,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -45,7 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.Comanda
+import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -54,47 +60,49 @@ import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-//class ComandaListActivity : ComponentActivity() {
+//class CardapioListActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
 //        setContent {
 //            GourmetinventorymobileTheme {
-//                ComandaList()
+//                CardapioListScreen()
 //            }
 //        }
 //    }
 //}
 
 @Composable
-fun ComandaListScreen(
-    onComandaListClickMudarPerfil: () -> Unit,
-    onComandaListClickAcao1: () -> Unit,
-    onComandaListClickAcao2: () -> Unit,
-    onComandaListClickAcao3: () -> Unit,
-    onComandaListComandaView: () -> Unit
+fun CardapioListScreen(
+    onCardapioClickMudarPerfil: () -> Unit,
+    onCardapioClickAcao1: () -> Unit,
+    onCardapioClickAcao2: () -> Unit,
+    onCardapioClickAcao3: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
         var searchText by remember { mutableStateOf("") }
         var selectedOptionIndex by remember { mutableStateOf(-1) }
 
-
-        val comandas = listOf(
-            Comanda("Mesa 1", "João Silva", "Comanda 123"),
-            Comanda("Mesa 2", "Maria Oliveira", "Comanda 456"),
-            Comanda("Mesa 3", "Pedro Souza", "Comanda 789"),
-            Comanda("Mesa 4", "Ana Pereira", "Comanda 101"),
-            Comanda("Mesa 5", "Carlos Rodrigues", "Comanda 112"),
-            Comanda("Mesa 6", "Fábio Teixiera", "Comanda 111"),
-            Comanda("Mesa 7", "Gislaino Portoloto", "Comanda 01"),
+        val pratos = listOf(
+            Prato("Feijoada", 25.0, "4 pessoas"),
+            Prato("Lasanha", 30.0, "6 pessoas"),
+            Prato("Moqueca", 35.0, "5 pessoas"),
+            Prato("Strogonoff", 28.0, "4 pessoas"),
+            Prato("Churrasco", 50.0, "10 pessoas"),
+            Prato("Pizza", 20.0, "3 pessoas"),
+            Prato("Sushi", 40.0, "2 pessoas")
         )
 
         // Filtra a lista com base no texto da pesquisa
-        val filteredComandas = comandas.filter {
-            it.mesa.contains(searchText, ignoreCase = true) ||
-                    it.nomeCliente.contains(searchText, ignoreCase = true) ||
-                    it.nomeComanda.contains(searchText, ignoreCase = true)
+        val filteredCardapio = pratos.filter {
+            it.nome.contains(searchText, ignoreCase = true) ||
+                    try {
+                        it.preco == searchText.toDouble()
+                    } catch (e: NumberFormatException) {
+                        false
+                    } ||
+                    it.rendimento.contains(searchText, ignoreCase = true)
         }
 
         Column(
@@ -110,7 +118,9 @@ fun ComandaListScreen(
             ) {
                 OutlinedButton(
                     onClick = {
-                        onComandaListClickMudarPerfil()
+                        onCardapioClickMudarPerfil()
+                        Toast.makeText(context, "Mudar Perfil", Toast.LENGTH_SHORT)
+                            .show()
                     },
                     modifier = Modifier
                         .width(170.dp)
@@ -129,7 +139,7 @@ fun ComandaListScreen(
                 }
             }
             Text(
-                text = "Comanda: ",
+                text = "Cardápio: ",
                 modifier = Modifier
                     .padding(start = 26.dp, top = 35.dp),
                 style = TextStyle(
@@ -139,88 +149,66 @@ fun ComandaListScreen(
             )
 
             // Campo de Pesquisa
-            SearchBox(
+            CardapioSearchBox(
                 searchText = searchText,
                 mudaValorCampo = { novoValorCampo: String ->
                     searchText = novoValorCampo
                 }
             )
-            //Botões de filtro
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
-            ) {
-                RadioButton(
-                    selected = selectedOptionIndex == 1,
-                    onClick = { selectedOptionIndex = 1 }
-                )
-                Text(text = "Todas", fontSize = 16.sp, modifier = Modifier.padding(end = 4.dp))
-
-                RadioButton(
-                    selected = selectedOptionIndex == 0,
-                    onClick = { selectedOptionIndex = 0 }
-                )
-                Text(text = "Mnhas", fontSize = 16.sp)
-            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 70.dp)
                     .weight(1f)
                     .padding(start = 26.dp, end = 26.dp)
             ) {
-                items(filteredComandas) { comanda ->
+                items(filteredCardapio) { prato ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
-                            .background(White.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-                            .border(1.dp, Black, RoundedCornerShape(8.dp))
-                            .clickable {
-                                onComandaListComandaView()
-                            },
-                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
                             modifier = Modifier
                                 .weight(1f)
                         ) {
-                            Row(
+                            Text(
+                                text = prato.nome,
+                                fontSize = 20.sp,
+                                style = TextStyle(
+                                    fontFamily = JostBold,
+                                    color = Black
+                                ),
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(
-                                        GI_AzulMarinho,
-                                        RoundedCornerShape(bottomEnd = 0.dp, bottomStart = 0.dp, topEnd = 8.dp, topStart = 8.dp)
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = comanda.nomeComanda,
-                                    fontSize = 20.sp,
-                                    style = TextStyle(
-                                        fontFamily = JostBold,
-                                        color = White
-                                    ),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 10.dp, bottom = 10.dp),
-                                horizontalArrangement = Arrangement.SpaceAround
-                            ) {
-                                Text(text = comanda.mesa, fontSize = 18.sp)
-                                Text(text = comanda.nomeCliente, fontSize = 18.sp)
-                            }
+                                    .padding(start = 8.dp),
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                text = prato.rendimento,
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(start = 8.dp),
+                                textAlign = TextAlign.Start
+                            )
+                            Text(
+                                text = "R$" + prato.preco.toString(),
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(start = 8.dp, top = 14.dp),
+                                textAlign = TextAlign.Start
+                            )
+
                         }
+                        Image(
+                            painter = painterResource(id = R.drawable.prato_exemplo),
+                            contentDescription = "Imagem do prato",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .height(100.dp)
+                        )
                     }
+                    Divider(
+                        color = Color.Black,
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
                 }
             }
         }
@@ -229,10 +217,10 @@ fun ComandaListScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.BottomCenter
         ) {
-            DownBar(
-                onComandaListClickAcao1 = onComandaListClickAcao1,
-                onComandaListClickAcao2 = onComandaListClickAcao2,
-                onComandaListClickAcao3 = onComandaListClickAcao3
+            CardapioDownBar(
+                onCardapioClickAcao1 = onCardapioClickAcao1,
+                onCardapioClickAcao2 = onCardapioClickAcao2,
+                onCardapioClickAcao3 = onCardapioClickAcao3
             )
         }
     }
@@ -240,20 +228,19 @@ fun ComandaListScreen(
 
 @Preview
 @Composable
-fun ComandaListPreview() {
+fun CardapioListPreview() {
     GourmetinventorymobileTheme {
-        ComandaListScreen(
-            onComandaListClickMudarPerfil = {},
-            onComandaListClickAcao1 = {},
-            onComandaListClickAcao2 = {},
-            onComandaListClickAcao3 = {},
-            onComandaListComandaView = {}
+        CardapioListScreen(
+            onCardapioClickMudarPerfil = {},
+            onCardapioClickAcao1 = {},
+            onCardapioClickAcao2 = {},
+            onCardapioClickAcao3 = {}
         )
     }
 }
 
 @Composable
-fun SearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
+fun CardapioSearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
     OutlinedTextField(
         value = searchText,
         onValueChange = { novoValorCampo: String ->
@@ -290,15 +277,15 @@ fun SearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
 
 @Preview
 @Composable
-fun SearchBoxPreview() {
+fun CardapioSearchBoxPreview() {
     SearchBox(searchText = "", mudaValorCampo = {})
 }
 
 @Composable
-fun DownBar(
-    onComandaListClickAcao1: () -> Unit,
-    onComandaListClickAcao2: () -> Unit,
-    onComandaListClickAcao3: () -> Unit
+fun CardapioDownBar(
+    onCardapioClickAcao1: () -> Unit,
+    onCardapioClickAcao2: () -> Unit,
+    onCardapioClickAcao3: () -> Unit
 ) {
     val context = LocalContext.current
     Row(
@@ -317,7 +304,7 @@ fun DownBar(
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    onComandaListClickAcao1()
+                    onCardapioClickAcao1()
                 }
         )
 //        Spacer(modifier = Modifier.height(60.dp))
@@ -328,7 +315,7 @@ fun DownBar(
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    onComandaListClickAcao2()
+                    onCardapioClickAcao2()
                 }
         )
         Image(
@@ -338,7 +325,7 @@ fun DownBar(
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    onComandaListClickAcao3()
+                    onCardapioClickAcao3()
                 }
         )
     }
@@ -346,10 +333,10 @@ fun DownBar(
 
 @Preview()
 @Composable
-fun DownBarPreview() {
-    DownBar(
-        onComandaListClickAcao1 = {},
-        onComandaListClickAcao2 = {},
-        onComandaListClickAcao3 = {}
+fun CardapioDownBarPreview() {
+    CardapioDownBar(
+        onCardapioClickAcao1 = {},
+        onCardapioClickAcao2 = {},
+        onCardapioClickAcao3 = {}
     )
 }

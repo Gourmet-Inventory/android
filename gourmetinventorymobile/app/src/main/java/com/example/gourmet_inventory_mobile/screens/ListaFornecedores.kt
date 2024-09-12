@@ -33,20 +33,26 @@ import androidx.compose.foundation.lazy.items
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
-class ListaFornecedoresActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                ListaFornecedores()
-            }
-        }
-    }
-}
+//class ListaFornecedoresActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            GourmetinventorymobileTheme {
+//                ListaFornecedoresScreen()
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun ListaFornecedores() {
+fun ListaFornecedoresScreen(
+    onListaFornecedorClickMudarPerfil: () -> Unit,
+    onListaFornecedorClickAcao1: () -> Unit,
+    onListaFornecedorClickAcao2: () -> Unit,
+    onListaFornecedorClickAcao3: () -> Unit,
+    onListaFornecedorClickAcao4: () -> Unit
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
 
@@ -75,9 +81,10 @@ fun ListaFornecedores() {
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
-            Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
                 // Botão Mudar Perfil
                 Row(
@@ -88,9 +95,12 @@ fun ListaFornecedores() {
                 ) {
                     Button(
                         onClick = {
-                            Toast.makeText(context, "Mudar Perfil", Toast.LENGTH_SHORT).show()
+                            onListaFornecedorClickMudarPerfil()
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = GI_Orange, contentColor = White),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_Orange,
+                            contentColor = White
+                        ),
                         modifier = Modifier.padding(top = 16.dp)
                     ) {
                         Text(text = "Mudar Perfil", color = Black)
@@ -98,13 +108,19 @@ fun ListaFornecedores() {
                 }
 
                 // Título
-                Text(text = "Fornecedor:", fontSize = 34.sp, modifier = Modifier.padding(bottom = 16.dp))
+                Text(
+                    text = "Fornecedor:",
+                    fontSize = 34.sp,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
 
                 // Campo de Pesquisa
                 TextField(
                     value = texto,
                     onValueChange = { novoTexto -> texto = novoTexto },
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
                     label = { Text("Pesquisar") },
                     placeholder = { Text("") },
                     shape = RoundedCornerShape(8.dp)
@@ -120,10 +136,18 @@ fun ListaFornecedores() {
                                 .background(GI_Orange.copy(alpha = 0.2f), RoundedCornerShape(8.dp)),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(modifier = Modifier.weight(1f).padding(8.dp)) {
+                            Column(modifier = Modifier
+                                .weight(1f)
+                                .padding(8.dp)) {
                                 Text(text = fornecedor.first, fontSize = 20.sp)
-                                Text(text = "Telefone: ${fornecedor.second.first}", fontSize = 14.sp)
-                                Text(text = "Categoria: ${fornecedor.second.second}", fontSize = 14.sp)
+                                Text(
+                                    text = "Telefone: ${fornecedor.second.first}",
+                                    fontSize = 14.sp
+                                )
+                                Text(
+                                    text = "Categoria: ${fornecedor.second.second}",
+                                    fontSize = 14.sp
+                                )
                             }
                         }
                     }
@@ -134,47 +158,51 @@ fun ListaFornecedores() {
 
             // Barra Inferior Fixa
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
-                ListaFornecedorDownBar()
+                ListaFornecedorDownBar(
+                    onListaFornecedorClickAcao1 = onListaFornecedorClickAcao1,
+                    onListaFornecedorClickAcao2 = onListaFornecedorClickAcao2,
+                    onListaFornecedorClickAcao3 = onListaFornecedorClickAcao3,
+                    onListaFornecedorClickAcao4 = onListaFornecedorClickAcao4
+                )
             }
         }
     }
 }
 
 @Composable
-fun ListaFornecedorDownBar() {
+fun ListaFornecedorDownBar(
+    onListaFornecedorClickAcao1: () -> Unit,
+    onListaFornecedorClickAcao2: () -> Unit,
+    onListaFornecedorClickAcao3: () -> Unit,
+    onListaFornecedorClickAcao4: () -> Unit
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = GI_AzulMarinho)
-            .heightIn(80.dp),
-//      horizontalArrangement = Arrangement.SpaceEvenly,
+            .heightIn(70.dp),
         horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             painter = painterResource(id = R.drawable.fornecedores_db),
             contentDescription = "Ação 1",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(30.dp)
+                .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaFornecedorClickAcao1()
                 }
         )
-//        Spacer(modifier = Modifier.height(60.dp))
         Image(
             painter = painterResource(id = R.drawable.opened_box),
             contentDescription = "Ação 2",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(30.dp)
+                .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaFornecedorClickAcao2()
                 }
         )
         Image(
@@ -182,23 +210,19 @@ fun ListaFornecedorDownBar() {
             contentDescription = "Ação 3",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(30.dp)
+                .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaFornecedorClickAcao3()
                 }
         )
         Image(
             painter = painterResource(id = R.drawable.account_icon),
-            contentDescription = "Ação 4",
+            contentDescription = "Ação 3",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
-                        .show()
+                    onListaFornecedorClickAcao4()
                 }
         )
     }
@@ -207,5 +231,11 @@ fun ListaFornecedorDownBar() {
 @Preview
 @Composable
 fun ListaFornecedoresPreview() {
-    ListaFornecedores()
+    ListaFornecedoresScreen(
+        onListaFornecedorClickMudarPerfil = {},
+        onListaFornecedorClickAcao1 = {},
+        onListaFornecedorClickAcao2 = {},
+        onListaFornecedorClickAcao3 = {},
+        onListaFornecedorClickAcao4 = {}
+    )
 }
