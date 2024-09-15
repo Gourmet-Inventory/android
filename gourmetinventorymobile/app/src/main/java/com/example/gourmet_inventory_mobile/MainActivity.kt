@@ -24,6 +24,8 @@ import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
 import com.example.gourmet_inventory_mobile.screens.DeleteCnfirmacaoScreen
+import com.example.gourmet_inventory_mobile.screens.Editar2Screen
+import com.example.gourmet_inventory_mobile.screens.EditarScreen
 import com.example.gourmet_inventory_mobile.screens.ItemEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
 import com.example.gourmet_inventory_mobile.screens.ListaEstoqueScreen
@@ -241,7 +243,8 @@ class MainActivity : ComponentActivity() {
                                     navController.popBackStack()
                                 },
                                 onItemEstoqueViewEditarClick = {
-//                                    clickedAction = "Editar"
+                                    clickedAction = "Editar"
+                                    navController.navigate("editarItemEstoque")
                                 },
                                 onItemEstoqueViewExcluirClick = {
                                     clickedAction = "Excluir"
@@ -314,9 +317,35 @@ class MainActivity : ComponentActivity() {
                                     clickedAction = "Voltar"
                                     navController.popBackStack()
                                 },
-                                onCadastroItemCadastrarClick ={
+                                onCadastroItemCadastrarClick = {
                                     clickedAction = "Cadastrar"
                                     navController.navigate("listaEstoque")
+                                }
+                            )
+                        }
+
+                        composable("editarItemEstoque") {
+                            EditarScreen(
+                                onEditarItem1ProximoClick = {
+                                    clickedAction = "Próximo"
+                                    navController.navigate("editarItemEstoque2")
+                                },
+                                onEditarItem1AnteriorClick = {
+                                    clickedAction = "Anterior"
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+
+                        composable("editarItemEstoque2") {
+                            Editar2Screen(
+                                onEditarItem2SalvarClick = {
+                                    clickedAction = "Salvar"
+                                    navController.navigate("listaEstoque")
+                                },
+                                onEditarItem2AnteriorClick = {
+                                    clickedAction = "Anterior"
+                                    navController.popBackStack()
                                 }
                             )
                         }
