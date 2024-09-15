@@ -140,8 +140,6 @@ fun ItemEstoqueScreen(
                 Button(
                     onClick = {
                         onItemEstoqueViewEditarClick()
-                        Toast.makeText(context, "Item Editado com sucesso", Toast.LENGTH_SHORT)
-                            .show()
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Verde,
