@@ -167,7 +167,8 @@ fun ListaComprasScreen(
                 // Cabeçalho da Lista
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = "Item", fontSize = 20.sp)
                     Divider(
@@ -268,7 +269,7 @@ fun ListaComprasDownBar(
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.carrinho_de_compraspng),
+            painter = painterResource(id = R.drawable.cart),
             contentDescription = "Ação 3",
             contentScale = ContentScale.Crop,
             modifier = Modifier

@@ -163,7 +163,7 @@ fun ComandaListScreen(
                     selected = selectedOptionIndex == 0,
                     onClick = { selectedOptionIndex = 0 }
                 )
-                Text(text = "Mnhas", fontSize = 16.sp)
+                Text(text = "Minhas", fontSize = 16.sp)
             }
             LazyColumn(
                 modifier = Modifier

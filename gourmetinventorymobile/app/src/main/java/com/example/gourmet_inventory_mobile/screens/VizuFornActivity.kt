@@ -12,12 +12,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,21 +47,27 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 
-class VizuFornActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                VizuFornScreen()
-
-            }
-        }
-    }
-}
+//class VizuFornActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            GourmetinventorymobileTheme {
+//                VizuFornScreen()
+//
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun VizuFornScreen() {
+fun VizuFornScreen(
+    onVizuFornVoltarPerfilClick: () -> Unit = {},
+    onVizuFornAcao1Click: () -> Unit = {},
+    onVizuFornAcao2Click: () -> Unit = {},
+    onVizuFornAcao3Click: () -> Unit = {},
+    onVizuFornAcao4Click: () -> Unit = {},
+) {
     var cnpj by remember {
         mutableStateOf("08.792.981/0001-69")
     }
@@ -93,20 +104,38 @@ fun VizuFornScreen() {
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 50.dp),
+                .fillMaxSize(),
+//                .padding(top = 50.dp),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
-//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-                horizontalArrangement = Arrangement.Center,
+                    .padding(top = 30.dp),
                 verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+
+                }) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+//                painter = painterResource(id = R.drawable.back),
+                        contentDescription = "Voltar",
+                        Modifier.size(44.dp),
+                        tint = Color.Black
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp),
+//                    .padding(bottom = 45.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Top
             ) {
                 Text(
                     text = "Kibon",
@@ -168,7 +197,9 @@ fun VizuFornScreen() {
                 .padding(top = 100.dp),
             contentAlignment = androidx.compose.ui.Alignment.BottomCenter
         ) {
-            DownBarVizuScreen()
+            DownBarVizuScreen(
+
+            )
         }
     }
 }
@@ -253,7 +284,7 @@ fun DownBarVizuScreen() {
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.carrinho_de_compraspng),
+            painter = painterResource(id = R.drawable.cart),
             contentDescription = "Ação 3",
             contentScale = ContentScale.Crop,
             modifier = Modifier

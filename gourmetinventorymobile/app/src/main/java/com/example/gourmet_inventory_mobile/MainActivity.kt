@@ -1,7 +1,6 @@
 package com.example.gourmet_inventory_mobile
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -17,57 +16,20 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.EscolhaPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.LoginScreen
-import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
+import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
+import com.example.gourmet_inventory_mobile.screens.DeleteCnfirmacaoScreen
+import com.example.gourmet_inventory_mobile.screens.ItemEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
 import com.example.gourmet_inventory_mobile.screens.ListaEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaFornecedoresScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
-//                    val navController = rememberNavController()
-//
-//                    NavHost(navController = navController, startDestination = "perfil/{user}") {
-//                        composable("perfil/{user}") { entry ->
-//                            entry.arguments?.getString("user")?.let { user ->
-//                                //Serializando o objeto User para JSON
-////                                val userJson = Json.encodeToString(user)
-//                                EscolhaPerfilScreen(user, onPerfilClick = { _, _ ->})
-//
-//                            } ?: LaunchedEffect(null) {
-//                                navController.navigate("login")
-//                            }
-//                        }
-//                        composable("login") {
-//                            LoginScreen(
-//                                onLoginClick = { user ->
-//                                    navController.navigate("perfil/$user")
-//                                }
-//                            )
-//                        }
-//                        composable("cardapio") {
-////                            CardapioScreen(
-////                                onCardapioClick = { user ->
-////                                    navController.navigate("perfil/$user")
-////                                }
-////                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,18 +37,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             GourmetinventorymobileTheme {
-                Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
+                Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
                     var clickedAction by remember { mutableStateOf("") }
 
                     NavHost(navController = navController, startDestination = "login") {
+
                         composable("perfil/{user}") { entry ->
                             entry.arguments?.getString("user")?.let { user ->
                                 EscolhaPerfilScreen(user, onPerfilClick = { perfil ->
                                     val destination = if (perfil == "Garçom") {
                                         "cardapio"
                                     } else {
-                                        "estoque"
+                                        "listaEstoque"
                                     }
                                     navController.navigate(destination)
                                     destination
@@ -95,11 +58,13 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("login")
                             }
                         }
+
                         composable("login") {
                             LoginScreen(onLoginClick = { user ->
                                 navController.navigate("perfil/$user")
                             })
                         }
+
                         composable("cardapio") {
                             CardapioListScreen(onCardapioClickMudarPerfil = {
                                 clickedAction = "Mudar Perfil"
@@ -115,24 +80,7 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate("viewPerfil")
                             })
                         }
-                        composable("estoque") {
-                            ListaEstoqueScreen(onListaEstoqueClickMudarPerfil = {
-                                clickedAction = "Mudar Perfil"
-                                navController.navigate("perfil/Teste")
-                            }, onListaEstoqueClickAcao1 = {
-                                clickedAction = "Ação 1"
-                                navController.navigate("listaFornecedor")
-                            }, onListaEstoqueClickAcao2 = {
-                                clickedAction = "Ação 2"
-                                navController.navigate("listaEstoque")
-                            }, onListaEstoqueClickAcao3 = {
-                                clickedAction = "Ação 3"
-                                navController.navigate("listaCompras")
-                            }, onListaEstoqueClickAcao4 = {
-                                clickedAction = "Ação 4"
-                                navController.navigate("viewPerfil")
-                            })
-                        }
+
                         composable("comandaList") {
                             ComandaListScreen(
                                 onComandaListClickMudarPerfil = {
@@ -156,6 +104,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("comandaView")
                                 })
                         }
+
                         composable("viewPerfil") {
                             ViewPerfilScreen(
                                 onViewPerfilSair = {
@@ -176,6 +125,7 @@ class MainActivity : ComponentActivity() {
 //                                }
                             )
                         }
+
                         composable("listaFornecedor") {
                             ListaFornecedoresScreen(
                                 onListaFornecedorClickMudarPerfil = {
@@ -199,6 +149,7 @@ class MainActivity : ComponentActivity() {
                                     navController.navigate("viewPerfil")
                                 })
                         }
+
                         composable("listaEstoque") {
                             ListaEstoqueScreen(
                                 onListaEstoqueClickMudarPerfil = {
@@ -220,8 +171,18 @@ class MainActivity : ComponentActivity() {
                                 onListaEstoqueClickAcao4 = {
                                     clickedAction = "Ação 4"
                                     navController.navigate("viewPerfil")
-                                })
+                                },
+                                onListaEstoqueClickItemEstoque = {
+                                    clickedAction = "Ação 5"
+                                    navController.navigate("itemEstoque")
+                                },
+                                onListaEstoqueCadastrarEstoqueClick = {
+                                    clickedAction = "Ação 6"
+                                    navController.navigate("cadastrarItemEstoque")
+                                }
+                            )
                         }
+
                         composable("listaCompras") {
                             ListaComprasScreen(
                                 onListaComprasMudarPerfilClick = {
@@ -245,6 +206,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+
                         composable("comandaView") {
                             ComandaViewScreen(
                                 onComandaViewCancelarClick = {
@@ -267,7 +229,94 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onComandaViewVoltarClick = {
                                     clickedAction = "Voltar"
-                                    navController.navigate("comandaList")
+                                    navController.popBackStack()
+                                }
+                            )
+                        }
+
+                        composable("itemEstoque") {
+                            ItemEstoqueScreen(
+                                onItemEstoqueViewVoltarClick = {
+                                    clickedAction = "Voltar"
+                                    navController.popBackStack()
+                                },
+                                onItemEstoqueViewEditarClick = {
+//                                    clickedAction = "Editar"
+                                },
+                                onItemEstoqueViewExcluirClick = {
+                                    clickedAction = "Excluir"
+                                    navController.navigate("deleteConfirmação")
+                                },
+                                onItemEstoqueViewAcao1Click = {
+                                    clickedAction = "Ação 1"
+                                    navController.navigate("listaFornecedor")
+                                },
+                                onItemEstoqueViewAcao2Click = {
+                                    clickedAction = "Ação 2"
+                                    navController.navigate("listaEstoque")
+                                },
+                                onItemEstoqueViewAcao3Click = {
+                                    clickedAction = "Ação 3"
+                                    navController.navigate("listaCompras")
+                                },
+                                onItemEstoqueViewAcao4Click = {
+                                    clickedAction = "Ação 4"
+                                    navController.navigate("viewPerfil")
+                                }
+                            )
+                        }
+
+                        composable("deleteConfirmação") {
+                            DeleteCnfirmacaoScreen(
+                                onDeleteConfirmacaoConfirmarClick = {
+                                    clickedAction = "Deletar"
+                                    navController.navigate("listaEstoque")
+                                },
+                                onDeleteConfirmacaoCancelarClick = {
+                                    clickedAction = "Cancelar"
+                                    navController.popBackStack()
+                                },
+                                onDeleteConfirmacaoAcao1Click = {
+                                    clickedAction = "Ação 1"
+                                    navController.navigate("listaFornecedor")
+                                },
+                                onIDeleteConfirmacaoAcao2Click = {
+                                    clickedAction = "Ação 2"
+                                    navController.navigate("listaEstoque")
+                                },
+                                onDeleteConfirmacaoAcao3Click = {
+                                    clickedAction = "Ação 3"
+                                    navController.navigate("listaCompras")
+                                },
+                                onDeleteConfirmacaoAcao4Click = {
+                                    clickedAction = "Ação 4"
+                                    navController.navigate("viewPerfil")
+                                }
+                            )
+                        }
+
+                        composable("cadastrarItemEstoque") {
+                            CadastroItemScreen(
+                                onCadastroItemVoltarClick = {
+                                    clickedAction = "Voltar"
+                                    navController.popBackStack()
+                                },
+                                onCadastroItemProximoClick = {
+                                    clickedAction = "Próximo"
+                                    navController.navigate("cadastrarItemEstoque2")
+                                }
+                            )
+                        }
+
+                        composable("cadastrarItemEstoque2") {
+                            CadastroItem2Screen(
+                                onCadastroItem2AnteriorClick = {
+                                    clickedAction = "Voltar"
+                                    navController.popBackStack()
+                                },
+                                onCadastroItemCadastrarClick ={
+                                    clickedAction = "Cadastrar"
+                                    navController.navigate("listaEstoque")
                                 }
                             )
                         }

@@ -1,10 +1,6 @@
 package com.example.gourmet_inventory_mobile.screens
 
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,10 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.R.drawable.cart
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Vermelho
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
 //class DeleteActivity : ComponentActivity() {
@@ -55,8 +51,15 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 //}
 
 @Composable
-fun DeleteScreen() {
-
+fun DeleteCnfirmacaoScreen(
+    onDeleteConfirmacaoConfirmarClick: () -> Unit ,
+    onDeleteConfirmacaoCancelarClick: () -> Unit,
+    onDeleteConfirmacaoAcao1Click: () -> Unit,
+    onIDeleteConfirmacaoAcao2Click: () -> Unit,
+    onDeleteConfirmacaoAcao3Click: () -> Unit,
+    onDeleteConfirmacaoAcao4Click: () -> Unit
+) {
+    val context = LocalContext.current
 
     Surface(modifier = Modifier
         .fillMaxSize()
@@ -73,35 +76,25 @@ fun DeleteScreen() {
                 text = "Tem certeza que deseja excluir este item?",
                 fontSize = 25.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 20.dp)
+                modifier = Modifier.padding(bottom = 50.dp, end = 40.dp, start = 40.dp)
             )
 
-
             Row(
-                horizontalArrangement = Arrangement.SpaceAround
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ){
                 Button(
-                    onClick = {},
+                    onClick = {
+                        onDeleteConfirmacaoCancelarClick()
+                        Toast
+                            .makeText(context, "Exlusão cancelada", Toast.LENGTH_SHORT)
+                            .show()
+                    },
                     modifier = Modifier
                         .height(45.dp)
                         .width(120.dp),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Verde,
-                        contentColor = colorResource(id = R.color.white)
-                    )
-                ) {
-                    Text(
-                        text = "Sim",
-                        color = White,
-                        fontSize = 18.sp
-                    )
-                }
-                Button(
-                    onClick = {},
-                    modifier = Modifier
-                        .height(45.dp)
-                        .width(120.dp),
+//                        .padding(end = 10.dp),
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Vermelho,
@@ -110,6 +103,26 @@ fun DeleteScreen() {
                 ) {
                     Text(
                         text = "Não",
+                        color = White,
+                        fontSize = 18.sp
+                    )
+                }
+                Button(
+                    onClick = {
+                        onDeleteConfirmacaoConfirmarClick()
+                    },
+                    modifier = Modifier
+                        .height(45.dp)
+                        .width(120.dp),
+//                        .padding(start = 10.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Verde,
+                        contentColor = colorResource(id = R.color.white)
+                    )
+                ) {
+                    Text(
+                        text = "Sim",
                         color = White,
                         fontSize = 18.sp
                     )
@@ -123,20 +136,36 @@ fun DeleteScreen() {
             .padding(top = 100.dp),
         contentAlignment = androidx.compose.ui.Alignment.BottomCenter
     ) {
-        DownBarDeleteScreen()
+        DownBarDeleteConfirmacaoScreen(
+            onDeleteConfirmacaoAcao1Click = onDeleteConfirmacaoAcao1Click,
+            onDeleteConfirmacaoAcao2Click = onIDeleteConfirmacaoAcao2Click,
+            onDeleteConfirmacaoAcao3Click = onDeleteConfirmacaoAcao3Click,
+            onDeleteConfirmacaoAcao4Click = onDeleteConfirmacaoAcao4Click
+        )
     }
 
 }
 
 @Preview
 @Composable
-fun DeletePreview() {
-    DeleteScreen()
+fun DeleteScreenPreview() {
+    DeleteCnfirmacaoScreen(
+        onDeleteConfirmacaoConfirmarClick = {},
+        onDeleteConfirmacaoCancelarClick = {},
+        onDeleteConfirmacaoAcao1Click = {},
+        onIDeleteConfirmacaoAcao2Click = {},
+        onDeleteConfirmacaoAcao3Click = {},
+        onDeleteConfirmacaoAcao4Click = {}
+    )
 }
 
-
 @Composable
-fun DownBarDelete2Screen() {
+fun DownBarDeleteConfirmacaoScreen(
+    onDeleteConfirmacaoAcao1Click: () -> Unit = {},
+    onDeleteConfirmacaoAcao2Click: () -> Unit = {},
+    onDeleteConfirmacaoAcao3Click: () -> Unit = {},
+    onDeleteConfirmacaoAcao4Click: () -> Unit = {}
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
@@ -154,9 +183,7 @@ fun DownBarDelete2Screen() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
+                    onDeleteConfirmacaoAcao1Click()
                 }
         )
 //        Spacer(modifier = Modifier.height(60.dp))
@@ -167,21 +194,17 @@ fun DownBarDelete2Screen() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-                        .show()
+                    onDeleteConfirmacaoAcao2Click()
                 }
         )
         Image(
-            painter = painterResource(id = R.drawable.carrinho_de_compraspng),
+            painter = painterResource(id = cart),
             contentDescription = "Ação 3",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-                        .show()
+                    onDeleteConfirmacaoAcao3Click()
                 }
         )
         Image(
@@ -191,9 +214,7 @@ fun DownBarDelete2Screen() {
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
-                        .show()
+                    onDeleteConfirmacaoAcao4Click()
                 }
         )
     }
@@ -201,7 +222,7 @@ fun DownBarDelete2Screen() {
 
 @Preview
 @Composable
-fun DownBarDelete2ScreenPreview() {
+fun DownBarDeleteScreenPreview() {
     DownBarScreen()
 }
 
