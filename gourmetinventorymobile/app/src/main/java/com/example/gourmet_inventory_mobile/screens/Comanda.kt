@@ -22,6 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,17 +78,18 @@ fun ComandaViewScreen(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(top = 30.dp),
+                        .padding(start = 8.dp, top = 30.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = {
                         Toast.makeText(context, "Voltar", Toast.LENGTH_SHORT).show()
                     }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.back),
+                            imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+//                            painter = painterResource(id = R.drawable.back),
                             contentDescription = "Voltar",
                             Modifier
-                                .size(44.dp)
+                                .size(45.dp)
                                 .clickable(onClick = {
                                     onComandaViewVoltarClick()
                                 }),
@@ -189,9 +193,15 @@ fun ComandaViewScreen(
                         containerColor = Color.Red, contentColor = Color.White
                     ), modifier = Modifier
                         .weight(1f)
-                        .padding(end = 8.dp),
+                        .padding(end = 8.dp)
+                        .height(45.dp),
                     shape = RoundedCornerShape(4.dp)
                 ) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.Close,
+                        contentDescription = "Cancelar"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Cancelar")
                 }
 
@@ -203,9 +213,15 @@ fun ComandaViewScreen(
                         containerColor = GI_Verde, contentColor = Color.White
                     ), modifier = Modifier
                         .weight(1f)
-                        .padding(start = 8.dp),
+                        .padding(start = 8.dp)
+                        .height(45.dp),
                     shape = RoundedCornerShape(4.dp)
                 ) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.Send,
+                        contentDescription = "Enviar"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Enviar")
                 }
             }

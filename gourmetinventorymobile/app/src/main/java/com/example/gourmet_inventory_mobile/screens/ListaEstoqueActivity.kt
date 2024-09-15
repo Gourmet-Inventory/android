@@ -54,6 +54,8 @@ fun ListaEstoqueScreen(
     onListaEstoqueClickAcao2: () -> Unit,
     onListaEstoqueClickAcao3: () -> Unit,
     onListaEstoqueClickAcao4: () -> Unit,
+    onListaEstoqueClickItemEstoque: () -> Unit,
+    onListaEstoqueCadastrarEstoqueClick: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
@@ -121,9 +123,7 @@ fun ListaEstoqueScreen(
                         fontSize = 34.sp,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
-                    AddButton(onClick = {
-                        Toast.makeText(context, "Adicionar Estoque", Toast.LENGTH_SHORT).show()
-                    })
+                    AddButton(onListaEstoqueCadastrarEstoqueClick)
                 }
 
                 // Campo de Pesquisa
@@ -155,6 +155,9 @@ fun ListaEstoqueScreen(
                                 modifier = Modifier
                                     .weight(1f)
                                     .padding(8.dp)
+                                    .clickable(onClick = {
+                                        onListaEstoqueClickItemEstoque()
+                                    })
                             ) {
                                 Text(text = fornecedor.first, fontSize = 20.sp)
                                 Text(
@@ -177,9 +180,9 @@ fun ListaEstoqueScreen(
             Column(modifier = Modifier.align(Alignment.BottomCenter)) {
                 ListaEstoquerDownBar(
                     onListaEstoqueClickAcao1 = onListaEstoqueClickAcao1,
-                    onListaEstoqueClickAcao2 =  onListaEstoqueClickAcao2,
-                    onListaEstoqueClickAcao3 =  onListaEstoqueClickAcao3,
-                    onListaEstoqueClickAcao4 =  onListaEstoqueClickAcao4
+                    onListaEstoqueClickAcao2 = onListaEstoqueClickAcao2,
+                    onListaEstoqueClickAcao3 = onListaEstoqueClickAcao3,
+                    onListaEstoqueClickAcao4 = onListaEstoqueClickAcao4
                 )
             }
         }
@@ -255,15 +258,19 @@ fun ListaEstoquePreview() {
         onListaEstoqueClickAcao1 = {},
         onListaEstoqueClickAcao2 = {},
         onListaEstoqueClickAcao3 = {},
-        onListaEstoqueClickAcao4 = {}
+        onListaEstoqueClickAcao4 = {},
+        onListaEstoqueClickItemEstoque = {},
+        onListaEstoqueCadastrarEstoqueClick = {}
     )
 }
 
 @Composable
-fun AddButton(onClick: () -> Unit) {
+fun AddButton(onListaEstoqueCadastrarEstoqueClick: () -> Unit) {
     val context = LocalContext.current
     SmallFloatingActionButton(
-        onClick = { onClick() },
+        onClick = {
+            onListaEstoqueCadastrarEstoqueClick()
+        },
         containerColor = GI_AzulMarinho,
         contentColor = White,
         modifier = Modifier.width(70.dp),
