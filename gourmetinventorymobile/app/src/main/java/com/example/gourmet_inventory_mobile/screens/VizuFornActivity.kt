@@ -62,11 +62,11 @@ import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 
 @Composable
 fun VizuFornScreen(
-    onVizuFornVoltarPerfilClick: () -> Unit = {},
-    onVizuFornAcao1Click: () -> Unit = {},
-    onVizuFornAcao2Click: () -> Unit = {},
-    onVizuFornAcao3Click: () -> Unit = {},
-    onVizuFornAcao4Click: () -> Unit = {},
+    onVizuFornVoltarClick: () -> Unit,
+    onVizuFornAcao1Click: () -> Unit,
+    onVizuFornAcao2Click: () -> Unit,
+    onVizuFornAcao3Click: () -> Unit,
+    onVizuFornAcao4Click: () -> Unit
 ) {
     var cnpj by remember {
         mutableStateOf("08.792.981/0001-69")
@@ -107,33 +107,30 @@ fun VizuFornScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize(),
-//                .padding(top = 50.dp),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 30.dp),
+                    .padding(top = 50.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
-
+                    onVizuFornVoltarClick()
                 }) {
                     Icon(
                         imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
-//                painter = painterResource(id = R.drawable.back),
                         contentDescription = "Voltar",
                         Modifier.size(44.dp),
                         tint = Color.Black
                     )
                 }
             }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(70.dp),
-//                    .padding(bottom = 45.dp),
+                    .height(100.dp)
+                    .padding(bottom = 40.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.Top
             ) {
@@ -189,7 +186,6 @@ fun VizuFornScreen(
                 categoria = novoValor
             })
 
-//            DownBarDeleteScreen()
         }
         Box(
             modifier = Modifier
@@ -198,7 +194,10 @@ fun VizuFornScreen(
             contentAlignment = androidx.compose.ui.Alignment.BottomCenter
         ) {
             DownBarVizuScreen(
-
+                onVizuFornAcao1Click = onVizuFornAcao1Click,
+                onVizuFornAcao2Click = onVizuFornAcao2Click,
+                onVizuFornAcao3Click = onVizuFornAcao3Click,
+                onVizuFornAcao4Click = onVizuFornAcao4Click
             )
         }
     }
@@ -207,7 +206,13 @@ fun VizuFornScreen(
 @Preview
 @Composable
 fun VizuFornScreenPreview() {
-    VizuFornScreen()
+    VizuFornScreen(
+        onVizuFornVoltarClick = {},
+        onVizuFornAcao1Click = {},
+        onVizuFornAcao2Click = {},
+        onVizuFornAcao3Click = {},
+        onVizuFornAcao4Click = {}
+    )
 }
 
 
@@ -247,7 +252,12 @@ fun InfoForn(
 
 
 @Composable
-fun DownBarVizuScreen() {
+fun DownBarVizuScreen(
+    onVizuFornAcao1Click: () -> Unit,
+    onVizuFornAcao2Click: () -> Unit,
+    onVizuFornAcao3Click: () -> Unit,
+    onVizuFornAcao4Click: () -> Unit ,
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
@@ -265,9 +275,7 @@ fun DownBarVizuScreen() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
+                    onVizuFornAcao1Click()
                 }
         )
 //        Spacer(modifier = Modifier.height(60.dp))
@@ -278,9 +286,7 @@ fun DownBarVizuScreen() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-                        .show()
+                    onVizuFornAcao2Click()
                 }
         )
         Image(
@@ -290,9 +296,7 @@ fun DownBarVizuScreen() {
             modifier = Modifier
                 .height(30.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-                        .show()
+                    onVizuFornAcao3Click()
                 }
         )
         Image(
@@ -302,9 +306,7 @@ fun DownBarVizuScreen() {
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
-                        .show()
+                    onVizuFornAcao4Click()
                 }
         )
     }
@@ -313,6 +315,11 @@ fun DownBarVizuScreen() {
 @Preview
 @Composable
 fun DownBarVizuScreenPreview() {
-    DownBarVizuScreen()
+    DownBarVizuScreen(
+        onVizuFornAcao1Click = {},
+        onVizuFornAcao2Click = {},
+        onVizuFornAcao3Click = {},
+        onVizuFornAcao4Click = {}
+    )
 }
 
