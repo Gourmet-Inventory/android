@@ -31,6 +31,8 @@ import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
 import com.example.gourmet_inventory_mobile.screens.ListaEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaFornecedoresScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
+import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
+import com.example.gourmet_inventory_mobile.screens.VizuFornScreenPreview
 
 
 class MainActivity : ComponentActivity() {
@@ -136,7 +138,7 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onListaFornecedorClickAcao1 = {
                                     clickedAction = "Ação 1"
-//                                    navController.navigate("listaFornecedor")
+                                    navController.navigate("listaFornecedor")
                                 },
                                 onListaFornecedorClickAcao2 = {
                                     clickedAction = "Ação 2"
@@ -149,7 +151,37 @@ class MainActivity : ComponentActivity() {
                                 onListaFornecedorClickAcao4 = {
                                     clickedAction = "Ação 4"
                                     navController.navigate("viewPerfil")
-                                })
+                                },
+                                onListaFornecedorVizuFornClick = {
+                                    clickedAction = "Ação 5"
+                                    navController.navigate("fornecedorView")
+                                }
+                            )
+                        }
+
+                        composable("fornecedorView"){
+                            VizuFornScreen(
+                                onVizuFornVoltarClick = {
+                                    clickedAction = "Voltar"
+                                    navController.popBackStack()
+                                },
+                                onVizuFornAcao1Click = {
+                                    clickedAction = "Ação 1"
+                                    navController.navigate("listaFornecedor")
+                                },
+                                onVizuFornAcao2Click = {
+                                    clickedAction = "Ação 2"
+                                    navController.navigate("listaEstoque")
+                                },
+                                onVizuFornAcao3Click = {
+                                    clickedAction = "Ação 3"
+                                    navController.navigate("listaCompras")
+                                },
+                                onVizuFornAcao4Click = {
+                                    clickedAction = "Ação 4"
+                                    navController.navigate("viewPerfil")
+                                }
+                            )
                         }
 
                         composable("listaEstoque") {

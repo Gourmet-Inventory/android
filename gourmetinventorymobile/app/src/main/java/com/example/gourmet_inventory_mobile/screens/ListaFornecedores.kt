@@ -51,7 +51,8 @@ fun ListaFornecedoresScreen(
     onListaFornecedorClickAcao1: () -> Unit,
     onListaFornecedorClickAcao2: () -> Unit,
     onListaFornecedorClickAcao3: () -> Unit,
-    onListaFornecedorClickAcao4: () -> Unit
+    onListaFornecedorClickAcao4: () -> Unit,
+    onListaFornecedorVizuFornClick: () -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         val context = LocalContext.current
@@ -136,9 +137,14 @@ fun ListaFornecedoresScreen(
                                 .background(GI_Orange.copy(alpha = 0.2f), RoundedCornerShape(8.dp)),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Column(modifier = Modifier
-                                .weight(1f)
-                                .padding(8.dp)) {
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(8.dp)
+                                    .clickable(onClick = {
+                                    onListaFornecedorVizuFornClick()
+                                })
+                            ) {
                                 Text(text = fornecedor.first, fontSize = 20.sp)
                                 Text(
                                     text = "Telefone: ${fornecedor.second.first}",
@@ -152,7 +158,6 @@ fun ListaFornecedoresScreen(
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.weight(1f))
             }
 
@@ -236,6 +241,7 @@ fun ListaFornecedoresPreview() {
         onListaFornecedorClickAcao1 = {},
         onListaFornecedorClickAcao2 = {},
         onListaFornecedorClickAcao3 = {},
-        onListaFornecedorClickAcao4 = {}
+        onListaFornecedorClickAcao4 = {},
+        onListaFornecedorVizuFornClick = {}
     )
 }
