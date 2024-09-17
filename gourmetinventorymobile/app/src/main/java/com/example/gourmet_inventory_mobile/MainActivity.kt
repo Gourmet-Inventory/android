@@ -47,9 +47,25 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = "login") {
 
-                        composable("perfil/{user}") { entry ->
-                            entry.arguments?.getString("user")?.let { user ->
-                                EscolhaPerfilScreen(user, onPerfilClick = { perfil ->
+//                        composable("perfil/{user}") { entry ->
+//                            entry.arguments?.getString("user")?.let { user ->
+//                                EscolhaPerfilScreen(user, onPerfilClick = { perfil ->
+//                                    val destination = if (perfil == "Garçom") {
+//                                        "cardapio"
+//                                    } else {
+//                                        "listaEstoque"
+//                                    }
+//                                    navController.navigate(destination)
+//                                    destination
+//                                })
+//                            } ?: LaunchedEffect(null) {
+//                                navController.navigate("login")
+//                            }
+//                        }
+
+                        composable("perfil") {
+                            EscolhaPerfilScreen(
+                                onPerfilClick = { perfil ->
                                     val destination = if (perfil == "Garçom") {
                                         "cardapio"
                                     } else {
@@ -57,22 +73,19 @@ class MainActivity : ComponentActivity() {
                                     }
                                     navController.navigate(destination)
                                     destination
-                                })
-                            } ?: LaunchedEffect(null) {
-                                navController.navigate("login")
-                            }
+                                }
+                            )
                         }
-
                         composable("login") {
                             LoginScreen(onLoginClick = { user ->
-                                navController.navigate("perfil/$user")
+                                navController.navigate("perfil")
                             })
                         }
 
                         composable("cardapio") {
                             CardapioListScreen(onCardapioClickMudarPerfil = {
                                 clickedAction = "Mudar Perfil"
-                                navController.navigate("perfil/Teste")
+                                navController.navigate("perfil")
                             }, onCardapioClickAcao1 = {
                                 clickedAction = "Ação 1"
                                 navController.navigate("comandaList")
@@ -89,7 +102,7 @@ class MainActivity : ComponentActivity() {
                             ComandaListScreen(
                                 onComandaListClickMudarPerfil = {
                                     clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
+                                    navController.navigate("perfil")
                                 },
                                 onComandaListClickAcao1 = {
                                     clickedAction = "Ação 1"
@@ -134,7 +147,7 @@ class MainActivity : ComponentActivity() {
                             ListaFornecedoresScreen(
                                 onListaFornecedorClickMudarPerfil = {
                                     clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
+                                    navController.navigate("perfil")
                                 },
                                 onListaFornecedorClickAcao1 = {
                                     clickedAction = "Ação 1"
@@ -188,7 +201,7 @@ class MainActivity : ComponentActivity() {
                             ListaEstoqueScreen(
                                 onListaEstoqueClickMudarPerfil = {
                                     clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
+                                    navController.navigate("perfil")
                                 },
                                 onListaEstoqueClickAcao1 = {
                                     clickedAction = "Ação 1"
@@ -221,7 +234,7 @@ class MainActivity : ComponentActivity() {
                             ListaComprasScreen(
                                 onListaComprasMudarPerfilClick = {
                                     clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil/Teste")
+                                    navController.navigate("perfil")
                                 },
                                 onListaComprasAcao1Click = {
                                     clickedAction = "Ação 1"
