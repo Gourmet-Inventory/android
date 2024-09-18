@@ -1,10 +1,6 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,26 +22,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-class PerfilActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                EscolhaPerfilScreen()
-
-            }
-        }
-    }
-}
-
 @Composable
-fun EscolhaPerfilScreen() {
+fun EscolhaPerfilScreen(onPerfilClick: (String) -> Unit) {
+//fun EscolhaPerfilScreen(user: String, onPerfilClick: (String) -> String) {
     Surface(modifier = Modifier.fillMaxSize(), color = Black) {
         Column(
             modifier = Modifier
@@ -56,7 +40,7 @@ fun EscolhaPerfilScreen() {
             verticalArrangement = Arrangement.Top,
         ) {
             Text(
-                text = "ESCOLHA SEU PERFIL:",
+                text = "ESCOLHA SEU PERFIL :",
                 modifier = Modifier,
                 color = White,
                 style = androidx.compose.ui.text.TextStyle(
@@ -64,8 +48,9 @@ fun EscolhaPerfilScreen() {
                     fontFamily = JostBold,
                 )
             )
-            ProfileImages()
-
+            ProfileImages { perfil ->
+                val destination = onPerfilClick(perfil)
+            }
         }
     }
 }
@@ -73,11 +58,12 @@ fun EscolhaPerfilScreen() {
 @Preview(showBackground = true)
 @Composable
 fun EscolhaPerfilScreenPreview() {
-    EscolhaPerfilScreen()
+//    val user = "Teste"
+    EscolhaPerfilScreen() { }
 }
 
 @Composable
-fun ProfileImages() {
+fun ProfileImages(onPerfilClick: (String) -> Unit) {
     val context = LocalContext.current
     Column(
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
@@ -93,6 +79,7 @@ fun ProfileImages() {
             modifier = Modifier
                 .height(160.dp)
                 .clickable {
+                    onPerfilClick("Garçom")
                     Toast
                         .makeText(context, "Logado como Garçom", Toast.LENGTH_SHORT)
                         .show()
@@ -113,6 +100,7 @@ fun ProfileImages() {
             modifier = Modifier
                 .height(160.dp)
                 .clickable {
+                    onPerfilClick("Gerente")
                     Toast
                         .makeText(context, "Logado como Gerente", Toast.LENGTH_SHORT)
                         .show()
@@ -131,5 +119,5 @@ fun ProfileImages() {
 @Preview
 @Composable
 fun ProfileImagesPreview() {
-    ProfileImages()
+    ProfileImages {}
 }

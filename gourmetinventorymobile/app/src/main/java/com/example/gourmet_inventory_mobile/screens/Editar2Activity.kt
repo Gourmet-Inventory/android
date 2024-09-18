@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
 import android.os.Bundle
 import android.widget.Toast
@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,9 +21,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,27 +47,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-class Editar2Activity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                Editar2Screen()
-
-            }
-        }
-    }
-}
-
 @Composable
-fun Editar2Screen() {
+fun Editar2Screen(
+    onEditarItem2AnteriorClick: () -> Unit,
+    onEditarItem2SalvarClick: () -> Unit
+) {
     var qtdUnitaria by remember {
         mutableStateOf("")
     }
@@ -78,19 +74,35 @@ fun Editar2Screen() {
     var dataAviso by remember {
         mutableStateOf("")
     }
+    val context = LocalContext.current
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color.White)) {
-
-
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 80.dp),
+                .fillMaxSize(),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
-
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 40.dp, start = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    onEditarItem2AnteriorClick()
+                }) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Voltar",
+                        Modifier.size(44.dp),
+                        tint = Color.Black
+                    )
+                }
+            }
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -109,12 +121,13 @@ fun Editar2Screen() {
                     )
                 )
             }
-            Row (
+            Row(
                 modifier = Modifier
                     .width(350.dp)
                     .height(120.dp),
                 horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically){
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 Text(
                     fontSize = 22.sp,
@@ -125,7 +138,7 @@ fun Editar2Screen() {
 
                 OutlinedTextField(
                     value = qtdUnitaria,
-                    onValueChange = {qtdUnitaria = it},
+                    onValueChange = { qtdUnitaria = it },
                     modifier = Modifier
                         .background(color = White, shape = RoundedCornerShape(5.dp))
                         .border(
@@ -142,31 +155,57 @@ fun Editar2Screen() {
                 )
             }
             Row {
-                InputEditar2(titulo = "Tipo Medida", placeholder = "GRAMAS", valorCampo = tipoMedida, mudaValor = { novoValor ->
-                    tipoMedida = novoValor })
+                InputEditar2(
+                    titulo = "Tipo Medida",
+                    placeholder = "GRAMAS",
+                    valorCampo = tipoMedida,
+                    mudaValor = { novoValor ->
+                        tipoMedida = novoValor
+                    })
 
-                InputEditar2(titulo = "Valor Medida", placeholder = "500", valorCampo = valorMedida, mudaValor = { novoValor ->
-                    valorMedida = novoValor })
+                InputEditar2(
+                    titulo = "Valor Medida",
+                    placeholder = "500",
+                    valorCampo = valorMedida,
+                    mudaValor = { novoValor ->
+                        valorMedida = novoValor
+                    })
             }
 
             Row {
-                InputEditar2(titulo = "Data Cadastro", placeholder = " 20/05/2024", valorCampo = dataCadastro, mudaValor = { novoValor ->
-                    dataCadastro = novoValor })
+                InputEditar2(
+                    titulo = "Data Cadastro",
+                    placeholder = " 20/05/2024",
+                    valorCampo = dataCadastro,
+                    mudaValor = { novoValor ->
+                        dataCadastro = novoValor
+                    })
 
-                InputEditar2(titulo = "Data Aviso", placeholder = " 20/05/2024", valorCampo = dataAviso, mudaValor = { novoValor ->
-                    dataAviso = novoValor })
+                InputEditar2(
+                    titulo = "Data Aviso",
+                    placeholder = " 20/05/2024",
+                    valorCampo = dataAviso,
+                    mudaValor = { novoValor ->
+                        dataAviso = novoValor
+                    })
             }
 
-            Column( 
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 20.dp),
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
             ) {
-                ImagemPasso2()
+                EditImagemPasso2(
+                    onEditarItem2AnteriorClick = onEditarItem2AnteriorClick
+                )
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        Toast.makeText(context, "Edição  efetuada com sucesso!", Toast.LENGTH_SHORT)
+                            .show()
+                        onEditarItem2SalvarClick()
+                    },
                     modifier = Modifier
                         .height(55.dp)
                         .width(155.dp),
@@ -177,23 +216,31 @@ fun Editar2Screen() {
                     )
                 ) {
                     Text(
-                        text = "Editar",
+                        text = "Salvar",
                         color = Black,
                         fontSize = 18.sp
                     )
                 }
             }
-
-
-//            DownBarDeleteScreen()
         }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(top = 100.dp),
+//            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
+//        ) {
+//            DownBarEditar2Screen()
+//        }
     }
 }
 
 @Preview
 @Composable
 fun Editar2ScreenPreview() {
-    Editar2Screen()
+    Editar2Screen(
+        onEditarItem2AnteriorClick = { },
+        onEditarItem2SalvarClick = { }
+    )
 }
 
 
@@ -205,19 +252,19 @@ fun InputEditar2(
     mudaValor: (String) -> Unit
 ) {
 
-    Row (
+    Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .width(180.dp)
             .height(160.dp)
 
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .size(width = 350.dp, height = 100.dp),
-            
-        ){
+
+            ) {
             Text(
                 modifier = Modifier
                     .padding(top = 10.dp)
@@ -231,8 +278,8 @@ fun InputEditar2(
 
                 value = valorCampo,
                 onValueChange = { novoValorDoCampo ->
-                mudaValor(novoValorDoCampo)
-                 },
+                    mudaValor(novoValorDoCampo)
+                },
                 modifier = Modifier
                     .height(55.dp)
                     .width(160.dp)
@@ -255,37 +302,96 @@ fun InputEditar2(
 }
 
 @Composable
-fun DownBarEditarScreen2() {
-    val context = LocalContext.current
+fun EditImagemPasso2(
+    onEditarItem2AnteriorClick: () -> Unit
+) {
+    var selectedOptionIndex by remember { mutableStateOf(1) }
+
     Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = GI_AzulMarinho)
-            .heightIn(75.dp),
-//        horizontalArrangement = Arrangement.SpaceEvenly,
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            .padding(4.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.notes_icon),
-            contentDescription = "Ação 1",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(35.dp)
-                .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
-                }
+        RadioButton(
+            selected = selectedOptionIndex == 0,
+            onClick = { onEditarItem2AnteriorClick() }
         )
-
-
+        RadioButton(
+            selected = selectedOptionIndex == 1,
+            onClick = { selectedOptionIndex == 1 }
+        )
     }
 }
 
-@Preview
-@Composable
-fun DownBarEditarcreenPreview2() {
-    DownBarEditarScreen()
-}
+//@Composable
+//fun DownBarEditarScreen2() {
+//    val context = LocalContext.current
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .background(color = GI_AzulMarinho)
+//            .heightIn(70.dp),
+////        horizontalArrangement = Arrangement.SpaceEvenly,
+//        horizontalArrangement = Arrangement.SpaceAround,
+//        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.fornecedores_db),
+//            contentDescription = "Ação 1",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(30.dp)
+//                .clickable {
+//                    Toast
+//                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
+//                        .show()
+//                }
+//        )
+////        Spacer(modifier = Modifier.height(60.dp))
+//        Image(
+//            painter = painterResource(id = R.drawable.opened_box),
+//            contentDescription = "Ação 2",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(30.dp)
+//                .clickable {
+//                    Toast
+//                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
+//                        .show()
+//                }
+//        )
+//        Image(
+//            painter = painterResource(id = R.drawable.cart),
+//            contentDescription = "Ação 3",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(30.dp)
+//                .clickable {
+//                    Toast
+//                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
+//                        .show()
+//                }
+//        )
+//        Image(
+//            painter = painterResource(id = R.drawable.account_icon),
+//            contentDescription = "Ação 4",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(35.dp)
+//                .clickable {
+//                    Toast
+//                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
+//                        .show()
+//                }
+//        )
+//    }
+//}
+
+//@Preview
+//@Composable
+//fun DownBarEditarcreenPreview2() {
+//    DownBarEditarScreen()
+//}
 

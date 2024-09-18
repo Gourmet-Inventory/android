@@ -1,15 +1,11 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,9 +16,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,26 +42,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.R.drawable.cart
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-class CadastroActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                CadastroScreen()
-
-            }
-        }
-    }
-}
+//class CadastroActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            GourmetinventorymobileTheme {
+//                CadastroScreen()
+//
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun CadastroScreen() {
+fun CadastroItemScreen(
+    onCadastroItemVoltarClick: () -> Unit = {},
+    onCadastroItemProximoClick: () -> Unit = {}
+) {
     var nome by remember {
         mutableStateOf("")
     }
@@ -81,17 +85,34 @@ fun CadastroScreen() {
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 80.dp),
+                .fillMaxSize() ,
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
-//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-                horizontalArrangement = Arrangement.Center,
+                    .padding(top = 40.dp, start = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    onCadastroItemVoltarClick()
+                }) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Voltar",
+                        Modifier.size(44.dp),
+                        tint = Color.Black
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(105.dp),
+//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = "Cadastrar Item:",
@@ -115,10 +136,12 @@ fun CadastroScreen() {
             InputCadastro(titulo = "Local Armazenamento",valorCampo = localArmazenamento, mudaValor = { novoValor ->
                 localArmazenamento = novoValor })
 
-            ImagemPasso1()
+            ImagemPasso1(onCadastroItemProximoClick = onCadastroItemProximoClick)
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    onCadastroItemProximoClick()
+                },
                 modifier = Modifier
                     .height(55.dp)
                     .width(155.dp),
@@ -134,16 +157,27 @@ fun CadastroScreen() {
                     fontSize = 18.sp
                 )
             }
-
-//            DownBarDeleteScreen()
         }
+//        Box(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(top = 100.dp),
+//            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
+//        ) {
+//            DownBarCadastroItemScreen(
+//                onCadastroItemAcao1Click = onCadastroItemAcao1Click,
+//                onCadastroItemAcao2Click = onCadastroItemAcao2Click,
+//                onCadastroItemAcao3Click = onCadastroItemAcao3Click,
+//                onCadastroItemAcao4Click = onCadastroItemAcao4Click
+//            )
+//        }
     }
 }
 
 @Preview
 @Composable
 fun CadastroScreenPreview() {
-    CadastroScreen()
+    CadastroItemScreen()
 }
 
 
@@ -196,49 +230,93 @@ fun InputCadastro(
     }
 }
 
+//@Composable
+//fun DownBarCadastroItemScreen(
+//    onCadastroItemAcao1Click: () -> Unit = {},
+//    onCadastroItemAcao2Click: () -> Unit = {},
+//    onCadastroItemAcao3Click: () -> Unit = {},
+//    onCadastroItemAcao4Click: () -> Unit = {}
+//) {
+//    val context = LocalContext.current
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .background(color = GI_AzulMarinho)
+//            .heightIn(70.dp),
+////        horizontalArrangement = Arrangement.SpaceEvenly,
+//        horizontalArrangement = Arrangement.SpaceAround,
+//        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+//    ) {
+//        Image(
+//            painter = painterResource(id = R.drawable.fornecedores_db),
+//            contentDescription = "Ação 1",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(30.dp)
+//                .clickable {
+//                    onCadastroItemAcao1Click()
+//                }
+//        )
+////        Spacer(modifier = Modifier.height(60.dp))
+//        Image(
+//            painter = painterResource(id = R.drawable.opened_box),
+//            contentDescription = "Ação 2",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(30.dp)
+//                .clickable {
+//                    onCadastroItemAcao2Click()
+//                }
+//        )
+//        Image(
+//            painter = painterResource(id = cart),
+//            contentDescription = "Ação 3",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(30.dp)
+//                .clickable {
+//                    onCadastroItemAcao3Click()
+//                }
+//        )
+//        Image(
+//            painter = painterResource(id = R.drawable.account_icon),
+//            contentDescription = "Ação 4",
+//            contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(35.dp)
+//                .clickable {
+//                    onCadastroItemAcao4Click()
+//                }
+//        )
+//    }
+//}
+
+//@Preview
+//@Composable
+//fun DownBarCadastroItemScreenPreview() {
+//    DownBarCadastroItemScreen()
+//}
+
 @Composable
-fun DownBarDeleteScreen() {
-    val context = LocalContext.current
+fun ImagemPasso1(
+    onCadastroItemProximoClick: () -> Unit = {}
+) {
+    var selectedOptionIndex by remember { mutableStateOf(1) }
+
     Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(color = GI_AzulMarinho)
-            .heightIn(75.dp),
-//        horizontalArrangement = Arrangement.SpaceEvenly,
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
+            .padding(4.dp)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.notes_icon),
-            contentDescription = "Ação 1",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(35.dp)
-                .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
-                }
+        RadioButton(
+            selected = selectedOptionIndex == 1,
+            onClick = { selectedOptionIndex = 1 }
         )
-
-
+        RadioButton(
+            selected = selectedOptionIndex == 0,
+            onClick = { onCadastroItemProximoClick() }
+        )
     }
-}
-
-@Preview
-@Composable
-fun DownBarDeleteScreenPreview() {
-    DownBarDeleteScreen()
-}
-
-@Composable
-fun ImagemPasso1() {
-    Image(
-        painter = painterResource(id = R.drawable.bolinha1),
-        contentDescription = "Bolinha",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .height(30.dp)
-            .padding(bottom = 15.dp)
-    )
 }

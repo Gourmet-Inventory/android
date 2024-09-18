@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile
+package com.example.gourmet_inventory_mobile.screens
 
 import android.os.Bundle
 import android.widget.Toast
@@ -7,11 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,10 +20,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,34 +35,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
-import com.example.gourmet_inventory_mobile.ui.theme.White
 
-class VizuFornActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            GourmetinventorymobileTheme {
-                VizuFornScreen()
-
-            }
-        }
-    }
-}
+//class VizuFornActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            GourmetinventorymobileTheme {
+//                VizuFornScreen()
+//
+//            }
+//        }
+//    }
+//}
 
 @Composable
-fun VizuFornScreen() {
+fun VizuFornScreen(
+    onVizuFornVoltarClick: () -> Unit,
+    onVizuFornAcao1Click: () -> Unit,
+    onVizuFornAcao2Click: () -> Unit,
+    onVizuFornAcao3Click: () -> Unit,
+    onVizuFornAcao4Click: () -> Unit
+) {
     var cnpj by remember {
         mutableStateOf("08.792.981/0001-69")
     }
@@ -94,23 +99,40 @@ fun VizuFornScreen() {
         mutableStateOf("Frios")
     }
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color.White)) {
-
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 50.dp),
+                .fillMaxSize(),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
-//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-                horizontalArrangement = Arrangement.Center,
+                    .padding(top = 50.dp),
                 verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = {
+                    onVizuFornVoltarClick()
+                }) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Voltar",
+                        Modifier.size(44.dp),
+                        tint = Color.Black
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .padding(bottom = 40.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.Top
             ) {
                 Text(
                     text = "Kibon",
@@ -125,36 +147,58 @@ fun VizuFornScreen() {
             }
 
             InfoForn(titulo = "CNPJ", valorCampo = cnpj, mudaValor = { novoValor ->
-                cnpj = novoValor })
+                cnpj = novoValor
+            })
 
             InfoForn(titulo = "CEP", valorCampo = cep, mudaValor = { novoValor ->
-                cep = novoValor })
+                cep = novoValor
+            })
 
             InfoForn(titulo = "Logradouro", valorCampo = logradouro, mudaValor = { novoValor ->
-                logradouro = novoValor })
+                logradouro = novoValor
+            })
 
             InfoForn(titulo = "Complemento", valorCampo = complemento, mudaValor = { novoValor ->
-                complemento = novoValor })
+                complemento = novoValor
+            })
 
             InfoForn(titulo = "Bairro", valorCampo = bairro, mudaValor = { novoValor ->
-                bairro = novoValor })
+                bairro = novoValor
+            })
 
             InfoForn(titulo = "Localidade", valorCampo = localidade, mudaValor = { novoValor ->
-                localidade = novoValor })
+                localidade = novoValor
+            })
 
             InfoForn(titulo = "UF", valorCampo = uf, mudaValor = { novoValor ->
-                uf = novoValor })
+                uf = novoValor
+            })
 
             InfoForn(titulo = "Numeração", valorCampo = numeracao, mudaValor = { novoValor ->
-                numeracao = novoValor })
+                numeracao = novoValor
+            })
 
             InfoForn(titulo = "Telefone", valorCampo = telefone, mudaValor = { novoValor ->
-                telefone = novoValor })
+                telefone = novoValor
+            })
 
             InfoForn(titulo = "Categoria", valorCampo = categoria, mudaValor = { novoValor ->
-                categoria = novoValor })
+                categoria = novoValor
+            })
 
-//            DownBarDeleteScreen()
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 100.dp),
+            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
+        ) {
+            DownBarVizuScreen(
+                onVizuFornAcao1Click = onVizuFornAcao1Click,
+                onVizuFornAcao2Click = onVizuFornAcao2Click,
+                onVizuFornAcao3Click = onVizuFornAcao3Click,
+                onVizuFornAcao4Click = onVizuFornAcao4Click
+            )
         }
     }
 }
@@ -162,7 +206,13 @@ fun VizuFornScreen() {
 @Preview
 @Composable
 fun VizuFornScreenPreview() {
-    VizuFornScreen()
+    VizuFornScreen(
+        onVizuFornVoltarClick = {},
+        onVizuFornAcao1Click = {},
+        onVizuFornAcao2Click = {},
+        onVizuFornAcao3Click = {},
+        onVizuFornAcao4Click = {}
+    )
 }
 
 
@@ -202,37 +252,74 @@ fun InfoForn(
 
 
 @Composable
-fun DownBarVizuScreen() {
+fun DownBarVizuScreen(
+    onVizuFornAcao1Click: () -> Unit,
+    onVizuFornAcao2Click: () -> Unit,
+    onVizuFornAcao3Click: () -> Unit,
+    onVizuFornAcao4Click: () -> Unit ,
+) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(color = GI_AzulMarinho)
-            .heightIn(75.dp),
+            .heightIn(70.dp),
 //        horizontalArrangement = Arrangement.SpaceEvenly,
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.notes_icon),
+            painter = painterResource(id = R.drawable.fornecedores_db),
             contentDescription = "Ação 1",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    onVizuFornAcao1Click()
+                }
+        )
+//        Spacer(modifier = Modifier.height(60.dp))
+        Image(
+            painter = painterResource(id = R.drawable.opened_box),
+            contentDescription = "Ação 2",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    onVizuFornAcao2Click()
+                }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.cart),
+            contentDescription = "Ação 3",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(30.dp)
+                .clickable {
+                    onVizuFornAcao3Click()
+                }
+        )
+        Image(
+            painter = painterResource(id = R.drawable.account_icon),
+            contentDescription = "Ação 4",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(35.dp)
                 .clickable {
-                    Toast
-                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-                        .show()
+                    onVizuFornAcao4Click()
                 }
         )
-
-
     }
 }
 
 @Preview
 @Composable
 fun DownBarVizuScreenPreview() {
-    DownBarVizuScreen()
+    DownBarVizuScreen(
+        onVizuFornAcao1Click = {},
+        onVizuFornAcao2Click = {},
+        onVizuFornAcao3Click = {},
+        onVizuFornAcao4Click = {}
+    )
 }
 
