@@ -100,26 +100,19 @@ class MainActivity : ComponentActivity() {
 
                         composable("comandaList") {
                             ComandaListScreen(
-                                onComandaListClickMudarPerfil = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil")
+                                navController = navController,
+//                                onComandaListClickMudarPerfil = {
+//                                    clickedAction = "Mudar Perfil"
+//                                    navController.navigate("perfil")
+//                                },
+                                onComandaClick = { route ->
+                                    navController.navigate(route)
                                 },
-                                onComandaListClickAcao1 = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("comandaList")
-                                },
-                                onComandaListClickAcao2 = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("cardapio")
-                                },
-                                onComandaListClickAcao3 = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("viewPerfil")
-                                },
-                                onComandaListComandaView = {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("comandaView")
-                                })
+//                                onComandaListComandaView = {
+//                                    clickedAction = "Ação 4"
+//                                    navController.navigate("comandaView")
+//                                }
+                            )
                         }
 
                         composable("viewPerfil") {
