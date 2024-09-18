@@ -71,7 +71,7 @@ fun ComandaListScreen(
                 onComandaClick = {
                     navController.navigate(it)
                 },
-                navController = {}
+                navController = navController
             )
         }
     ) { padding ->
@@ -371,8 +371,8 @@ fun SearchBoxPreview() {
 //}
 
 @Composable
-fun BottomBar(navController: NavController.() -> Unit, onComandaClick: (String) -> Unit) {
-    var selectedIndex by rememberSaveable { mutableStateOf(0) }
+fun BottomBar(navController: NavController, onComandaClick: (String) -> Unit) {
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
 
     val items = listOf(
         BottomNavBar.Comandas,
@@ -384,7 +384,7 @@ fun BottomBar(navController: NavController.() -> Unit, onComandaClick: (String) 
         containerColor = GI_AzulMarinho,
     ) {
         items.forEachIndexed { index, item ->
-            val isSelected = selectedIndex == index
+            val isSelected = currentRoute == item.route
             NavigationBarItem(
                 icon = {
                     Icon(
@@ -396,7 +396,6 @@ fun BottomBar(navController: NavController.() -> Unit, onComandaClick: (String) 
                 label = { Text(text = item.title, color = Color.White) },
                 selected = isSelected,
                 onClick = {
-                    selectedIndex = index
                     onComandaClick(item.route)
                 },
                 colors = NavigationBarItemDefaults.colors(
@@ -410,5 +409,5 @@ fun BottomBar(navController: NavController.() -> Unit, onComandaClick: (String) 
 @Preview
 @Composable
 fun BottomBarPreview() {
-    BottomBar(onComandaClick = {}, navController = {})
+    BottomBar(onComandaClick = {},  navController = NavController(LocalContext.current))
 }
