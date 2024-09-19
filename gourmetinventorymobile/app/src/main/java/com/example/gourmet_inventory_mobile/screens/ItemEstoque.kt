@@ -115,6 +115,27 @@ fun ItemEstoqueScreen(
             ) {
                 Button(
                     onClick = {
+                        onItemEstoqueViewEditarClick()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Verde,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(45.dp)
+                        .padding(end = 8.dp),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Icon(
+                        imageVector = androidx.compose.material.icons.Icons.Default.Edit,
+                        contentDescription = "Editar"
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Editar")
+                }
+                Button(
+                    onClick = {
                         onItemEstoqueViewExcluirClick()
                         Toast.makeText(context, "Item Excluído com sucesso", Toast.LENGTH_SHORT)
                             .show()
@@ -126,7 +147,7 @@ fun ItemEstoqueScreen(
                     modifier = Modifier
                         .weight(1f)
                         .height(45.dp)
-                        .padding(end = 8.dp),
+                        .padding(start = 8.dp),
                     shape = RoundedCornerShape(4.dp)
                 ) {
                     Icon(
@@ -135,28 +156,6 @@ fun ItemEstoqueScreen(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(text = "Excluir")
-                }
-
-                Button(
-                    onClick = {
-                        onItemEstoqueViewEditarClick()
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Verde,
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(45.dp)
-                        .padding(start = 8.dp),
-                    shape = RoundedCornerShape(4.dp)
-                ) {
-                    Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.Edit,
-                        contentDescription = "Editar"
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Editar")
                 }
             }
 

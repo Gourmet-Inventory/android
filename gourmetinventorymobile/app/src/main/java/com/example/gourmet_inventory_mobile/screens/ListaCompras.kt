@@ -128,7 +128,7 @@ fun ListaComprasScreen(
                         Text(
                             text = "Mudar Perfil",
                             color = Black,
-                            fontSize = 18.sp
+                            fontSize = 15.sp
                         )
                     }
 //                    Button(

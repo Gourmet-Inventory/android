@@ -86,6 +86,26 @@ fun DeleteCnfirmacaoScreen(
             ){
                 Button(
                     onClick = {
+                        onDeleteConfirmacaoConfirmarClick()
+                    },
+                    modifier = Modifier
+                        .height(45.dp)
+                        .width(120.dp),
+//                        .padding(start = 10.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Verde,
+                        contentColor = colorResource(id = R.color.white)
+                    )
+                ) {
+                    Text(
+                        text = "Sim",
+                        color = White,
+                        fontSize = 18.sp
+                    )
+                }
+                Button(
+                    onClick = {
                         onDeleteConfirmacaoCancelarClick()
                         Toast
                             .makeText(context, "Exlusão cancelada", Toast.LENGTH_SHORT)
@@ -103,26 +123,6 @@ fun DeleteCnfirmacaoScreen(
                 ) {
                     Text(
                         text = "Não",
-                        color = White,
-                        fontSize = 18.sp
-                    )
-                }
-                Button(
-                    onClick = {
-                        onDeleteConfirmacaoConfirmarClick()
-                    },
-                    modifier = Modifier
-                        .height(45.dp)
-                        .width(120.dp),
-//                        .padding(start = 10.dp),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Verde,
-                        contentColor = colorResource(id = R.color.white)
-                    )
-                ) {
-                    Text(
-                        text = "Sim",
                         color = White,
                         fontSize = 18.sp
                     )
