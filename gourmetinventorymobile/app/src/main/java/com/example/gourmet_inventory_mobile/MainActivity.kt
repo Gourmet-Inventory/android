@@ -76,6 +76,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+
                         composable("login") {
                             LoginScreen(onLoginClick = { user ->
                                 navController.navigate("perfil")
@@ -83,35 +84,20 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("cardapio") {
-                            CardapioListScreen(onCardapioClickMudarPerfil = {
-                                clickedAction = "Mudar Perfil"
-                                navController.navigate("perfil")
-                            }, onCardapioClickAcao1 = {
-                                clickedAction = "Ação 1"
-                                navController.navigate("comandaList")
-                            }, onCardapioClickAcao2 = {
-                                clickedAction = "Ação 2"
-                                navController.navigate("cardapio")
-                            }, onCardapioClickAcao3 = {
-                                clickedAction = "Ação 3"
-                                navController.navigate("viewPerfil")
-                            })
+                            CardapioListScreen(
+                                navController = navController,
+                                onCardapioClick = { route ->
+                                    navController.navigate(route)
+                                }
+                            )
                         }
 
                         composable("comandaList") {
                             ComandaListScreen(
                                 navController = navController,
-//                                onComandaListClickMudarPerfil = {
-//                                    clickedAction = "Mudar Perfil"
-//                                    navController.navigate("perfil")
-//                                },
                                 onComandaClick = { route ->
                                     navController.navigate(route)
                                 },
-//                                onComandaListComandaView = {
-//                                    clickedAction = "Ação 4"
-//                                    navController.navigate("comandaView")
-//                                }
                             )
                         }
 
@@ -249,23 +235,9 @@ class MainActivity : ComponentActivity() {
 
                         composable("comandaView") {
                             ComandaViewScreen(
-                                onComandaViewCancelarClick = {
-                                    clickedAction = "Cancelar"
-                                },
-                                onComandaViewEnviarClick = {
-                                    clickedAction = "Enviar"
-                                },
-                                onComandaViewAcao1Click = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("comandaList")
-                                },
-                                onComandaViewAcao2Click = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("cardapio")
-                                },
-                                onComandaViewAcao3Click = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("viewPerfil")
+                                navController = navController,
+                                onComandaViewClick = { route ->
+                                    navController.navigate(route)
                                 },
                                 onComandaViewVoltarClick = {
                                     clickedAction = "Voltar"
