@@ -30,6 +30,7 @@ import com.example.gourmet_inventory_mobile.screens.ItemEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
 import com.example.gourmet_inventory_mobile.screens.ListaEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaFornecedoresScreen
+import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreenPreview
@@ -38,7 +39,6 @@ import com.example.gourmet_inventory_mobile.screens.VizuFornScreenPreview
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             GourmetinventorymobileTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
@@ -357,6 +357,19 @@ class MainActivity : ComponentActivity() {
                                     clickedAction = "Anterior"
                                     navController.popBackStack()
                                 }
+                            )
+                        }
+
+                        composable("cardapioItem") {
+                            PratoScreen(
+                                navController = navController,
+                                onClickPratoItem = { route ->
+                                    navController.navigate(route)
+                                },
+                                onPratoItemVoltarClick = {
+                                    clickedAction = "Voltar"
+                                    navController.popBackStack()
+                                },
                             )
                         }
                     }

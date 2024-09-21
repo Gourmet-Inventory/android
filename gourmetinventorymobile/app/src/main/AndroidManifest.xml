@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Gourmetinventorymobile"
         tools:targetApi="31">
         <activity
-            android:name=".screens.PratoActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/gourmet_inventory"
             android:theme="@style/Theme.Gourmetinventorymobile">

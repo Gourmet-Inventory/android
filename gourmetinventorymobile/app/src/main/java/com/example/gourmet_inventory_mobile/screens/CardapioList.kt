@@ -152,6 +152,9 @@ fun CardapioListScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
+                                .clickable {
+                                    onCardapioClick("cardapioItem")
+                                }
                         ) {
                             Column(
                                 modifier = Modifier
