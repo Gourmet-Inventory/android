@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
 //class ListaFornecedoresActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {

@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 
 //class VizuFornActivity : ComponentActivity() {

@@ -49,7 +49,6 @@ import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
@@ -242,12 +241,10 @@ fun ComandaListScreen(
 @Preview
 @Composable
 fun ComandaListPreview() {
-    GourmetinventorymobileTheme {
         ComandaListScreen(
             navController = NavController(LocalContext.current),
             onComandaClick = {},
         )
-    }
 }
 
 @Composable
