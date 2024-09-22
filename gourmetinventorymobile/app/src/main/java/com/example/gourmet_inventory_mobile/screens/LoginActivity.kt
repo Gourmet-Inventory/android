@@ -105,7 +105,8 @@ fun LoginScreen(
                     focusedBorderColor = GI_AzulMarinho,
                     unfocusedBorderColor = GI_AzulMarinho,
                     cursorColor = GI_AzulMarinho,
-                )
+                ),
+                singleLine = true,
             )
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -133,7 +134,8 @@ fun LoginScreen(
                     focusedBorderColor = GI_AzulMarinho,
                     unfocusedBorderColor = GI_AzulMarinho,
                     cursorColor = GI_AzulMarinho,
-                )
+                ),
+                singleLine = true,
             )
             Spacer(modifier = Modifier.height(60.dp))
 

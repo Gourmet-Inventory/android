@@ -53,11 +53,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 @Composable
 fun DeleteCnfirmacaoScreen(
     onDeleteConfirmacaoConfirmarClick: () -> Unit ,
-    onDeleteConfirmacaoCancelarClick: () -> Unit,
-    onDeleteConfirmacaoAcao1Click: () -> Unit,
-    onIDeleteConfirmacaoAcao2Click: () -> Unit,
-    onDeleteConfirmacaoAcao3Click: () -> Unit,
-    onDeleteConfirmacaoAcao4Click: () -> Unit
+    onDeleteConfirmacaoCancelarClick: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -86,6 +82,26 @@ fun DeleteCnfirmacaoScreen(
             ){
                 Button(
                     onClick = {
+                        onDeleteConfirmacaoConfirmarClick()
+                    },
+                    modifier = Modifier
+                        .height(45.dp)
+                        .width(120.dp),
+//                        .padding(start = 10.dp),
+                    shape = RoundedCornerShape(5.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Verde,
+                        contentColor = colorResource(id = R.color.white)
+                    )
+                ) {
+                    Text(
+                        text = "Sim",
+                        color = White,
+                        fontSize = 18.sp
+                    )
+                }
+                Button(
+                    onClick = {
                         onDeleteConfirmacaoCancelarClick()
                         Toast
                             .makeText(context, "Exlusão cancelada", Toast.LENGTH_SHORT)
@@ -107,43 +123,9 @@ fun DeleteCnfirmacaoScreen(
                         fontSize = 18.sp
                     )
                 }
-                Button(
-                    onClick = {
-                        onDeleteConfirmacaoConfirmarClick()
-                    },
-                    modifier = Modifier
-                        .height(45.dp)
-                        .width(120.dp),
-//                        .padding(start = 10.dp),
-                    shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Verde,
-                        contentColor = colorResource(id = R.color.white)
-                    )
-                ) {
-                    Text(
-                        text = "Sim",
-                        color = White,
-                        fontSize = 18.sp
-                    )
-                }
             }
         }
     }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 100.dp),
-        contentAlignment = androidx.compose.ui.Alignment.BottomCenter
-    ) {
-        DownBarDeleteConfirmacaoScreen(
-            onDeleteConfirmacaoAcao1Click = onDeleteConfirmacaoAcao1Click,
-            onDeleteConfirmacaoAcao2Click = onIDeleteConfirmacaoAcao2Click,
-            onDeleteConfirmacaoAcao3Click = onDeleteConfirmacaoAcao3Click,
-            onDeleteConfirmacaoAcao4Click = onDeleteConfirmacaoAcao4Click
-        )
-    }
-
 }
 
 @Preview
@@ -152,77 +134,5 @@ fun DeleteScreenPreview() {
     DeleteCnfirmacaoScreen(
         onDeleteConfirmacaoConfirmarClick = {},
         onDeleteConfirmacaoCancelarClick = {},
-        onDeleteConfirmacaoAcao1Click = {},
-        onIDeleteConfirmacaoAcao2Click = {},
-        onDeleteConfirmacaoAcao3Click = {},
-        onDeleteConfirmacaoAcao4Click = {}
     )
 }
-
-@Composable
-fun DownBarDeleteConfirmacaoScreen(
-    onDeleteConfirmacaoAcao1Click: () -> Unit = {},
-    onDeleteConfirmacaoAcao2Click: () -> Unit = {},
-    onDeleteConfirmacaoAcao3Click: () -> Unit = {},
-    onDeleteConfirmacaoAcao4Click: () -> Unit = {}
-) {
-    val context = LocalContext.current
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = GI_AzulMarinho)
-            .heightIn(70.dp),
-//        horizontalArrangement = Arrangement.SpaceEvenly,
-        horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.fornecedores_db),
-            contentDescription = "Ação 1",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(30.dp)
-                .clickable {
-                    onDeleteConfirmacaoAcao1Click()
-                }
-        )
-//        Spacer(modifier = Modifier.height(60.dp))
-        Image(
-            painter = painterResource(id = R.drawable.opened_box),
-            contentDescription = "Ação 2",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(30.dp)
-                .clickable {
-                    onDeleteConfirmacaoAcao2Click()
-                }
-        )
-        Image(
-            painter = painterResource(id = cart),
-            contentDescription = "Ação 3",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(30.dp)
-                .clickable {
-                    onDeleteConfirmacaoAcao3Click()
-                }
-        )
-        Image(
-            painter = painterResource(id = R.drawable.account_icon),
-            contentDescription = "Ação 4",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .height(35.dp)
-                .clickable {
-                    onDeleteConfirmacaoAcao4Click()
-                }
-        )
-    }
-}
-
-@Preview
-@Composable
-fun DownBarDeleteScreenPreview() {
-    DownBarScreen()
-}
-
