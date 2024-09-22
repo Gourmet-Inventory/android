@@ -3,37 +3,34 @@ package com.example.gourmet_inventory_mobile
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
-import com.example.gourmet_inventory_mobile.screens.EscolhaPerfilScreen
-import com.example.gourmet_inventory_mobile.screens.LoginScreen
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
+import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
 import com.example.gourmet_inventory_mobile.screens.DeleteCnfirmacaoScreen
 import com.example.gourmet_inventory_mobile.screens.Editar2Screen
 import com.example.gourmet_inventory_mobile.screens.EditarScreen
+import com.example.gourmet_inventory_mobile.screens.EscolhaPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.ItemEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
 import com.example.gourmet_inventory_mobile.screens.ListaEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaFornecedoresScreen
+import com.example.gourmet_inventory_mobile.screens.LoginScreen
 import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
-import com.example.gourmet_inventory_mobile.screens.VizuFornScreenPreview
+import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -124,29 +121,9 @@ class MainActivity : ComponentActivity() {
 
                         composable("listaFornecedor") {
                             ListaFornecedoresScreen(
-                                onListaFornecedorClickMudarPerfil = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil")
-                                },
-                                onListaFornecedorClickAcao1 = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                                onListaFornecedorClickAcao2 = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onListaFornecedorClickAcao3 = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
-                                },
-                                onListaFornecedorClickAcao4 = {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
-                                },
-                                onListaFornecedorVizuFornClick = {
-                                    clickedAction = "Ação 5"
-                                    navController.navigate("fornecedorView")
+                                navController = navController,
+                                onListaFornecedoresClick = { route ->
+                                    navController.navigate(route)
                                 }
                             )
                         }
@@ -156,22 +133,6 @@ class MainActivity : ComponentActivity() {
                                 onVizuFornVoltarClick = {
                                     clickedAction = "Voltar"
                                     navController.popBackStack()
-                                },
-                                onVizuFornAcao1Click = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                                onVizuFornAcao2Click = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onVizuFornAcao3Click = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
-                                },
-                                onVizuFornAcao4Click = {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
                                 }
                             )
                         }
