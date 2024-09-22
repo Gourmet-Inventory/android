@@ -63,8 +63,28 @@ fun CardapioListScreen(
     onCardapioClick: (String) -> Unit
 ) {
     Scaffold (
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                OutlinedButton (
+                    onClick = {
+                        onCardapioClick("perfil")
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Orange,
+                        contentColor = White
+                    ),
+                    modifier = Modifier.padding(top = 16.dp, end = 16.dp)
+                ) {
+                    Text(text = "Mudar Perfil", color = Black)
+                }
+            }
+        },
         bottomBar = {
-            BottomBarGarcom(navController = navController, onComandaClick = onCardapioClick)
+            BottomBarGarcom(navController = navController, onClick = onCardapioClick)
         }
     ){ padding ->
         Surface(modifier = Modifier.fillMaxSize()) {
@@ -96,34 +116,8 @@ fun CardapioListScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 45.dp)
+                    .padding(top = 40.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            onCardapioClick("perfil")
-                        },
-                        modifier = Modifier
-                            .width(170.dp)
-                            .height(45.dp)
-                            .padding(end = 16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = GI_Orange,
-                            contentColor = White
-                        )
-                    ) {
-                        Text(
-                            text = "Mudar Perfil",
-                            color = Black,
-                            fontSize = 15.sp
-                        )
-                    }
-                }
                 Text(
                     text = "Cardápio: ",
                     modifier = Modifier
@@ -145,7 +139,7 @@ fun CardapioListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .padding(start = 26.dp, end = 26.dp)
+                        .padding(start = 26.dp, end = 26.dp, bottom = 70.dp)
                 ) {
                     items(filteredCardapio) { prato ->
                         Row(
@@ -225,6 +219,7 @@ fun CardapioSearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
         },
         modifier = Modifier
             .fillMaxWidth()
+            .height(85.dp)
             .padding(16.dp)
             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
         placeholder = {

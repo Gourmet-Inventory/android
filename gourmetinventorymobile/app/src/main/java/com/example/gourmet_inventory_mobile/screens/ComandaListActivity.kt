@@ -59,8 +59,28 @@ fun ComandaListScreen(
     onComandaClick: (String) -> Unit,
 ) {
     Scaffold(
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                OutlinedButton (
+                    onClick = {
+                        onComandaClick("perfil")
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = GI_Orange,
+                        contentColor = White
+                    ),
+                    modifier = Modifier.padding(top = 16.dp, end = 16.dp)
+                ) {
+                    Text(text = "Mudar Perfil", color = Black)
+                }
+            }
+        },
         bottomBar = {
-            BottomBarGarcom(navController = navController, onComandaClick = onComandaClick)
+            BottomBarGarcom(navController = navController, onClick = onComandaClick)
         }
     ) { padding ->
         Surface(modifier = Modifier.fillMaxSize()) {
@@ -95,32 +115,6 @@ fun ComandaListScreen(
                     .fillMaxSize()
                     .padding(top = 40.dp)
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.Top
-                ) {
-                    OutlinedButton(
-                        onClick = {
-                            onComandaClick("perfil")
-                        },
-                        modifier = Modifier
-                            .width(170.dp)
-                            .height(45.dp)
-                            .padding(end = 16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = GI_Orange,
-                            contentColor = White
-                        )
-                    ) {
-                        Text(
-                            text = "Mudar Perfil",
-                            color = Black,
-                            fontSize = 15.sp
-                        )
-                    }
-                }
                 Text(
                     text = "Comanda: ",
                     modifier = Modifier
@@ -163,9 +157,8 @@ fun ComandaListScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 70.dp)
                         .weight(1f)
-                        .padding(start = 26.dp, end = 26.dp)
+                        .padding(start = 26.dp, end = 26.dp, bottom = 70.dp)
                 ) {
                     items(filteredComandas) { comanda ->
                         Row(
@@ -256,6 +249,7 @@ fun SearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
         },
         modifier = Modifier
             .fillMaxWidth()
+            .height(85.dp)
             .padding(16.dp)
             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
         placeholder = {

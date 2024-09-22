@@ -1,10 +1,5 @@
 package com.example.gourmet_inventory_mobile.screens
 
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -45,19 +39,6 @@ import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
-
-//class VizuFornActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                VizuFornScreen()
-//
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun VizuFornScreen(

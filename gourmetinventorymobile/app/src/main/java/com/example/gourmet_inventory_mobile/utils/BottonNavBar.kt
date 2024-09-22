@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.utils
 
+import android.util.Log
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -55,14 +56,15 @@ sealed class BottomNavBar(
 
     data object ListaCompras : BottomNavBar(
         route = "listaCompras",
-        icon = R.drawable.account_icon,
+        icon = R.drawable.cart,
         title = "Compras",
     )
 }
 
 @Composable
-fun BottomBarGarcom(navController: NavController, onComandaClick: (String) -> Unit) {
+fun BottomBarGarcom(navController: NavController, onClick: (String) -> Unit) {
     val currentRoute = navController.currentBackStackEntry?.destination?.route
+    Log.d("BottomBarGarcom", "currentRoute: $currentRoute")
 
     val items = listOf(
         BottomNavBar.Comandas,
@@ -77,7 +79,9 @@ fun BottomBarGarcom(navController: NavController, onComandaClick: (String) -> Un
         items.forEachIndexed { index, item ->
             val isSelected = currentRoute == item.route
             NavigationBarItem(
-                modifier = Modifier.padding(top = 20.dp).height(25.dp),
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(25.dp),
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icon),
@@ -88,7 +92,49 @@ fun BottomBarGarcom(navController: NavController, onComandaClick: (String) -> Un
                 label = { Text(text = item.title, color = Color.White) },
                 selected = isSelected,
                 onClick = {
-                    onComandaClick(item.route)
+                    onClick(item.route)
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = if (isSelected) White else Color.Transparent
+                )
+            )
+        }
+    }
+}
+
+@Composable
+fun BottomBarGerente(navController: NavController, onClick: (String) -> Unit) {
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    Log.d("BottomBarGerente", "currentRoute: $currentRoute")
+
+    val items = listOf(
+        BottomNavBar.Fornecedores,
+        BottomNavBar.Estoque,
+        BottomNavBar.ListaCompras,
+        BottomNavBar.PerfilView,
+    )
+
+    NavigationBar(
+        containerColor = GI_AzulMarinho,
+        modifier = Modifier.height(75.dp),
+    ) {
+        items.forEachIndexed { index, item ->
+            val isSelected = currentRoute == item.route
+            NavigationBarItem(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(30.dp),
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        tint = if (isSelected) Black else Color.White
+                    )
+                },
+                label = { Text(text = item.title, color = Color.White) },
+                selected = isSelected,
+                onClick = {
+                    onClick(item.route)
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = if (isSelected) White else Color.Transparent

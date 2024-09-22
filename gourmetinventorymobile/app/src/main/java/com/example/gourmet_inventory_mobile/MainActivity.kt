@@ -178,57 +178,18 @@ class MainActivity : ComponentActivity() {
 
                         composable("listaEstoque") {
                             ListaEstoqueScreen(
-                                onListaEstoqueClickMudarPerfil = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil")
-                                },
-                                onListaEstoqueClickAcao1 = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                                onListaEstoqueClickAcao2 = {
-                                    clickedAction = "Ação 2"
-//                                    navController.navigate("listaEstoque")
-                                },
-                                onListaEstoqueClickAcao3 = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
-                                },
-                                onListaEstoqueClickAcao4 = {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
-                                },
-                                onListaEstoqueClickItemEstoque = {
-                                    clickedAction = "Ação 5"
-                                    navController.navigate("itemEstoque")
-                                },
-                                onListaEstoqueCadastrarEstoqueClick = {
-                                    clickedAction = "Ação 6"
-                                    navController.navigate("cadastrarItemEstoque")
+                                navController = navController,
+                                onListaEstoqueClick = { route ->
+                                    navController.navigate(route)
                                 }
                             )
                         }
 
                         composable("listaCompras") {
                             ListaComprasScreen(
-                                onListaComprasMudarPerfilClick = {
-                                    clickedAction = "Mudar Perfil"
-                                    navController.navigate("perfil")
-                                },
-                                onListaComprasAcao1Click = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                                onListaComprasAcao2Click = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onListaComprasAcao3Click = {
-                                    clickedAction = "Ação 3"
-                                },
-                                onListaComprasAcao4Click = {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
+                                navController = navController,
+                                onListaComprasClick = { route ->
+                                    navController.navigate(route)
                                 }
                             )
                         }
@@ -248,7 +209,7 @@ class MainActivity : ComponentActivity() {
 
                         composable("itemEstoque") {
                             ItemEstoqueScreen(
-                                onItemEstoqueViewVoltarClick = {
+                                onItemEstoqueClick = {
                                     clickedAction = "Voltar"
                                     navController.popBackStack()
                                 },
@@ -259,22 +220,6 @@ class MainActivity : ComponentActivity() {
                                 onItemEstoqueViewExcluirClick = {
                                     clickedAction = "Excluir"
                                     navController.navigate("deleteConfirmação")
-                                },
-                                onItemEstoqueViewAcao1Click = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                                onItemEstoqueViewAcao2Click = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onItemEstoqueViewAcao3Click = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
-                                },
-                                onItemEstoqueViewAcao4Click = {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
                                 }
                             )
                         }
@@ -288,22 +233,6 @@ class MainActivity : ComponentActivity() {
                                 onDeleteConfirmacaoCancelarClick = {
                                     clickedAction = "Cancelar"
                                     navController.popBackStack()
-                                },
-                                onDeleteConfirmacaoAcao1Click = {
-                                    clickedAction = "Ação 1"
-                                    navController.navigate("listaFornecedor")
-                                },
-                                onIDeleteConfirmacaoAcao2Click = {
-                                    clickedAction = "Ação 2"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onDeleteConfirmacaoAcao3Click = {
-                                    clickedAction = "Ação 3"
-                                    navController.navigate("listaCompras")
-                                },
-                                onDeleteConfirmacaoAcao4Click = {
-                                    clickedAction = "Ação 4"
-                                    navController.navigate("viewPerfil")
                                 }
                             )
                         }

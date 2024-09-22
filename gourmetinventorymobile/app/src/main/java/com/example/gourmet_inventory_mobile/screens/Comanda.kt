@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Send
@@ -70,40 +71,34 @@ fun ComandaViewScreen(
     var isSent by remember { mutableStateOf(false) } // Estado do status
 
     Scaffold(
-        bottomBar = {
-            BottomBarGarcom(navController = navController, onComandaClick = onComandaViewClick)
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                IconButton(
+                    onClick = { onComandaViewVoltarClick() },
+                    modifier = Modifier
+                        .size(50.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Voltar",
+                    )
+                }
+            }
         }
     ) { padding ->
         Surface(
             modifier = Modifier.fillMaxSize()
-//        .padding(16.dp)
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
                 // Container para o botão de voltar e os textos
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 8.dp, top = 30.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(onClick = {
-                            Toast.makeText(context, "Voltar", Toast.LENGTH_SHORT).show()
-                        }) {
-                            Icon(
-                                imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
-//                            painter = painterResource(id = R.drawable.back),
-                                contentDescription = "Voltar",
-                                Modifier
-                                    .size(45.dp)
-                                    .clickable(onClick = {
-                                        onComandaViewVoltarClick()
-                                    }),
-                                tint = Color.Black
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                    }
+                Column(modifier = Modifier.fillMaxWidth()){
 
                     // Alinhando os textos
                     Column(

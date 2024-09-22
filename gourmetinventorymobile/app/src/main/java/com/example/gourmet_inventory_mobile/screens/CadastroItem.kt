@@ -40,18 +40,6 @@ import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
-//class CadastroActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                CadastroScreen()
-//
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun CadastroItemScreen(
