@@ -20,12 +20,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,29 +40,35 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
+import com.example.gourmet_inventory_mobile.viewmodel.LoginState
+import com.example.gourmet_inventory_mobile.viewmodel.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel = viewModel(),
     onLoginClick: (String) -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
+        val loginState by viewModel.loginState.collectAsState()
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var emailError by remember { mutableStateOf<String?>(null) }
+        var passwordError by remember { mutableStateOf<String?>(null) }
 
         Column(
             modifier = Modifier
-//            .heightIn(100.dp)
-//            .fillMaxSize()
                 .fillMaxHeight()
                 .padding(bottom = 110.dp, start = 25.dp, end = 25.dp, top = 50.dp),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
@@ -83,13 +92,15 @@ fun LoginScreen(
 
             OutlinedTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    emailError = validateEmail(it)
+                },
                 placeholder = {
                     Text(
                         text = "Email",
                         color = GI_AzulMarinho,
                         fontSize = 18.sp,
-//                        fontFamily = JostRegular
                     )
                 },
                 modifier = Modifier
@@ -107,13 +118,24 @@ fun LoginScreen(
                     cursorColor = GI_AzulMarinho,
                 ),
                 singleLine = true,
+                isError = emailError != null
             )
+            if (emailError != null) {
+                Text(
+                    text = emailError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = TextStyle(fontSize = 18.sp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(40.dp))
 
             OutlinedTextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it
+                    passwordError = validatePassword(it)
+                },
                 placeholder = {
                     Text(
                         text = "Senha",
@@ -121,6 +143,7 @@ fun LoginScreen(
                         fontSize = 18.sp
                     )
                 },
+                visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(color = GI_BrancoSujo, shape = RoundedCornerShape(5.dp))
@@ -136,16 +159,30 @@ fun LoginScreen(
                     cursorColor = GI_AzulMarinho,
                 ),
                 singleLine = true,
+                isError = passwordError != null
             )
+            if (passwordError != null) {
+                Text(
+                    text = passwordError!!,
+                    color = MaterialTheme.colorScheme.error,
+                    style = TextStyle(fontSize = 18.sp)
+                )
+            }
+
             Spacer(modifier = Modifier.height(60.dp))
 
             val context = LocalContext.current
 
             Button(
                 onClick = {
-                    onLoginClick(email)
-                    Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT)
-                        .show()
+                    val emailValidation = validateEmail(email)
+                    val passwordValidation = validatePassword(password)
+                    if (emailValidation == null && passwordValidation == null) {
+                        viewModel.login(email, password)
+                    } else {
+                        emailError = emailValidation
+                        passwordError = passwordValidation
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -162,6 +199,30 @@ fun LoginScreen(
                     color = GI_AzulMarinho,
                     fontSize = 18.sp,
                 )
+            }
+            when (loginState) {
+                is LoginState.Loading -> {
+                    CircularProgressIndicator()
+                }
+
+                is LoginState.Success -> {
+                    onLoginClick((loginState as LoginState.Success).token)
+                    Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                is LoginState.Error -> {
+                    Text(
+                        "Erro: ${(loginState as LoginState.Error).message}",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                    Toast.makeText(context, "Erro ao fazer login", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                else -> {
+                    // Estado ocioso, faz nada
+                }
             }
         }
     }
@@ -186,5 +247,25 @@ fun MinhaImagemVetorial() {
             .height(250.dp)
             .padding(bottom = 65.dp)
     )
+}
+
+fun validateEmail(email: String): String? {
+    return if (email.isBlank()) {
+        "Email não pode ser vazio"
+    } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        "Email inválido"
+    } else {
+        null
+    }
+}
+
+fun validatePassword(password: String): String? {
+    return if (password.isBlank()) {
+        "Senha não pode ser vazia"
+    } else if (password.length < 6) {
+        "Senha deve ter pelo menos 6 caracteres"
+    } else {
+        null
+    }
 }
 
