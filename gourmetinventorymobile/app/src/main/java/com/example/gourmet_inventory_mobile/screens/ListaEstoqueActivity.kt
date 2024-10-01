@@ -1,6 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,14 +18,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +36,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
+import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
@@ -47,14 +55,15 @@ fun ListaEstoqueScreen(
     navController: NavController,
     onListaEstoqueClick: (String) -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                OutlinedButton (
+                OutlinedButton(
                     onClick = {
                         onListaEstoqueClick("perfil")
                     },
@@ -71,7 +80,6 @@ fun ListaEstoqueScreen(
         bottomBar = {
             BottomBarGerente(navController = navController, onClick = onListaEstoqueClick)
         }
-
     ) { padding ->
         Surface(modifier = Modifier.fillMaxSize()) {
             val context = LocalContext.current
@@ -103,13 +111,11 @@ fun ListaEstoqueScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(start = 16.dp, end = 16.dp , top = 70.dp)
+                        .padding(start = 16.dp, end = 16.dp, top = 70.dp)
                 ) {
 
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-//                            .padding(top = 16.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         // Título
@@ -118,123 +124,126 @@ fun ListaEstoqueScreen(
                             fontSize = 34.sp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        AddButton(onListaEstoqueClick)
+                        AddButton(onAddClick = { showDialog = true })
                     }
 
-                    // Campo de Pesquisa
-                    TextField(
-                        value = texto,
-                        onValueChange = { novoTexto -> texto = novoTexto },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 16.dp),
-                        label = { Text("Pesquisar") },
-                        placeholder = { Text("") },
-                        shape = RoundedCornerShape(8.dp)
+                    SearchBoxEstoque(
+                        searchText = texto,
+                        mudaValorCampo = { novoTexto -> texto = novoTexto }
                     )
 
                     // Lista de Fornecedores Filtrada
-                    LazyColumn(modifier = Modifier.fillMaxWidth().padding(bottom = 75.dp)) {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 75.dp)
+                    ) {
                         items(filteredFornecedores) { fornecedor ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 8.dp)
+                                    .border(1.dp, Black, RoundedCornerShape(8.dp))
                                     .background(
                                         GI_AzulMarinho.copy(alpha = 0.2f),
                                         RoundedCornerShape(8.dp)
-                                    ),
+                                    )
+                                    .clickable(onClick = {
+                                        onListaEstoqueClick("itemEstoque")
+                                    }),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Column(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .padding(8.dp)
-                                        .clickable(onClick = {
-                                            onListaEstoqueClick("itemEstoque")
-                                        })
+                                        .background(color = White)
                                 ) {
-                                    Text(text = fornecedor.first, fontSize = 20.sp)
-                                    Text(
-                                        text = "Data de Aviso: ${fornecedor.second.first}",
-                                        fontSize = 14.sp
-                                    )
-                                    Text(
-                                        text = "Quantidade: ${fornecedor.second.second}",
-                                        fontSize = 14.sp
-                                    )
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .background(
+                                                GI_AzulMarinho,
+                                                RoundedCornerShape(
+                                                    bottomEnd = 0.dp,
+                                                    bottomStart = 0.dp,
+                                                    topEnd = 8.dp,
+                                                    topStart = 8.dp
+                                                )
+                                            )
+                                            .height(30.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceAround
+                                    ) {
+                                        Text(
+                                            text = fornecedor.first,
+                                            fontSize = 18.sp,
+                                            color = White
+                                        )
+                                    }
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 10.dp, bottom = 10.dp, start = 10.dp),
+                                        verticalArrangement = Arrangement.SpaceAround
+                                    ) {
+                                        Text(
+                                            text = "Data de Aviso: ${fornecedor.second.first}",
+                                            fontSize = 16.sp
+                                        )
+                                        Text(
+                                            text = "Quantidade: ${fornecedor.second.second}",
+                                            fontSize = 16.sp
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
-
                     Spacer(modifier = Modifier.weight(1f))
                 }
+            }
+
+            if (showDialog) {
+                EscolhaTipoDeEstoque(
+                    onListaEstoqueClick = onListaEstoqueClick,
+                    showDialog = showDialog,
+                    onDismiss = { showDialog = false }
+                )
             }
         }
     }
 }
 
-//@Composable
-//fun ListaEstoquerDownBar(
-//    onListaEstoqueClickAcao1: () -> Unit,
-//    onListaEstoqueClickAcao2: () -> Unit,
-//    onListaEstoqueClickAcao3: () -> Unit,
-//    onListaEstoqueClickAcao4: () -> Unit
-//) {
-//    val context = LocalContext.current
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(color = GI_AzulMarinho)
-//            .heightIn(70.dp),
-////        horizontalArrangement = Arrangement.SpaceEvenly,
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.fornecedores_db),
-//            contentDescription = "Ação 1",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onListaEstoqueClickAcao1()
-//                }
-//        )
-////        Spacer(modifier = Modifier.height(60.dp))
-//        Image(
-//            painter = painterResource(id = R.drawable.opened_box),
-//            contentDescription = "Ação 2",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onListaEstoqueClickAcao2()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.cart),
-//            contentDescription = "Ação 3",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onListaEstoqueClickAcao3()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.account_icon),
-//            contentDescription = "Ação 4",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    onListaEstoqueClickAcao4()
-//                }
-//        )
-//    }
-//}
+@Composable
+fun SearchBoxEstoque(searchText: String, mudaValorCampo: (String) -> Unit) {
+    OutlinedTextField(
+        value = searchText,
+        onValueChange = { novoValorCampo: String ->
+            mudaValorCampo(novoValorCampo)
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(85.dp)
+            .padding(bottom = 16.dp, top = 16.dp)
+            .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
+        placeholder = {
+            Text(
+                text = "Pesquisar",
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    color = Black,
+                ),
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Ícone de pesquisa"
+            )
+        },
+        shape = RoundedCornerShape(5.dp),
+    )
+}
 
 @Preview
 @Composable
@@ -246,12 +255,9 @@ fun ListaEstoquePreview() {
 }
 
 @Composable
-fun AddButton(onListaEstoqueClick: (String) -> Unit) {
-    val context = LocalContext.current
+fun AddButton(onAddClick: () -> Unit) {
     SmallFloatingActionButton(
-        onClick = {
-            onListaEstoqueClick("cadastrarItemEstoque")
-        },
+        onClick = onAddClick,
         containerColor = GI_AzulMarinho,
         contentColor = White,
         modifier = Modifier.width(70.dp),
@@ -259,4 +265,80 @@ fun AddButton(onListaEstoqueClick: (String) -> Unit) {
     ) {
         Icon(Icons.Filled.Add, "Small floating action button.")
     }
+}
+
+@Composable
+fun EscolhaTipoDeEstoque(
+    onListaEstoqueClick: (String) -> Unit,
+    showDialog: Boolean,
+    onDismiss: () -> Unit
+) {
+    if (showDialog) {
+        AlertDialog(
+            modifier = Modifier
+                .background(White, shape = RoundedCornerShape(10.dp)),
+            onDismissRequest = { onDismiss() },
+
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Selecione o tipo:",
+                        modifier = Modifier
+                            .padding(bottom = 16.dp)
+                            .align(Alignment.CenterVertically),
+                    )
+                }
+            },
+
+            confirmButton = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            onListaEstoqueClick("cadastrarItemEstoque")
+                            onDismiss()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_Orange,
+                            contentColor = Black
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 14.dp),
+                        shape = RoundedCornerShape(5.dp),
+                    ) {
+                        Text("SIMPLES")
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            onListaEstoqueClick("cadastrarItemEstoque")
+                            onDismiss()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_Orange,
+                            contentColor = Black
+                        ),
+                        shape = RoundedCornerShape(5.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("MANIPULADO")
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EscolhaPreview() {
+    EscolhaTipoDeEstoque(onListaEstoqueClick = {}, showDialog = true, onDismiss = {})
 }
