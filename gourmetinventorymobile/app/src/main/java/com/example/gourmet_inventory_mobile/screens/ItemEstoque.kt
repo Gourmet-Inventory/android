@@ -111,6 +111,7 @@ fun ItemEstoqueScreen(
                     InfoItem("Quantidade Unitária:", "3", topPadding = 36.dp)
                     InfoItem("Tipo Medida:", "GRAMAS", topPadding = 30.dp)
                     InfoItem("Valor medida:", "500", topPadding = 41.dp)
+                    InfoItem("Valor total:", "1500", topPadding = 41.dp)
                     InfoItem("Data Cadastro:", "20/05/2024", topPadding = 45.dp)
                     InfoItem("Data Aviso:", "20/05/2024", topPadding = 34.dp)
                 }
