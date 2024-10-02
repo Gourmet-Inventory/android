@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -59,83 +60,95 @@ fun CadastroItemScreen(
         mutableStateOf("")
     }
 
+    var marca by remember {
+        mutableStateOf("")
+    }
+
     Surface(modifier = Modifier
         .fillMaxSize()
         .background(color = Color.White)) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize() ,
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 40.dp, start = 10.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = {
-                    onCadastroItemVoltarClick()
-                }) {
-                    Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "Voltar",
-                        Modifier.size(44.dp),
-                        tint = Color.Black
-                    )
-                }
-            }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(105.dp),
-//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = "Cadastrar Item:",
-                    modifier = Modifier,
-                    color = Black,
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        fontSize = 35.sp
-                    )
-                )
-            }
-            InputCadastro(titulo = "Nome",valorCampo = nome, mudaValor = { novoValor ->
+        LazyColumn {
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize() ,
+                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 40.dp, start = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = {
+                            onCadastroItemVoltarClick()
+                        }) {
+                            Icon(
+                                imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+                                contentDescription = "Voltar",
+                                Modifier.size(44.dp),
+                                tint = Color.Black
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(105.dp),
+    //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
+                        Text(
+                            text = "Cadastrar Item:",
+                            modifier = Modifier,
+                            color = Black,
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(
+                                fontSize = 35.sp
+                            )
+                        )
+                    }
+                    InputCadastro(titulo = "Nome",valorCampo = nome, mudaValor = { novoValor ->
                         nome = novoValor })
 
-            InputCadastro(titulo = "Lote",valorCampo = lote, mudaValor = { novoValor ->
-                lote = novoValor })
+                    InputCadastro(titulo = "Lote",valorCampo = lote, mudaValor = { novoValor ->
+                        lote = novoValor })
 
-            InputCadastro(titulo = "Categoria",valorCampo = categoria, mudaValor = { novoValor ->
-                categoria = novoValor })
+                    InputCadastro(titulo = "Categoria",valorCampo = categoria, mudaValor = { novoValor ->
+                        categoria = novoValor })
 
-            InputCadastro(titulo = "Local Armazenamento",valorCampo = localArmazenamento, mudaValor = { novoValor ->
-                localArmazenamento = novoValor })
+                    InputCadastro(titulo = "Categoria",valorCampo = marca, mudaValor = { novoValor ->
+                        marca = novoValor })
 
-            ImagemPasso1(onCadastroItemProximoClick = onCadastroItemProximoClick)
+                    InputCadastro(titulo = "Local Armazenamento",valorCampo = localArmazenamento, mudaValor = { novoValor ->
+                        localArmazenamento = novoValor })
 
-            Button(
-                onClick = {
-                    onCadastroItemProximoClick()
-                },
-                modifier = Modifier
-                    .height(55.dp)
-                    .width(155.dp),
-                shape = RoundedCornerShape(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = GI_AzulMarinho,
-                    contentColor = colorResource(id = R.color.white)
-                )
-            ) {
-                Text(
-                    text = "Próximo",
-                    color = White,
-                    fontSize = 18.sp
-                )
+                    ImagemPasso1(onCadastroItemProximoClick = onCadastroItemProximoClick)
+
+                    Button(
+                        onClick = {
+                            onCadastroItemProximoClick()
+                        },
+                        modifier = Modifier
+                            .height(55.dp)
+                            .width(155.dp),
+                        shape = RoundedCornerShape(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_AzulMarinho,
+                            contentColor = colorResource(id = R.color.white)
+                        )
+                    ) {
+                        Text(
+                            text = "Próximo",
+                            color = White,
+                            fontSize = 18.sp
+                        )
+                    }
+                }
             }
         }
 //        Box(
