@@ -1,22 +1,14 @@
 package com.example.gourmet_inventory_mobile.screens
 
-import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,10 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,15 +39,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
-import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
+//class Cadastro2Activity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
+//        setContent {
+//            GourmetinventorymobileTheme {
+//                Cadastro2Screen()
+//
+//            }
+//        }
+//    }
+//}
+
 @Composable
-fun Editar2Screen(
-    onEditarItem2AnteriorClick: () -> Unit,
-    onEditarItem2SalvarClick: () -> Unit
+fun CadastroItem2Screen(
+    onCadastroItem2AnteriorClick: () -> Unit = {},
+    onCadastroItemCadastrarClick: () -> Unit = {}
 ) {
     var qtdUnitaria by remember {
         mutableStateOf("")
@@ -76,11 +77,11 @@ fun Editar2Screen(
     }
     val context = LocalContext.current
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
-    ) {
+    Surface(modifier = Modifier
+        .fillMaxSize()
+        .background(color = Color.White)) {
+
+
         Column(
             modifier = Modifier
                 .fillMaxSize(),
@@ -93,7 +94,7 @@ fun Editar2Screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
-                    onEditarItem2AnteriorClick()
+                    onCadastroItem2AnteriorClick()
                 }) {
                     Icon(
                         imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
@@ -103,16 +104,17 @@ fun Editar2Screen(
                     )
                 }
             }
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
+                    .height(105.dp),
 //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Editar Item:",
+                    text = "Cadastrar Item:",
                     modifier = Modifier,
                     color = Black,
                     textAlign = TextAlign.Center,
@@ -121,90 +123,67 @@ fun Editar2Screen(
                     )
                 )
             }
-            Row(
+            Column (
                 modifier = Modifier
-                    .width(350.dp)
-                    .height(120.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                Text(
-                    fontSize = 22.sp,
+                    .padding(top = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ){
+                Row (
                     modifier = Modifier
-                        .width(160.dp),
-                    text = "Quantidade Unitária:"
-                )
+                        .width(350.dp)
+                        .height(120.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically){
 
-                OutlinedTextField(
-                    value = qtdUnitaria,
-                    onValueChange = { qtdUnitaria = it },
-                    modifier = Modifier
-                        .background(color = White, shape = RoundedCornerShape(5.dp))
-                        .border(
-                            width = 1.dp,
-                            color = Color.Black
-                        )
-                        .width(180.dp),
-                    placeholder = {
-                        Text(
-                            text = "3",
-                            fontSize = 18.sp,
-                        )
-                    }
-                )
-            }
-            Row {
-                InputEditar2(
-                    titulo = "Tipo Medida",
-                    placeholder = "GRAMAS",
-                    valorCampo = tipoMedida,
-                    mudaValor = { novoValor ->
-                        tipoMedida = novoValor
-                    })
+                    Text(
+                        fontSize = 22.sp,
+                        modifier = Modifier
+                            .width(160.dp),
+                        text = "Quantidade Unitária:"
+                    )
 
-                InputEditar2(
-                    titulo = "Valor Medida",
-                    placeholder = "500",
-                    valorCampo = valorMedida,
-                    mudaValor = { novoValor ->
-                        valorMedida = novoValor
-                    })
-            }
+                    OutlinedTextField(
+                        value = qtdUnitaria,
+                        onValueChange = {qtdUnitaria = it},
+                        modifier = Modifier
+                            .background(color = White, shape = RoundedCornerShape(5.dp))
+                            .border(
+                                width = 1.dp,
+                                color = Color.Black
+                            )
+                            .width(180.dp)
+                    )
+                }
+                Row {
+                    InputCadastro2(titulo = "Tipo Medida", placeholder = "", valorCampo = tipoMedida, mudaValor = { novoValor ->
+                        tipoMedida = novoValor })
 
-            Row {
-                InputEditar2(
-                    titulo = "Data Cadastro",
-                    placeholder = " 20/05/2024",
-                    valorCampo = dataCadastro,
-                    mudaValor = { novoValor ->
-                        dataCadastro = novoValor
-                    })
+                    InputCadastro2(titulo = "Valor Medida", placeholder = "", valorCampo = valorMedida, mudaValor = { novoValor ->
+                        valorMedida = novoValor })
+                }
 
-                InputEditar2(
-                    titulo = "Data Aviso",
-                    placeholder = " 20/05/2024",
-                    valorCampo = dataAviso,
-                    mudaValor = { novoValor ->
-                        dataAviso = novoValor
-                    })
+                Row {
+                    InputCadastro2(titulo = "Data Cadastro", placeholder = "dd/mm/aaaa", valorCampo = dataCadastro, mudaValor = { novoValor ->
+                        dataCadastro = novoValor })
+
+                    InputCadastro2(titulo = "Data Aviso", placeholder = "dd/mm/aaaa", valorCampo = dataAviso, mudaValor = { novoValor ->
+                        dataAviso = novoValor })
+                }
             }
 
-            Column(
+            Column( 
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 20.dp),
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
             ) {
-                EditImagemPasso2(
-                    onEditarItem2AnteriorClick = onEditarItem2AnteriorClick
-                )
+                ImagemPasso2(onCadastroItemAnteriorClick = onCadastroItem2AnteriorClick)
 
                 Button(
                     onClick = {
-                        Toast.makeText(context, "Edição  efetuada com sucesso!", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
                             .show()
-                        onEditarItem2SalvarClick()
+                        onCadastroItemCadastrarClick()
                     },
                     modifier = Modifier
                         .height(55.dp)
@@ -216,7 +195,7 @@ fun Editar2Screen(
                     )
                 ) {
                     Text(
-                        text = "Salvar",
+                        text = "Cadastrar",
                         color = Black,
                         fontSize = 18.sp
                     )
@@ -229,42 +208,39 @@ fun Editar2Screen(
 //                .padding(top = 100.dp),
 //            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
 //        ) {
-//            DownBarEditar2Screen()
+//            DownBarCadastroItemActivityScreen2()
 //        }
     }
 }
 
 @Preview
 @Composable
-fun Editar2ScreenPreview() {
-    Editar2Screen(
-        onEditarItem2AnteriorClick = { },
-        onEditarItem2SalvarClick = { }
-    )
+fun Cadastro2ScreenPreview() {
+    CadastroItem2Screen()
 }
 
 
 @Composable
-fun InputEditar2(
+fun InputCadastro2(
     titulo: String,
     placeholder: String,
     valorCampo: String,
     mudaValor: (String) -> Unit
 ) {
 
-    Row(
+    Row (
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .width(180.dp)
             .height(160.dp)
 
-    ) {
+    ){
         Column(
             modifier = Modifier
                 .size(width = 350.dp, height = 100.dp),
-
-            ) {
+            
+        ){
             Text(
                 modifier = Modifier
                     .padding(top = 10.dp)
@@ -278,8 +254,8 @@ fun InputEditar2(
 
                 value = valorCampo,
                 onValueChange = { novoValorDoCampo ->
-                    mudaValor(novoValorDoCampo)
-                },
+                mudaValor(novoValorDoCampo)
+                 },
                 modifier = Modifier
                     .height(55.dp)
                     .width(160.dp)
@@ -301,32 +277,8 @@ fun InputEditar2(
     }
 }
 
-@Composable
-fun EditImagemPasso2(
-    onEditarItem2AnteriorClick: () -> Unit
-) {
-    var selectedOptionIndex by remember { mutableStateOf(1) }
-
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
-    ) {
-        RadioButton(
-            selected = selectedOptionIndex == 0,
-            onClick = { onEditarItem2AnteriorClick() }
-        )
-        RadioButton(
-            selected = selectedOptionIndex == 1,
-            onClick = { selectedOptionIndex == 1 }
-        )
-    }
-}
-
 //@Composable
-//fun DownBarEditarScreen2() {
+//fun DownBarCadastroItemActivityScreen2() {
 //    val context = LocalContext.current
 //    Row(
 //        modifier = Modifier
@@ -391,7 +343,31 @@ fun EditImagemPasso2(
 
 //@Preview
 //@Composable
-//fun DownBarEditarcreenPreview2() {
-//    DownBarEditarScreen()
+//fun DownBarCadastroItemActivityPreview2() {
+//    DownBarCadastroItemActivityScreen2()
 //}
 
+
+@Composable
+fun ImagemPasso2(
+    onCadastroItemAnteriorClick: () -> Unit = {}
+) {
+    var selectedOptionIndex by remember { mutableStateOf(1) }
+
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+    ) {
+        RadioButton(
+            selected = selectedOptionIndex == 0,
+            onClick = { onCadastroItemAnteriorClick() }
+        )
+        RadioButton(
+            selected = selectedOptionIndex == 1,
+            onClick = { selectedOptionIndex = 1 }
+        )
+    }
+}
