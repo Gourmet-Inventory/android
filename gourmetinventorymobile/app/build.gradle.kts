@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "2.0.20"
+    id("kotlin-parcelize")
 }
 
 android {
@@ -52,12 +54,19 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-//    val nav_version = "2.8.0"
-//    implementation("androidx.navigation:navigation-compose:$nav_version")
-//    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
-
+    //Navigation Compose dependencies
     implementation(libs.navigation.compose)
+    //Compose Serialization
     implementation(libs.kotlinx.serialization.json)
+    //Network calls
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    //Json to Kotling object mapping
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    //Image loading
+    implementation(libs.coil.compose)
+    //
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
