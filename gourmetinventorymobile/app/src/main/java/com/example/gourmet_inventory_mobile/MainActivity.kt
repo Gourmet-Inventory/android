@@ -103,19 +103,7 @@ class MainActivity : ComponentActivity() {
                                 onViewPerfilSair = {
                                     clickedAction = "Sair"
                                     navController.navigate("login")
-                                },
-//                                onCardapioClickAcao1 = {
-//                                    clickedAction = "Ação 1"
-//                                },
-//                                onCardapioClickAcao2 = {
-//                                    clickedAction = "Ação 2"
-//                                },
-//                                onCardapioClickAcao3 = {
-//                                    clickedAction = "Ação 3"
-//                                },
-//                                onCardapioClickAcao4 =  {
-//                                    clickedAction = "Ação 3"
-//                                }
+                                }
                             )
                         }
 
