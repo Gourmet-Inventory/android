@@ -2,6 +2,7 @@ package com.example.gourmet_inventory_mobile.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +14,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -32,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,7 +52,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 
 
 @Composable
-fun CadastroItemScreen(
+fun CadastroItemManipulavelScreen(
     onCadastroItemVoltarClick: () -> Unit = {},
     onCadastroItemProximoClick: () -> Unit = {}
 ) {
@@ -97,34 +106,45 @@ fun CadastroItemScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(105.dp),
-    //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
+                            .height(38.dp),
+                        //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
                         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            text = "Cadastrar Item:",
+                            text = "Cadastrar Item",
                             modifier = Modifier,
                             color = Black,
                             textAlign = TextAlign.Center,
                             style = TextStyle(
-                                fontSize = 35.sp
+                                fontSize = 30.sp
                             )
                         )
                     }
-                    InputCadastro(titulo = "Nome",valorCampo = nome, mudaValor = { novoValor ->
+                    Text(
+                        text = "MANIPULAVEL",
+                        modifier = Modifier,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center,
+                        style = TextStyle(
+                            fontSize = 18.sp
+                        )
+                    )
+                    InputCadastroManipulavel(titulo = "Nome",valorCampo = nome, mudaValor = { novoValor ->
                         nome = novoValor })
 
-                    InputCadastro(titulo = "Lote",valorCampo = lote, mudaValor = { novoValor ->
+                    InputCadastroManipulavel(titulo = "Lote",valorCampo = lote, mudaValor = { novoValor ->
                         lote = novoValor })
 
-                    InputCadastro(titulo = "Categoria",valorCampo = categoria, mudaValor = { novoValor ->
+                    InputCadastroManipulavel(titulo = "Categoria",valorCampo = categoria, mudaValor = { novoValor ->
                         categoria = novoValor })
 
-                    InputCadastro(titulo = "Marca",valorCampo = marca, mudaValor = { novoValor ->
+                    InputCadastroManipulavel(titulo = "Categoria",valorCampo = marca, mudaValor = { novoValor ->
                         marca = novoValor })
 
-                    ImagemPasso1(onCadastroItemProximoClick = onCadastroItemProximoClick)
+                    StyledSelectBox()
+
+                    ImagemPassoMaipulavel1(onCadastroItemProximoClick = onCadastroItemProximoClick)
 
                     Button(
                         onClick = {
@@ -166,13 +186,86 @@ fun CadastroItemScreen(
 
 @Preview
 @Composable
-fun CadastroScreenPreview() {
-    CadastroItemScreen()
+fun CadastroManipulavelScreen() {
+    CadastroItemManipulavelScreen()
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StyledSelectBox() {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by remember { mutableStateOf("Selecione um local") }
+    val options = listOf("Freezer", "Geladeira", "Pratileira AC-001", "Pratileira AC-002", "Pratileira AC-003", "Pratileira AC-004")
+
+    Row (
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(120.dp)
+
+    ){
+        Column(
+            modifier = Modifier
+                .size(width = 350.dp, height = 100.dp)
+
+        ){
+            Text(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(30.dp),
+                text = "Local Armazenamento:",
+                color = Black,
+                fontSize = 22.sp,
+                // fontFamily = JostRegular
+            )
+            // Usando ExposedDropdownMenuBox para um campo de seleção clicável
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded },
+
+                Modifier
+                    .border(
+                        width = 1.dp,
+                        color = Color.Black
+                    )// Alterna entre expandido e recolhido
+            ) {
+                OutlinedTextField(
+                    value = selectedOption,
+                    onValueChange = { },
+                    readOnly = true, // Define como somente leitura para funcionar como um select box
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(), // Garante que o menu dropdown apareça no lugar certo
+                    trailingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Dropdown"
+                        )
+                    },
+                )
+
+                // Menu Dropdown para as opções
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    options.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text(option) },
+                            onClick = {
+                                selectedOption = option
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
 @Composable
-fun InputCadastro(
+fun InputCadastroManipulavel(
     titulo: String,
     valorCampo: String,
     mudaValor: (String) -> Unit
@@ -203,8 +296,8 @@ fun InputCadastro(
 
                 value = valorCampo,
                 onValueChange = { novoValorDoCampo ->
-                mudaValor(novoValorDoCampo)
-                 },
+                    mudaValor(novoValorDoCampo)
+                },
                 modifier = Modifier
                     .height(50.dp)
                     .fillMaxSize()
@@ -288,7 +381,7 @@ fun InputCadastro(
 //}
 
 @Composable
-fun ImagemPasso1(
+fun ImagemPassoMaipulavel1(
     onCadastroItemProximoClick: () -> Unit = {}
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
