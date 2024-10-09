@@ -21,9 +21,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Divider
@@ -37,6 +40,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.Prato
+import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
@@ -64,53 +69,59 @@ fun ComandaViewScreen(
         Pedido("Hambúrguer", 2, 128.00),
         Pedido("Esfirra", 1, 19.50),
         Pedido("Coca-Cola", 2, 40.00),
+        Pedido("Hambúrguer", 2, 128.00),
+        Pedido("Hambúrguer", 2, 128.00),
+        Pedido("Hambúrguer", 2, 128.00),
+        Pedido("Hambúrguer", 2, 128.00),
+        Pedido("Hambúrguer", 2, 128.00),
+        Pedido("Hambúrguer", 2, 128.00),
+        Pedido("Hambúrguer", 2, 128.00),
         Pedido("Hambúrguer", 2, 128.00)
     )
 
     val total = pedidos.sumOf { it.preco * it.quantidade }
     var isSent by remember { mutableStateOf(false) } // Estado do status
 
-    Scaffold(
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+    Scaffold(topBar = {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            IconButton(
+                onClick = { onComandaViewVoltarClick() }, modifier = Modifier.size(50.dp)
             ) {
-                IconButton(
-                    onClick = { onComandaViewVoltarClick() },
-                    modifier = Modifier
-                        .size(50.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        imageVector = Icons.Default.KeyboardArrowLeft,
-                        contentDescription = "Voltar",
-                    )
-                }
+                Icon(
+                    modifier = Modifier.fillMaxSize(),
+                    imageVector = Icons.Default.KeyboardArrowLeft,
+                    contentDescription = "Voltar",
+                )
             }
         }
-    ) { padding ->
+    }) { padding ->
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
-            Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 // Container para o botão de voltar e os textos
-                Column(modifier = Modifier.fillMaxWidth()){
 
-                    // Alinhando os textos
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Text(text = "Comanda 03", fontSize = 34.sp)
-                        Text(text = "Mesa 1", fontSize = 22.sp)
-                    }
+
+                // Alinhando os textos
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp, start = 16.dp, bottom = 10.dp, top = 20.dp)
+                ) {
+                    Text(text = "Comanda 03", fontSize = 34.sp)
+                    Text(text = "Mesa 1", fontSize = 22.sp)
                 }
+
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -121,74 +132,65 @@ fun ComandaViewScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp)
+                        .height(470.dp)
                         .background(GI_BrancoFundo, RoundedCornerShape(8.dp))
                 ) {
-                    LazyColumn(
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(250.dp)
-                            .background(GI_BrancoFundo, RoundedCornerShape(8.dp))
-                            .padding(25.dp)
+                            .fillMaxSize()
+                            .padding(16.dp),
                     ) {
-                        item(content = {
-                            Text(
-                                text = "Pedido",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(bottom = 8.dp)
-                            )
-                            Divider(
-                                color = Color.Gray,
-                                thickness = 1.dp,
-                                modifier = Modifier.padding(vertical = 8.dp)
-                            )
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Button(colors = ButtonDefaults.buttonColors(
+                                containerColor = GI_AzulMarinho, contentColor = Color.White
+                            ), onClick = { }) {
+                                Text(text = "Adicionar pedido")
+                            }
+                            Icon(imageVector = Icons.Default.Delete,
+                                contentDescription = "Deletar",
+                                tint = Color.Red,
+                                modifier = Modifier
+                                    .size(35.dp)
+                                    .clickable {})
                         }
+
+                        Divider(
+                            color = Black,
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(vertical = 8.dp)
                         )
 
-                        items(pedidos) { pedido ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(text = "${pedido.quantidade}x ${pedido.nome}")
-                                Text(text = "R$${pedido.preco * pedido.quantidade},00")
-                            }
-                        }
+                        ItensComanda(pedidos)
 
-                        // Linha divisória
-                        item {
-                            Divider(
-                                color = Color.Gray,
-                                thickness = 1.dp,
-                                modifier = Modifier.padding(vertical = 8.dp)
+                        Divider(
+                            color = Black,
+                            thickness = 1.dp,
+                            modifier = Modifier.padding(vertical = 8.dp)
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            Text(
+                                text = "Total:",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
                             )
-                        }
-
-                        // Total
-                        item {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = "Total:",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = "R$$total,00",
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                            Text(
+                                text = "R$$total,00",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
-
-
-                Spacer(modifier = Modifier.height(46.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 // Botões de Ação
                 Row(
@@ -201,9 +203,11 @@ fun ComandaViewScreen(
                         onClick = {
                             onComandaViewClick("comandaList")
                             Toast.makeText(context, "Comanda enviada", Toast.LENGTH_SHORT).show()
-                        }, colors = ButtonDefaults.buttonColors(
+                        },
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = GI_Verde, contentColor = Color.White
-                        ), modifier = Modifier
+                        ),
+                        modifier = Modifier
                             .weight(1f)
                             .padding(end = 8.dp)
                             .height(45.dp),
@@ -220,9 +224,11 @@ fun ComandaViewScreen(
                         onClick = {
                             onComandaViewClick("comandaList")
                             Toast.makeText(context, "Comanda cancelada", Toast.LENGTH_SHORT).show()
-                        }, colors = ButtonDefaults.buttonColors(
+                        },
+                        colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Red, contentColor = Color.White
-                        ), modifier = Modifier
+                        ),
+                        modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp)
                             .height(45.dp),
@@ -250,8 +256,7 @@ fun ComandaViewScreen(
                     Box(modifier = Modifier
                         .size(24.dp)
                         .background(
-                            if (isSent) Color.Red else Color.Gray,
-                            shape = RoundedCornerShape(12.dp)
+                            if (isSent) Color.Red else Color.Gray, shape = RoundedCornerShape(12.dp)
                         )
                         .clickable {
                             isSent = !isSent // Alterna o estado
@@ -318,9 +323,35 @@ fun ComandaDownBar(
 @Preview(showBackground = true)
 @Composable
 fun ComandaPreview() {
-    ComandaViewScreen(
-        onComandaViewVoltarClick = { },
+    ComandaViewScreen(onComandaViewVoltarClick = { },
         navController = NavController(LocalContext.current),
-        onComandaViewClick = { }
-    )
+        onComandaViewClick = { })
+}
+
+@Composable
+fun ItensComanda(pedidos: List<Pedido>) {
+    LazyColumn(
+        modifier = Modifier
+            .height(300.dp)
+            .fillMaxSize()
+            .padding(top = 16.dp, start= 8.dp, end = 8.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.Top
+    ) {
+        items(pedidos) { pedido ->
+            ItemComanda(pedido = pedido)
+        }
+    }
+}
+
+@Composable
+fun ItemComanda(pedido: Pedido) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "${pedido.quantidade}x ${pedido.nome}")
+        Text(text = "R$${pedido.preco * pedido.quantidade},00")
+    }
 }

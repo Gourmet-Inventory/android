@@ -1,10 +1,13 @@
 package com.example.gourmet_inventory_mobile.model
 
-import kotlinx.serialization.Serializable
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
 
-@Serializable
+@Parcelize
 data class User(
     val email : String,
     val password : String,
     val role : String
-)
+) : Parcelable
+
+data class UserResponse(val users: List<User>)
