@@ -16,6 +16,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -39,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
+import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
@@ -85,7 +90,7 @@ fun CadastroItem2Screen(
         Column(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Row(
                 modifier = Modifier
@@ -154,13 +159,6 @@ fun CadastroItem2Screen(
                             .width(180.dp)
                     )
                 }
-                Row {
-                    InputCadastro2(titulo = "Tipo Medida", placeholder = "", valorCampo = tipoMedida, mudaValor = { novoValor ->
-                        tipoMedida = novoValor })
-
-                    InputCadastro2(titulo = "Valor Medida", placeholder = "", valorCampo = valorMedida, mudaValor = { novoValor ->
-                        valorMedida = novoValor })
-                }
 
                 Row {
                     InputCadastro2(titulo = "Data Cadastro", placeholder = "dd/mm/aaaa", valorCampo = dataCadastro, mudaValor = { novoValor ->
@@ -169,13 +167,38 @@ fun CadastroItem2Screen(
                     InputCadastro2(titulo = "Data Aviso", placeholder = "dd/mm/aaaa", valorCampo = dataAviso, mudaValor = { novoValor ->
                         dataAviso = novoValor })
                 }
+
+                Column {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        InputCadastro2(titulo = "Data Cadastro", placeholder = "dd/mm/aaaa", valorCampo = dataCadastro, mudaValor = { novoValor ->
+                            dataCadastro = novoValor })
+                        Row (
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+
+                            addReceita()
+                        }
+                    }
+                }
+
+                Row {
+                    InputCadastro2(titulo = "Tipo Medida", placeholder = "", valorCampo = tipoMedida, mudaValor = { novoValor ->
+                        tipoMedida = novoValor })
+
+                    InputCadastro2(titulo = "Valor Medida", placeholder = "", valorCampo = valorMedida, mudaValor = { novoValor ->
+                        valorMedida = novoValor })
+                }
             }
 
             Column( 
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 20.dp),
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ImagemPasso2(onCadastroItemAnteriorClick = onCadastroItem2AnteriorClick)
 
@@ -219,6 +242,83 @@ fun Cadastro2ScreenPreview() {
     CadastroItem2Screen()
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectBox() {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOption by remember { mutableStateOf("Selecione") }
+    val options = listOf("Unidade", "Kg", "Litros", "Caixas")
+
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Campo do Select Box
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = selectedOption,
+                onValueChange = { },
+                modifier = Modifier.fillMaxWidth(),
+                label = { Text("Tipo Medida") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                readOnly = true
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                options.forEach { selectionOption ->
+                    DropdownMenuItem(
+                        text = { Text(selectionOption) },
+                        onClick = {
+                            selectedOption = selectionOption
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+
+        // Outro campo de input como no exemplo "Valor Medida"
+        OutlinedTextField(
+            value = "",
+            onValueChange = { },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Valor Medida") }
+        )
+    }
+}
+
+
+@Composable
+fun addReceita(){
+    Button(
+        modifier = Modifier
+            .height(55.dp),
+        onClick = {
+            /*TODO*/
+        },
+        shape = RoundedCornerShape(5.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = GI_Orange,
+            contentColor = colorResource(id = R.color.white)
+        )
+    ) {
+        Text(
+            text = "+",
+            color = White,
+            fontSize = 22.sp
+        )
+    }
+}
 
 @Composable
 fun InputCadastro2(
