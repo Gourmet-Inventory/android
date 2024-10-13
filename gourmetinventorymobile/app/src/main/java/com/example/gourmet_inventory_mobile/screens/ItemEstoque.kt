@@ -97,7 +97,7 @@ fun ItemEstoqueScreen(
                 ) {
                     Text(
                         text = "Molho de Tomate",
-                        fontSize = 30.sp,
+                        fontSize = 32.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(
                             bottom = 40.dp
@@ -105,19 +105,21 @@ fun ItemEstoqueScreen(
                     )
                 }
                 Column() {
-                    InfoItem("Lote:", "Lote 1")
-                    InfoItem("Categoria:", "Molhos", topPadding = 31.dp)
-                    InfoItem("Local Armazenamento:", "Geladeira", topPadding = 34.dp)
-                    InfoItem("Quantidade Unitária:", "3", topPadding = 36.dp)
-                    InfoItem("Tipo Medida:", "GRAMAS", topPadding = 30.dp)
-                    InfoItem("Valor medida:", "500", topPadding = 41.dp)
-                    InfoItem("Data Cadastro:", "20/05/2024", topPadding = 45.dp)
-                    InfoItem("Data Aviso:", "20/05/2024", topPadding = 34.dp)
+                    InfoItem("Lote:", "Lote 1", topPadding = 25.dp)
+                    InfoItem("Categoria:", "Molhos", topPadding = 22.dp)
+                    InfoItem("Marca:", "Quero", topPadding = 22.dp)
+                    InfoItem("Local Armazenamento:", "Geladeira", topPadding = 22.dp)
+                    InfoItem("Quantidade Unitária:", "3", topPadding = 22.dp)
+                    InfoItem("Tipo Medida:", "GRAMAS", topPadding = 22.dp)
+                    InfoItem("Valor medida:", "500", topPadding = 22.dp)
+                    InfoItem("Valor total:", "1500", topPadding = 22.dp)
+                    InfoItem("Data Cadastro:", "20/05/2024", topPadding = 22.dp)
+                    InfoItem("Data Aviso:", "20/05/2024", topPadding = 22.dp)
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 50.dp, start = 15.dp, end = 15.dp),
+                        .padding(top = 80.dp, start = 15.dp, end = 15.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Button(
