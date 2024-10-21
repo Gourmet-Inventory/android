@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.network
+package com.example.gourmet_inventory_mobile.service
 
 import com.example.gourmet_inventory_mobile.model.Empresa
 import retrofit2.Response
@@ -20,10 +20,11 @@ data class LoginResponse(
     val nome : String,
     val email : String,
     val cargo : String,
-    val empresa : Empresa
+    val empresa : Empresa,
+    val celular : String
 )
 
-interface UserService {
+interface UsuarioService {
     @POST("/login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 }
