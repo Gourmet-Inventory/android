@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
@@ -157,7 +157,7 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
                         .width(150.dp)
                         .padding(top = 20.dp),
                     shape = RectangleShape,
-                    colors = ButtonDefaults.buttonColors(GI_Orange),
+                    colors = ButtonDefaults.buttonColors(GI_Laranja),
                 ) {
                     Text(
                         text = "FINALIZAR",

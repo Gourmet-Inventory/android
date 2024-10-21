@@ -2,6 +2,8 @@
 
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +31,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,16 +50,25 @@ import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun ComandaListScreen(
     navController: NavController,
     onComandaClick: (String) -> Unit,
 ) {
+
+    val context = LocalContext.current
+    var currentUser: User? by remember { mutableStateOf(null) }
+    LaunchedEffect(Unit) {
+        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+    }
+
     Scaffold(
         topBar = {
             Row(
@@ -65,12 +76,17 @@ fun ComandaListScreen(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                OutlinedButton (
+                OutlinedButton(
                     onClick = {
-                        onComandaClick("perfil")
-                    },
+                        Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
+
+                        if (currentUser?.role == "Gerente") {
+                            onComandaClick("perfil")
+                        } else {
+                            Toast.makeText(context, "Acesso restrito a Gerentes", Toast.LENGTH_SHORT).show()
+                        }                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Orange,
+                        containerColor = GI_Laranja,
                         contentColor = White
                     ),
                     modifier = Modifier.padding(top = 16.dp, end = 16.dp)
@@ -89,8 +105,8 @@ fun ComandaListScreen(
             var selectedOptionIndex by remember { mutableStateOf(0) }
             var isSent: String by remember { mutableStateOf("not_sent") }
 
-            val userGarcom1 = User("garcomum@gmail.com", "123456", "garçom")
-            val userGarcom2 = User("garcomdois@gmail.com", "123456", "garçom")
+            val userGarcom1 = User("garcomum@gmail.com", "123456", "garçom", "Garçom Um", "11999999999")
+            val userGarcom2 = User("garcomdois@gmail.com", "123456", "garçom", "Garçom Dois", "11999999999")
 
             val comandas = listOf(
                 Comanda("Mesa 1", "João Silva", "Comanda 123", userGarcom1),
@@ -126,7 +142,7 @@ fun ComandaListScreen(
                 )
 
                 // Campo de Pesquisa
-                SearchBox(
+                SearchBoxC(
                     searchText = searchText,
                     mudaValorCampo = { novoValorCampo: String ->
                         searchText = novoValorCampo
@@ -241,7 +257,7 @@ fun ComandaListPreview() {
 }
 
 @Composable
-fun SearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
+fun SearchBoxC(searchText: String, mudaValorCampo: (String) -> Unit) {
     OutlinedTextField(
         value = searchText,
         onValueChange = { novoValorCampo: String ->
@@ -280,5 +296,5 @@ fun SearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
 @Preview
 @Composable
 fun SearchBoxPreview() {
-    SearchBox(searchText = "", mudaValorCampo = {})
+    SearchBoxC(searchText = "", mudaValorCampo = {})
 }

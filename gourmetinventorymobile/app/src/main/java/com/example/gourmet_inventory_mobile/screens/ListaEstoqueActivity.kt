@@ -1,5 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +36,7 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +56,7 @@ import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -60,7 +64,9 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
 @Composable
@@ -69,6 +75,14 @@ fun ListaEstoqueScreen(
     onListaEstoqueClick: (String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    Log.d("ListaEstoqueScreen", "")
+
+    val context = LocalContext.current
+
+    var currentUser: User? by remember { mutableStateOf(null) }
+    LaunchedEffect(Unit) {
+        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+    }
 
     Scaffold(
         topBar = {
@@ -78,8 +92,13 @@ fun ListaEstoqueScreen(
             ) {
                 OutlinedButton(
                     onClick = {
-                        onListaEstoqueClick("perfil")
-                    },
+                        Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
+
+                        if (currentUser?.role == "Gerente") {
+                            onListaEstoqueClick("perfil")
+                        } else {
+                            Toast.makeText(context, "Acesso restrito a Gerentes", Toast.LENGTH_SHORT).show()
+                        }                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Laranja,
                         contentColor = White
@@ -103,156 +122,16 @@ fun ListaEstoqueScreen(
             val empresa = Empresa(idEmpresa = 1L, nomeFantasia = "Empresa A")
 
             val listaEstoqueConsulta = listOf(
-                EstoqueConsulta(
-                    1,
-                    empresa,
-                    true,
-                    "Lote1",
-                    "Item1",
-                    "Categoria1",
-                    Medidas.UNIDADE,
-                    10,
-                    2.5,
-                    25.0,
-                    "Local1",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(10)
-                ),
-                EstoqueConsulta(
-                    2,
-                    empresa,
-                    false,
-                    "Lote2",
-                    "Item2",
-                    "Categoria2",
-                    Medidas.QUILOGRAMA,
-                    5,
-                    3.0,
-                    15.0,
-                    "Local2",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(20)
-                ),
-                EstoqueConsulta(
-                    3,
-                    empresa,
-                    true,
-                    "Lote3",
-                    "Item3",
-                    "Categoria3",
-                    Medidas.LITRO,
-                    8,
-                    1.5,
-                    12.0,
-                    "Local3",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(30)
-                ),
-                EstoqueConsulta(
-                    4,
-                    empresa,
-                    false,
-                    "Lote4",
-                    "Item4",
-                    "Categoria4",
-                    Medidas.UNIDADE,
-                    12,
-                    2.0,
-                    24.0,
-                    "Local4",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(40)
-                ),
-                EstoqueConsulta(
-                    5,
-                    empresa,
-                    true,
-                    "Lote5",
-                    "Item5",
-                    "Categoria5",
-                    Medidas.QUILOGRAMA,
-                    7,
-                    4.0,
-                    28.0,
-                    "Local5",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(50)
-                ),
-                EstoqueConsulta(
-                    6,
-                    empresa,
-                    false,
-                    "Lote6",
-                    "Item6",
-                    "Categoria6",
-                    Medidas.LITRO,
-                    9,
-                    3.5,
-                    31.5,
-                    "Local6",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(60)
-                ),
-                EstoqueConsulta(
-                    7,
-                    empresa,
-                    true,
-                    "Lote7",
-                    "Item7",
-                    "Categoria7",
-                    Medidas.UNIDADE,
-                    11,
-                    1.0,
-                    11.0,
-                    "Local7",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(70)
-                ),
-                EstoqueConsulta(
-                    8,
-                    empresa,
-                    false,
-                    "Lote8",
-                    "Item8",
-                    "Categoria8",
-                    Medidas.QUILOGRAMA,
-                    6,
-                    2.5,
-                    15.0,
-                    "Local8",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(80)
-                ),
-                EstoqueConsulta(
-                    9,
-                    empresa,
-                    true,
-                    "Lote9",
-                    "Item9",
-                    "Categoria9",
-                    Medidas.LITRO,
-                    4,
-                    5.0,
-                    20.0,
-                    "Local9",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(90)
-                ),
-                EstoqueConsulta(
-                    10,
-                    empresa,
-                    false,
-                    "Lote10",
-                    "Item10",
-                    "Categoria10",
-                    Medidas.UNIDADE,
-                    3,
-                    6.0,
-                    18.0,
-                    "Local10",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(100)
-                )
+                EstoqueConsulta(1,empresa,true,"Lote1","Item1","Categoria1",Medidas.UNIDADE,10,2.5,25.0,"Local1",LocalDate.now(),LocalDate.now().plusDays(10)),
+                EstoqueConsulta(2,empresa,false,"Lote2","Item2","Categoria2",Medidas.QUILOGRAMA,5,3.0,15.0,"Local2",LocalDate.now(),LocalDate.now().plusDays(20)),
+                EstoqueConsulta(3,empresa,true,"Lote3","Item3","Categoria3",Medidas.LITRO,8,1.5,12.0,"Local3",LocalDate.now(),LocalDate.now().plusDays(30)),
+                EstoqueConsulta(4,empresa,false,"Lote4","Item4","Categoria4",Medidas.UNIDADE,12,2.0,24.0,"Local4",LocalDate.now(),LocalDate.now().plusDays(40)),
+                EstoqueConsulta(5,empresa,true,"Lote5","Item5","Categoria5",Medidas.QUILOGRAMA,7,4.0,28.0,"Local5",LocalDate.now(),LocalDate.now().plusDays(50)),
+                EstoqueConsulta(6,empresa,false,"Lote6","Item6","Categoria6",Medidas.LITRO,9,3.5,31.5,"Local6",LocalDate.now(),LocalDate.now().plusDays(60)),
+                EstoqueConsulta(7,empresa,true,"Lote7","Item7","Categoria7",Medidas.UNIDADE,11,1.0,11.0,"Local7",LocalDate.now(),LocalDate.now().plusDays(70)),
+                EstoqueConsulta(8,empresa,false,"Lote8","Item8","Categoria8",Medidas.QUILOGRAMA,6,2.5,15.0,"Local8",LocalDate.now(),LocalDate.now().plusDays(80)),
+                EstoqueConsulta(9,empresa,true,"Lote9","Item9","Categoria9",Medidas.LITRO,4,5.0,20.0,"Local9",LocalDate.now(),LocalDate.now().plusDays(90)),
+                EstoqueConsulta(10,empresa,false,"Lote10","Item10","Categoria10",Medidas.UNIDADE,3,6.0,18.0,"Local10",LocalDate.now(),LocalDate.now().plusDays(100))
             )
 
             // Filtra a lista com base no texto da pesquisa
@@ -466,7 +345,7 @@ fun ItemListaEstoque(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .border(2   .dp, GI_AzulMarinho, RoundedCornerShape(8.dp))
+            .border(2.dp, GI_AzulMarinho, RoundedCornerShape(8.dp))
             .background(
                 GI_AzulMarinho.copy(alpha = 0.2f),
                 RoundedCornerShape(8.dp)
@@ -481,7 +360,7 @@ fun ItemListaEstoque(
                 .weight(1f)
                 .background(color = White)
         ) {
-                Row(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
