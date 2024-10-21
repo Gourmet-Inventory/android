@@ -2,19 +2,18 @@
 
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,11 +29,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -48,20 +47,29 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Prato
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
-import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun CardapioListScreen(
     navController: NavController,
     onCardapioClick: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
+    var currentUser: User? by remember { mutableStateOf(null) }
+    LaunchedEffect(Unit) {
+        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+    }
+
     Scaffold (
         topBar = {
             Row(
@@ -69,12 +77,17 @@ fun CardapioListScreen(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                OutlinedButton (
+                OutlinedButton(
                     onClick = {
-                        onCardapioClick("perfil")
-                    },
+                        Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
+
+                        if (currentUser?.role == "Gerente") {
+                            onCardapioClick("perfil")
+                        } else {
+                            Toast.makeText(context, "Acesso restrito a Gerentes", Toast.LENGTH_SHORT).show()
+                        }                    },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Orange,
+                        containerColor = GI_Laranja,
                         contentColor = White
                     ),
                     modifier = Modifier.padding(top = 16.dp, end = 16.dp)
@@ -245,61 +258,5 @@ fun CardapioSearchBox(searchText: String, mudaValorCampo: (String) -> Unit) {
 @Preview
 @Composable
 fun CardapioSearchBoxPreview() {
-    SearchBox(searchText = "", mudaValorCampo = {})
+    SearchBoxC(searchText = "", mudaValorCampo = {})
 }
-
-//@Composable
-//fun CardapioDownBar(
-//    onCardapioClick: (String) -> Unit
-//) {
-//    val context = LocalContext.current
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(color = GI_AzulMarinho)
-//            .heightIn(70.dp),
-////        horizontalArrangement = Arrangement.SpaceEvenly,
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.notes_icon),
-//            contentDescription = "Ação 1",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onCardapioClick("comandaList")
-//                }
-//        )
-////        Spacer(modifier = Modifier.height(60.dp))
-//        Image(
-//            painter = painterResource(id = R.drawable.book_icon),
-//            contentDescription = "Ação 2",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onCardapioClick("cardapio")
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.account_icon),
-//            contentDescription = "Ação 3",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    onCardapioClick("viewPerfil")
-//                }
-//        )
-//    }
-//}
-//
-//@Preview()
-//@Composable
-//fun CardapioDownBarPreview() {
-//    CardapioDownBar(
-//        onCardapioClick = {}
-//    )
-//}

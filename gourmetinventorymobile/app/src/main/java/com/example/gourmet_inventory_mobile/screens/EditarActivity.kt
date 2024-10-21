@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
 //class EditarActivity : ComponentActivity() {
@@ -112,7 +113,8 @@ fun EditarScreen(
                     color = Black,
                     textAlign = TextAlign.Center,
                     style = TextStyle(
-                        fontSize = 35.sp
+                        fontSize = 35.sp,
+                        fontFamily = JostBold
                     )
                 )
             }

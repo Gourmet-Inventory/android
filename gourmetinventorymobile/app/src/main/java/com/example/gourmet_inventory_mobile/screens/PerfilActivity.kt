@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
@@ -59,7 +60,7 @@ fun EscolhaPerfilScreen(onPerfilClick: (String) -> Unit) {
 @Composable
 fun EscolhaPerfilScreenPreview() {
 //    val user = "Teste"
-    EscolhaPerfilScreen() { }
+    EscolhaPerfilScreen({})
 }
 
 @Composable
