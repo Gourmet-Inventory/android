@@ -4,49 +4,61 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
-import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
 
 //class ComandaActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,41 +77,44 @@ fun ComandaViewScreen(
     onComandaViewVoltarClick: () -> Unit
 ) {
     val context = LocalContext.current
-    val pedidos = listOf(
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Esfirra", 1, 19.50),
-        Pedido("Coca-Cola", 2, 40.00),
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Hambúrguer", 2, 128.00),
-        Pedido("Hambúrguer", 2, 128.00)
-    )
+    val pedidos = remember {
+        mutableListOf(
+            Pedido("Hambúrguer", 2, 10.00),
+            Pedido("Esfirra", 1, 19.50),
+            Pedido("Coca-Cola", 2, 20.00),
+            Pedido("Hambúrguer2", 2, 12.00),
+            Pedido("Hambúrguer3", 2, 18.00),
+            Pedido("Hambúrguer4", 2, 10.00),
+            Pedido("Hambúrguer5", 2, 18.00),
+            Pedido("Hambúrguer6", 2, 18.00),
+            Pedido("Hambúrguer7", 2, 12.00),
+            Pedido("Hambúrguer8", 2, 12.00),
+            Pedido("Hambúrguer9", 2, 12.00)
+        )
+    }
 
     val total = pedidos.sumOf { it.preco * it.quantidade }
     var isSent by remember { mutableStateOf(false) } // Estado do status
 
-    Scaffold(topBar = {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(
-                onClick = { onComandaViewVoltarClick() }, modifier = Modifier.size(50.dp)
+    Scaffold(
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Default.KeyboardArrowLeft,
-                    contentDescription = "Voltar",
-                )
+                IconButton(
+                    onClick = { onComandaViewVoltarClick() }, modifier = Modifier.size(50.dp)
+                ) {
+                    Icon(
+                        modifier = Modifier.fillMaxSize(),
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "Voltar",
+                    )
+                }
             }
-        }
-    }) { padding ->
+        }) { padding ->
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -131,8 +146,8 @@ fun ComandaViewScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp)
-                        .height(470.dp)
+                        .padding(16.dp)
+                        .height(500.dp)
                         .background(GI_BrancoFundo, RoundedCornerShape(8.dp))
                 ) {
                     Column(
@@ -141,21 +156,20 @@ fun ComandaViewScreen(
                             .padding(16.dp),
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 5.dp),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Button(colors = ButtonDefaults.buttonColors(
-                                containerColor = GI_AzulMarinho, contentColor = Color.White
-                            ), onClick = { }) {
+                            Button(
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = GI_AzulMarinho, contentColor = Color.White
+                                ),
+                                onClick = {}
+                            ) {
                                 Text(text = "Adicionar pedido")
                             }
-                            Icon(imageVector = Icons.Default.Delete,
-                                contentDescription = "Deletar",
-                                tint = Color.Red,
-                                modifier = Modifier
-                                    .size(35.dp)
-                                    .clickable {})
                         }
 
                         Divider(
@@ -164,7 +178,7 @@ fun ComandaViewScreen(
                             modifier = Modifier.padding(vertical = 8.dp)
                         )
 
-                        ItensComanda(pedidos)
+                        ItensComanda(pedidos, onComandaViewClick = onComandaViewClick)
 
                         Divider(
                             color = Black,
@@ -256,7 +270,8 @@ fun ComandaViewScreen(
                     Box(modifier = Modifier
                         .size(24.dp)
                         .background(
-                            if (isSent) Color.Red else Color.Gray, shape = RoundedCornerShape(12.dp)
+                            if (isSent) Color.Red else Color.Gray,
+                            shape = RoundedCornerShape(12.dp)
                         )
                         .clickable {
                             isSent = !isSent // Alterna o estado
@@ -329,29 +344,74 @@ fun ComandaPreview() {
 }
 
 @Composable
-fun ItensComanda(pedidos: List<Pedido>) {
-    LazyColumn(
+fun ItensComanda(pedidos: List<Pedido>, onComandaViewClick: (String) -> Unit) {
+    Box(
         modifier = Modifier
-            .height(300.dp)
-            .fillMaxSize()
-            .padding(top = 16.dp, start= 8.dp, end = 8.dp, bottom = 16.dp),
-        verticalArrangement = Arrangement.Top
+            .height(350.dp)
+            .fillMaxWidth()
     ) {
-        items(pedidos) { pedido ->
-            ItemComanda(pedido = pedido)
+        val listScrollState = rememberLazyListState()
+        LazyColumn(
+            state = listScrollState,
+            modifier = Modifier
+                .height(345.dp)
+                .width(325.dp)
+                .fillMaxSize()
+                .padding(top = 3.dp, start = 8.dp, end = 8.dp, bottom = 3.dp),
+//                .verticalScroll(rememberScrollState(), true),
+            verticalArrangement = Arrangement.Top
+        ) {
+            items(pedidos) { pedido ->
+                ItemComanda(
+                    pedido = pedido,
+                    onComandaViewClick = onComandaViewClick,
+                    pedidios = pedidos
+                )
+            }
         }
     }
 }
 
 @Composable
-fun ItemComanda(pedido: Pedido) {
+fun ItemComanda(pedido: Pedido, onComandaViewClick: (String) -> Unit, pedidios: List<Pedido>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(vertical = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "${pedido.quantidade}x ${pedido.nome}")
-        Text(text = "R$${pedido.preco * pedido.quantidade},00")
+        Text(
+            text = "${pedido.quantidade}x ${pedido.nome}",
+            modifier = Modifier
+                .semantics { }
+                .clickable {
+                    onComandaViewClick("cardapioItem")
+                },
+            textDecoration = TextDecoration.Underline
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "R$${pedido.preco * pedido.quantidade},00")
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Deletar",
+                tint = Black,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .size(30.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable {
+                        removerItemComanda(pedido, pedidios)
+                    }
+            )
+        }
     }
+}
+
+fun removerItemComanda(pedido: Pedido, pedidos: List<Pedido>): List<Pedido> {
+    val pedidosAtualizados = pedidos.toMutableList()
+    pedidosAtualizados.remove(pedido)
+    return pedidosAtualizados
 }

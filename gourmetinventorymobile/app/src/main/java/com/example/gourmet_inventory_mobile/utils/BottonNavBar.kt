@@ -92,7 +92,9 @@ fun BottomBarGarcom(navController: NavController, onClick: (String) -> Unit) {
                 label = { Text(text = item.title, color = Color.White) },
                 selected = isSelected,
                 onClick = {
-                    onClick(item.route)
+                    if (currentRoute != item.route) {
+                        onClick(item.route)
+                    }
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = if (isSelected) White else Color.Transparent
@@ -134,7 +136,9 @@ fun BottomBarGerente(navController: NavController, onClick: (String) -> Unit) {
                 label = { Text(text = item.title, color = Color.White) },
                 selected = isSelected,
                 onClick = {
-                    onClick(item.route)
+                    if (currentRoute != item.route) {
+                        onClick(item.route)
+                    }
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = if (isSelected) White else Color.Transparent

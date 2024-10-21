@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,6 +19,17 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        val localProperties = project.rootProject.file("local.properties")
+        val properties = Properties().apply {
+            load(FileInputStream(localProperties))
+        }
+
+        buildConfigField(
+            type = "String",
+            name = "API_BASE_URL",
+            value = properties.getProperty("API_BASE_URL")
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -42,6 +56,8 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
+
     }
 }
 
@@ -64,9 +80,13 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     //Image loading
     implementation(libs.coil.compose)
-    //
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
-
+    //Logging interceptor
+    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2")
+    //Datastore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    //Koin
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("io.insert-koin:koin-compose-viewmodel:4.0.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -78,6 +98,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.room.ktx)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

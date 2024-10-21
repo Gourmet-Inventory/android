@@ -1,18 +1,23 @@
 package com.example.gourmet_inventory_mobile
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
@@ -31,11 +36,23 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
 
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        lateinit var appContext: Context
+            private set
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startKoin(){
+            androidContext(this@MainActivity)
+            modules(appModule)
+        }
+        appContext = applicationContext
         setContent {
             GourmetinventorymobileTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
@@ -44,39 +61,28 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(navController = navController, startDestination = "login") {
 
-//                        composable("perfil/{user}") { entry ->
-//                            entry.arguments?.getString("user")?.let { user ->
-//                                EscolhaPerfilScreen(user, onPerfilClick = { perfil ->
-//                                    val destination = if (perfil == "Garçom") {
-//                                        "cardapio"
-//                                    } else {
-//                                        "listaEstoque"
-//                                    }
-//                                    navController.navigate(destination)
-//                                    destination
-//                                })
-//                            } ?: LaunchedEffect(null) {
-//                                navController.navigate("login")
-//                            }
-//                        }
-
                         composable("perfil") {
-                            EscolhaPerfilScreen(
-                                onPerfilClick = { perfil ->
-                                    val destination = if (perfil == "Garçom") {
-                                        "cardapio"
-                                    } else {
-                                        "listaEstoque"
-                                    }
-                                    navController.navigate(destination)
-                                    destination
+                            EscolhaPerfilScreen(onPerfilClick = { perfil ->
+                                val destination = if (perfil == "Garçom") {
+                                    "cardapio"
+                                } else {
+                                    "listaEstoque"
                                 }
-                            )
+                                navController.navigate(destination)
+                                destination
+                            })
                         }
 
                         composable("login") {
                             LoginScreen(onLoginClick = { user ->
-                                navController.navigate("perfil")
+//                                navController.currentBackStackEntry?.savedStateHandle?.set(
+//                                    "user", user
+//                                )
+                                if (user.role == "Garçom") {
+                                    navController.navigate("cardapio")
+                                } else {
+                                    navController.navigate("perfil")
+                                }
                             })
                         }
 
@@ -98,13 +104,18 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("viewPerfil") {
-                            ViewPerfilScreen(
-                                onViewPerfilSair = {
-                                    clickedAction = "Sair"
-                                    navController.navigate("login")
-                                }
-                            )
+                        composable("viewPerfil/{user}") { entry ->
+                            entry.arguments?.getString("user")?.let { user ->
+                                ViewPerfilScreen(
+                                    user = user,
+                                    navController = navController,
+                                    onViewPerfil = { route ->
+                                        navController.navigate(route)
+                                    }
+                                )
+                            } ?: LaunchedEffect(null) {
+                                navController.navigate("login")
+                            }
                         }
 
                         composable("listaFornecedor") {
@@ -116,7 +127,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("fornecedorView"){
+                        composable("fornecedorView") {
                             VizuFornScreen(
                                 onVizuFornVoltarClick = {
                                     clickedAction = "Voltar"
@@ -129,6 +140,7 @@ class MainActivity : ComponentActivity() {
                             ListaEstoqueScreen(
                                 navController = navController,
                                 onListaEstoqueClick = { route ->
+                                    Log.d("MainActivity", "route: $route")
                                     navController.navigate(route)
                                 }
                             )

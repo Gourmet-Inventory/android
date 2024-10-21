@@ -75,7 +75,7 @@ fun CadastroItemManipulavelScreen(
 
     Surface(modifier = Modifier
         .fillMaxSize()
-        .background(color = Color.White)) {
+        .background(color = White)) {
 
 
         LazyColumn {
@@ -83,12 +83,12 @@ fun CadastroItemManipulavelScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize() ,
-                    horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 40.dp, start = 10.dp),
+                            .padding(top = 10.dp, start = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = {
