@@ -3,6 +3,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
 import android.graphics.Color.WHITE
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,28 +46,32 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.viewmodel.LoginState
 import com.example.gourmet_inventory_mobile.viewmodel.LoginViewModel
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
-    onLoginClick: (String) -> Unit
+//    viewModel: LoginViewModel = viewModel(),
+    onLoginClick: (User) -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
+//        val loginState by viewModel.loginState.collectAsState()
+        val viewModel = koinViewModel<LoginViewModel>()
         val loginState by viewModel.loginState.collectAsState()
+
         var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var emailError by remember { mutableStateOf<String?>(null) }
         var passwordError by remember { mutableStateOf<String?>(null) }
+        var user: User? by remember { mutableStateOf(null) }
 
         Column(
             modifier = Modifier
@@ -177,8 +183,10 @@ fun LoginScreen(
                 onClick = {
                     val emailValidation = validateEmail(email)
                     val passwordValidation = validatePassword(password)
+
                     if (emailValidation == null && passwordValidation == null) {
-                        viewModel.login(email, password)
+                        Log.d("LoginScreen", "Email: $email, Password: $password")
+                        viewModel.login(context, email, password)
                     } else {
                         emailError = emailValidation
                         passwordError = passwordValidation
@@ -190,9 +198,9 @@ fun LoginScreen(
                     .padding(start = 85.dp, end = 85.dp),
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = GI_Orange,
+                    containerColor = GI_Laranja,
                     contentColor = colorResource(id = R.color.white)
-                )
+                ),
             ) {
                 Text(
                     text = "Entrar",
@@ -204,20 +212,19 @@ fun LoginScreen(
                 is LoginState.Loading -> {
                     CircularProgressIndicator()
                 }
-
                 is LoginState.Success -> {
-                    onLoginClick((loginState as LoginState.Success).token)
-                    Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT)
-                        .show()
+                    LaunchedEffect(Unit) {
+                        val user = (loginState as LoginState.Success).user
+                        Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
+                        onLoginClick(user)
+                    }
                 }
 
                 is LoginState.Error -> {
-                    Text(
-                        "Erro: ${(loginState as LoginState.Error).message}",
-                        color = MaterialTheme.colorScheme.error
-                    )
-                    Toast.makeText(context, "Erro ao fazer login", Toast.LENGTH_SHORT)
-                        .show()
+                    LaunchedEffect(Unit) {
+                        Log.e("LoginScreen", "ERRO: " + (loginState as LoginState.Error).message)
+                        Toast.makeText(context, "Erro ao fazer login", Toast.LENGTH_SHORT).show()
+                    }
                 }
 
                 else -> {
@@ -226,6 +233,7 @@ fun LoginScreen(
             }
         }
     }
+
 }
 
 @Preview(showBackground = true)
