@@ -41,10 +41,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Orange
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
 //class Cadastro2Activity : ComponentActivity() {
@@ -62,8 +62,8 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 
 @Composable
 fun CadastroItem2Screen(
-    onCadastroItem2AnteriorClick: () -> Unit = {},
-    onCadastroItemCadastrarClick: () -> Unit = {}
+    onCadastroItem2AnteriorClick: () -> Unit,
+    onCadastroItemCadastrarClick: () -> Unit
 ) {
     var qtdUnitaria by remember {
         mutableStateOf("")
@@ -85,7 +85,6 @@ fun CadastroItem2Screen(
     Surface(modifier = Modifier
         .fillMaxSize()
         .background(color = Color.White)) {
-
 
         Column(
             modifier = Modifier
@@ -124,7 +123,8 @@ fun CadastroItem2Screen(
                     color = Black,
                     textAlign = TextAlign.Center,
                     style = TextStyle(
-                        fontSize = 35.sp
+                        fontSize = 35.sp,
+                        fontFamily = JostBold
                     )
                 )
             }
@@ -213,8 +213,7 @@ fun CadastroItem2Screen(
                         .width(155.dp),
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Orange,
-                        contentColor = colorResource(id = R.color.white)
+                        containerColor = GI_Laranja
                     )
                 ) {
                     Text(
@@ -239,7 +238,10 @@ fun CadastroItem2Screen(
 @Preview
 @Composable
 fun Cadastro2ScreenPreview() {
-    CadastroItem2Screen()
+    CadastroItem2Screen(
+        onCadastroItem2AnteriorClick = {},
+        onCadastroItemCadastrarClick = {}
+    )
 }
 
 
@@ -308,8 +310,8 @@ fun addReceita(){
         },
         shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = GI_Orange,
-            contentColor = colorResource(id = R.color.white)
+            containerColor = GI_Laranja,
+            contentColor = White
         )
     ) {
         Text(
