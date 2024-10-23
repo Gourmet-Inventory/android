@@ -1,5 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +35,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.Fornecedor
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -41,7 +46,10 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import kotlinx.coroutines.flow.first
 
 //class ListaFornecedoresActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +68,14 @@ fun ListaFornecedoresScreen(
     navController: NavController,
     onListaFornecedoresClick: (String) -> Unit,
 ) {
+
+    val context = LocalContext.current
+
+    var currentUser: User? by remember { mutableStateOf(null) }
+    LaunchedEffect(Unit) {
+        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+    }
+
     Scaffold(
         topBar = {
             Row(
@@ -69,8 +85,13 @@ fun ListaFornecedoresScreen(
             ) {
                 OutlinedButton(
                     onClick = {
-                        onListaFornecedoresClick("perfil")
-                    },
+                        Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
+
+                        if (currentUser?.role == context.resources.getString(R.string.gerente)) {
+                            onListaFornecedoresClick("perfil")
+                        } else {
+                            Toast.makeText(context, "Acesso restrito a Gerentes", Toast.LENGTH_SHORT).show()
+                        }                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Laranja,
                         contentColor = White
@@ -134,8 +155,8 @@ fun ListaFornecedoresScreen(
                         mudaValorCampo = { novoTexto -> texto = novoTexto },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(85.dp)
-                            .padding(bottom = 30.dp)
+                            .height(80.dp)
+                            .padding(bottom = 25.dp)
                             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
                     )
 
@@ -168,24 +189,29 @@ fun ItensListaFornecedor(
             .fillMaxSize()
             .padding(bottom = 75.dp)
     ) {
-        val listScrollState = rememberLazyListState()
-        LazyColumn(
+        DrawScrollableView(
+            modifier = Modifier,
+            content = {
+                Column(
 //        state = listScrollState,
-            modifier = Modifier
+                    modifier = Modifier
 //                .height(345.dp)
 //                .width(325.dp)
-                .fillMaxSize()
-                .padding(top = 3.dp, bottom = 3.dp),
+                        .fillMaxSize()
+                        .padding(top = 3.dp, bottom = 3.dp, end = 10.dp),
 //            .verticalScroll(rememberScrollState(), true),
-            verticalArrangement = Arrangement.Top
-        ) {
-            items(fornecedores) { fornecedor ->
-                ItemListaFornecedor(
-                    fornecedorItem = fornecedor,
-                    onListaFornecedoresClick = onListaFornecedoresClick,
-                )
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    fornecedores.forEach() { fornecedor ->
+                        ItemListaFornecedor(
+                            fornecedorItem = fornecedor,
+                            onListaFornecedoresClick = onListaFornecedoresClick,
+                        )
+                    }
+                }
+
             }
-        }
+        )
     }
 }
 
