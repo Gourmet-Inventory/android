@@ -167,7 +167,7 @@ fun CardapioListScreen(
                         searchText = searchText,
                         mudaValorCampo = { novoTexto -> searchText = novoTexto },
                         modifier = Modifier
-                            .width(340.dp)
+                            .width(360.dp)
                             .height(80.dp)
                             .padding(bottom = 25.dp)
                             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),

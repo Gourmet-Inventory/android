@@ -148,7 +148,7 @@ fun ComandaListScreen(
                 Text(
                     text = "Comanda: ",
                     modifier = Modifier
-                        .padding(start = 26.dp, top = 35.dp, bottom = 16.dp),
+                        .padding(start = 26.dp, top = 35.dp),
                     style = TextStyle(
                         fontSize = 30.sp,
                         color = Black
@@ -159,16 +159,16 @@ fun ComandaListScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 26.dp, end = 26.dp),
+                        .padding(start = 26.dp, end = 26.dp, top = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     SearchBox(
                         searchText = searchText,
                         mudaValorCampo = { novoTexto -> searchText = novoTexto },
                         modifier = Modifier
-                            .width(340.dp)
-                            .height(75.dp)
-                            .padding(bottom = 15.dp)
+                            .width(360.dp)
+                            .height(80.dp)
+                            .padding(bottom = 25.dp)
                             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp))
                     )
                 }
