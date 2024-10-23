@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -24,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -112,7 +115,7 @@ fun CadastroItem2Screen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(105.dp),
+                    .height(50.dp),
 //                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -136,7 +139,7 @@ fun CadastroItem2Screen(
                 Row (
                     modifier = Modifier
                         .width(350.dp)
-                        .height(120.dp),
+                        .height(100.dp),
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically){
 
@@ -156,7 +159,8 @@ fun CadastroItem2Screen(
                                 width = 1.dp,
                                 color = Color.Black
                             )
-                            .width(180.dp)
+                            .width(180.dp),
+                        singleLine = true,
                     )
                 }
 
@@ -168,7 +172,7 @@ fun CadastroItem2Screen(
                         dataAviso = novoValor })
                 }
 
-                Column {
+                Column (modifier = Modifier, verticalArrangement = Arrangement.spacedBy(50.dp)) {
                     Row (
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
@@ -176,11 +180,13 @@ fun CadastroItem2Screen(
                         InputCadastro2(titulo = "Data Cadastro", placeholder = "dd/mm/aaaa", valorCampo = dataCadastro, mudaValor = { novoValor ->
                             dataCadastro = novoValor })
                         Row (
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
+//                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .padding(top = 30.dp)
                         ) {
 
-                            addReceita()
+                            AddrReceita(onAddClick = {})
                         }
                     }
                 }
@@ -304,7 +310,7 @@ fun SelectBox() {
 fun addReceita(){
     Button(
         modifier = Modifier
-            .height(55.dp),
+            .height(55.dp).padding(top = 10.dp),
         onClick = {
             /*TODO*/
         },
@@ -323,6 +329,19 @@ fun addReceita(){
 }
 
 @Composable
+fun AddrReceita(onAddClick: () -> Unit) {
+    SmallFloatingActionButton(
+        onClick = onAddClick,
+        containerColor = GI_Laranja,
+        contentColor = White,
+        modifier = Modifier.width(70.dp).height(60.dp),
+        shape = RoundedCornerShape(10.dp),
+    ) {
+        Icon(Icons.Filled.Add, "")
+    }
+}
+
+@Composable
 fun InputCadastro2(
     titulo: String,
     placeholder: String,
@@ -335,13 +354,12 @@ fun InputCadastro2(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .width(180.dp)
-            .height(160.dp)
+            .height(140.dp)
 
     ){
         Column(
             modifier = Modifier
-                .size(width = 350.dp, height = 100.dp),
-            
+                .size(width = 350.dp, height = 100.dp)
         ){
             Text(
                 modifier = Modifier
@@ -371,7 +389,8 @@ fun InputCadastro2(
                         text = placeholder,
                         fontSize = 18.sp,
                     )
-                }
+                },
+                singleLine = true
 
             )
         }
