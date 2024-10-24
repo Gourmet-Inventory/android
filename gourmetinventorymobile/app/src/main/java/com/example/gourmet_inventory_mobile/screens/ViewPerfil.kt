@@ -55,26 +55,30 @@ import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
 
 @Composable
 fun ViewPerfilScreen(
-    user: String,
     navController: NavController,
     onViewPerfil: (String) -> Unit
 ) {
+    val resources = LocalContext.current.resources
+
     var nome by remember {
         mutableStateOf("João Silva")
     }
     var cargo by remember {
-        mutableStateOf("Garçom")
+        mutableStateOf(resources.getString(R.string.gerente))
     }
     var celular by remember {
         mutableStateOf("11989898989")
     }
     var email by remember {
-        mutableStateOf("joão silva@gmail.com")
+        mutableStateOf("joaosilva@gmail.com")
+    }
+    val photo by remember {
+        mutableStateOf(if (cargo == resources.getString(R.string.garcom)) R.drawable.garcom else R.drawable.manager)
     }
 
     Scaffold(
         bottomBar = {
-            if (cargo == "Garçom") {
+            if (cargo == resources.getString(R.string.garcom)) {
                 BottomBarGarcom(
                     onClick = onViewPerfil,
                     navController = navController
@@ -101,23 +105,18 @@ fun ViewPerfilScreen(
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
             ) {
                 Row(
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
-//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
+                        .width(320.dp)
+                        .height(150.dp)
+                        .padding(bottom = 15.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.garcom),
+                        painter = painterResource(id = photo),
                         contentDescription = "Foto do perfil",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .height(100.dp)
-                    )
-                    Text(
-                        text = nome,
-                        fontSize = 20.sp
+                            .height(120.dp)
                     )
                 }
 
@@ -164,14 +163,6 @@ fun ViewPerfilScreen(
 
 
             }
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 100.dp),
-                contentAlignment = androidx.compose.ui.Alignment.BottomCenter
-            ) {
-//            DownBarDeleteScreen()
-            }
         }
     }
 }
@@ -180,7 +171,6 @@ fun ViewPerfilScreen(
 @Composable
 fun ViewPerfilPreview() {
     ViewPerfilScreen(
-        user = "Garçom",
         navController = NavController(LocalContext.current),
         onViewPerfil = {}
     )
@@ -198,7 +188,7 @@ fun InfoPerfil(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .width(320.dp)
-            .height(100.dp)
+            .height(80.dp)
     ) {
         Text(
             modifier = Modifier

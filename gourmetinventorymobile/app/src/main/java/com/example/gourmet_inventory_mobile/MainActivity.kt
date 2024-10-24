@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startKoin(){
+        startKoin() {
             androidContext(this@MainActivity)
             modules(appModule)
         }
@@ -63,13 +63,12 @@ class MainActivity : ComponentActivity() {
 
                         composable("perfil") {
                             EscolhaPerfilScreen(onPerfilClick = { perfil ->
-                                val destination = if (perfil == "Garçom") {
+                                val destination = if (perfil == resources.getString(R.string.garcom)) {
                                     "cardapio"
                                 } else {
                                     "listaEstoque"
                                 }
                                 navController.navigate(destination)
-                                destination
                             })
                         }
 
@@ -78,7 +77,7 @@ class MainActivity : ComponentActivity() {
 //                                navController.currentBackStackEntry?.savedStateHandle?.set(
 //                                    "user", user
 //                                )
-                                if (user.role == "Garçom") {
+                                if (user.role == resources.getString(R.string.garcom)) {
                                     navController.navigate("cardapio")
                                 } else {
                                     navController.navigate("perfil")
@@ -104,18 +103,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("viewPerfil/{user}") { entry ->
-                            entry.arguments?.getString("user")?.let { user ->
-                                ViewPerfilScreen(
-                                    user = user,
-                                    navController = navController,
-                                    onViewPerfil = { route ->
-                                        navController.navigate(route)
-                                    }
-                                )
-                            } ?: LaunchedEffect(null) {
-                                navController.navigate("login")
-                            }
+                        composable("viewPerfil") {
+                            ViewPerfilScreen(
+                                navController = navController,
+                                onViewPerfil = { route ->
+                                    navController.navigate(route)
+                                }
+                            )
                         }
 
                         composable("listaFornecedor") {
