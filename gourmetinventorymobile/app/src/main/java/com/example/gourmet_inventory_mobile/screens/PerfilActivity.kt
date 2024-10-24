@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
@@ -66,6 +65,7 @@ fun EscolhaPerfilScreenPreview() {
 @Composable
 fun ProfileImages(onPerfilClick: (String) -> Unit) {
     val context = LocalContext.current
+    val resours = context.resources
     Column(
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -80,7 +80,7 @@ fun ProfileImages(onPerfilClick: (String) -> Unit) {
             modifier = Modifier
                 .height(160.dp)
                 .clickable {
-                    onPerfilClick("Garçom")
+                    onPerfilClick(resours.getString(R.string.garcom))
                     Toast
                         .makeText(context, "Logado como Garçom", Toast.LENGTH_SHORT)
                         .show()
@@ -95,13 +95,13 @@ fun ProfileImages(onPerfilClick: (String) -> Unit) {
         )
         Spacer(modifier = Modifier.height(60.dp))
         Image(
-            painter = painterResource(id = R.drawable.gerente),
+            painter = painterResource(id = R.drawable.manager),
             contentDescription = "LogoGerente",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .height(160.dp)
                 .clickable {
-                    onPerfilClick("Gerente")
+                    onPerfilClick(resours.getString(R.string.gerente))
                     Toast
                         .makeText(context, "Logado como Gerente", Toast.LENGTH_SHORT)
                         .show()

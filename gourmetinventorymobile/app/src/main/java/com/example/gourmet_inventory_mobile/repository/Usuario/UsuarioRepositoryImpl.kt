@@ -7,8 +7,8 @@ import retrofit2.Response
 
 class UsuarioRepositoryImpl (private val serviceUsuario: UsuarioService) : UsuarioRepository {
 
-    override suspend fun login(email: String, password: String): Response<LoginResponse> {
-        return serviceUsuario.login(request =  LoginRequest(email, password))
+    override suspend fun login(email: String, senha: String): Response<LoginResponse> {
+        return serviceUsuario.login(request =  LoginRequest(email, senha))
     }
 
 }

@@ -23,22 +23,27 @@ class LoginViewModel (private val usuarioRepository: UsuarioRepository): ViewMod
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
 
-    fun login(context: Context, email: String, password: String) {
+    fun login(context: Context, email: String, senha: String) {
+        Log.d("LoginViewModel", "Email: $email, Password: $senha")
+
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
 
             try {
                 //fazendo a chamada para o login
 //                val response = serviceUsuario.login(LoginRequest(email, password))
-                val response = usuarioRepository.login(email, password)
+                val response = usuarioRepository.login(email, senha)
                 Log.d("LoginViewModel", "Response: $response")
+                Log.d("LoginViewModel", "Response Body: ${response.body().toString()}")
+                Log.d("LoginViewModel", "Response Erro Body: ${response.errorBody().toString()}")
 
                 if (response.isSuccessful && response.body() != null) {
+                    Log.d("LoginViewModel", "Login realizado com sucesso e corpo da resposta não é nulo")
                     val loginResponse = response.body()!!
 
                     val user = User(
                         email = loginResponse.email,
-                        password = password,
+                        password = senha,
                         role = loginResponse.cargo,
                         name = loginResponse.nome,
                         phone = loginResponse.celular
@@ -52,6 +57,7 @@ class LoginViewModel (private val usuarioRepository: UsuarioRepository): ViewMod
                     _loginState.value = LoginState.Success(user)
 
                 } else {
+                    Log.d("LoginViewModel", "Erro ao fazer login")
                     _loginState.value = LoginState.Error("Erro ao fazer login")
                 }
 
