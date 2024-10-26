@@ -1,8 +1,11 @@
 package com.example.gourmet_inventory_mobile
 
 import android.content.Context
+import androidx.core.os.BuildCompat
+import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.google.gson.internal.GsonBuildConfig
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -53,6 +56,7 @@ object RetrofitInstance {
     //Criação do client para fazer a requisição
     private val client by lazy {
         OkHttpClient.Builder()
+            .cache(null)
             .addInterceptor(ApiInterceptor(context = MainActivity.appContext))
             .addInterceptor(logginInterceptor())
             .build()
@@ -61,4 +65,10 @@ object RetrofitInstance {
     val serviceUsuario by lazy {
         api.create(UsuarioService::class.java)
     }
+
+    val serviceFornecedor by lazy {
+        api.create(FornecedorService::class.java)
+    }
+    //nova service aqui
+
 }

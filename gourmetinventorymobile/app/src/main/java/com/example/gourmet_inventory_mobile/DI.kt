@@ -1,8 +1,13 @@
 package com.example.gourmet_inventory_mobile
 
+import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepository
+import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepositoryLocalImpl
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepository
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepositoryLocalImpl
+import com.example.gourmet_inventory_mobile.service.FornecedorService
+import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.LoginViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -19,5 +24,20 @@ val appModule = module {
 
     viewModel<LoginViewModel> {
         LoginViewModel(get())
+    }
+
+//    Fornecedor
+
+    single<FornecedorService> {
+        RetrofitInstance.serviceFornecedor
+    }
+
+    single<FornecedorRepository> {
+        FornecedorRepositoryImpl(get())
+//        FornecedorRepositoryLocalImpl()
+    }
+
+    viewModel<FornViewModel> {
+        FornViewModel(get())
     }
 }
