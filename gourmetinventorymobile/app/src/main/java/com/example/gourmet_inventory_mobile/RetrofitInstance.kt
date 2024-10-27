@@ -1,7 +1,8 @@
 package com.example.gourmet_inventory_mobile
 
 import android.content.Context
-import android.util.Log
+import androidx.core.os.BuildCompat
+import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import kotlinx.coroutines.flow.first
@@ -75,4 +76,10 @@ object RetrofitInstance {
         Log.d("serviceUsuario", "Iniciando serviceUsuario")
         api.create(UsuarioService::class.java)
     }
+
+    val serviceFornecedor by lazy {
+        api.create(FornecedorService::class.java)
+    }
+    //nova service aqui
+
 }
