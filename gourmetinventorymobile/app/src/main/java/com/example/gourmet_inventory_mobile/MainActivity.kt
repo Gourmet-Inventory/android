@@ -7,17 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
@@ -77,7 +74,7 @@ class MainActivity : ComponentActivity() {
 //                                navController.currentBackStackEntry?.savedStateHandle?.set(
 //                                    "user", user
 //                                )
-                                if (user.role == resources.getString(R.string.garcom)) {
+                                if (user.cargo == resources.getString(R.string.garcom)) {
                                     navController.navigate("cardapio")
                                 } else {
                                     navController.navigate("perfil")

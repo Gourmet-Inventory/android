@@ -1,5 +1,8 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
+import android.widget.TextView
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,11 +19,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.model.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Fornecedor
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -41,7 +48,13 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import com.example.gourmet_inventory_mobile.utils.LoadingList
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import kotlinx.coroutines.flow.first
+import org.koin.compose.viewmodel.koinViewModel
 
 //class ListaFornecedoresActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,11 +92,16 @@ fun ListaFornecedoresScreen(
                     onClick = {
                         Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
 
-                        if (currentUser?.role == context.resources.getString(R.string.gerente)) {
+                        if (currentUser?.cargo == context.resources.getString(R.string.gerente)) {
                             onListaFornecedoresClick("perfil")
                         } else {
-                            Toast.makeText(context, "Acesso restrito a Gerentes", Toast.LENGTH_SHORT).show()
-                        }                    },
+                            Toast.makeText(
+                                context,
+                                "Acesso restrito a Gerentes",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Laranja,
                         contentColor = White
@@ -138,17 +156,31 @@ fun ListaFornecedoresScreen(
                     )
 
                     // Exibe a lista de fornecedores filtrados
-                    val fornecedoresFiltrados = listaFornecedores.filter {
-                        fornecedor -> fornecedor.nomeFornecedor.contains(texto, ignoreCase = true)
+                    val fornecedoresFiltrados = listaFornecedores.filter { fornecedor ->
+                        fornecedor.nomeFornecedor.contains(texto, ignoreCase = true)
                     }
 
-                    if (isLoading){
-                        CircularProgressIndicator()
-                    } else{
-                        ItensListaFornecedor(
-                            fornecedores = fornecedoresFiltrados,
-                            onListaFornecedoresClick = onListaFornecedoresClick
-                        )
+                    if (isLoading) {
+//                        CircularProgressIndicator()
+                        LoadingList()
+                    } else {
+                        if (fornecedoresFiltrados.isEmpty()) {
+                            Row (
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center
+                            ){
+                                Text(
+                                    text = "Nenhum fornecedor encontrado",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.padding(top = 20.dp)
+                                )
+                            }
+                        } else {
+                            ItensListaFornecedor(
+                                fornecedores = fornecedoresFiltrados,
+                                onListaFornecedoresClick = onListaFornecedoresClick
+                            )
+                        }
                     }
                 }
             }
@@ -164,6 +196,7 @@ fun ListaFornecedoresPreview() {
         onListaFornecedoresClick = {},
     )
 }
+
 @Composable
 fun ItensListaFornecedor(
     fornecedores: List<Fornecedor>,
@@ -265,3 +298,4 @@ fun ItemListaFornecedor(
         }
     }
 }
+

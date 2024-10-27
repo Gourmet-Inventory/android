@@ -2,7 +2,7 @@ package com.example.gourmet_inventory_mobile.model
 
 import java.time.LocalDate
 
-data class EstoqueCriação (
+data class EstoqueCriacao (
     val lote : String,
     val manipulado: Boolean,
     val nome: String,

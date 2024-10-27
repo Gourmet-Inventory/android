@@ -1,7 +1,7 @@
 package com.example.gourmet_inventory_mobile
 
 import android.content.Context
-import androidx.core.os.BuildCompat
+import android.util.Log
 import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
@@ -54,7 +54,7 @@ object RetrofitInstance {
                 newRequestBuilder.header("Authorization", "")
                 Log.d("ApiInterceptor", "newRequestBuilder: $newRequestBuilder")
             } else{
-                newRequestBuilder.header("Authorization", "Barer $token")
+                newRequestBuilder.header("Authorization", "Bearer $token")
             }
             val newRequest = newRequestBuilder.build()
 

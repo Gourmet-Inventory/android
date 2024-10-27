@@ -15,7 +15,7 @@ sealed class LoginState {
     object Idle : LoginState()
     object Loading : LoginState()
     data class Success(val user: User) : LoginState()
-    data class Error(val message: String) : LoginState()
+    data class Error(val message: String) : LoginState()        
 }
 
 class LoginViewModel (private val usuarioRepository: UsuarioRepository): ViewModel() {
@@ -43,10 +43,10 @@ class LoginViewModel (private val usuarioRepository: UsuarioRepository): ViewMod
 
                     val user = User(
                         email = loginResponse.email,
-                        password = senha,
-                        role = loginResponse.cargo,
+                        senha = senha,
+                        cargo = loginResponse.cargo,
                         name = loginResponse.nome,
-                        phone = loginResponse.celular
+                        telefone = loginResponse.celular
                     )
                     Log.d("LoginViewModel", "User: $user")
 

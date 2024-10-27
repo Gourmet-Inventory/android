@@ -1,13 +1,13 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -18,9 +18,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,11 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 //class ViewPerfilActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,23 +64,36 @@ fun ViewPerfilScreen(
     navController: NavController,
     onViewPerfil: (String) -> Unit
 ) {
-    val resources = LocalContext.current.resources
+    val context = LocalContext.current
+    val resources = context.resources
+    var currentUser: User? by remember { mutableStateOf(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     var nome by remember {
-        mutableStateOf("João Silva")
+        mutableStateOf("")
     }
     var cargo by remember {
-        mutableStateOf(resources.getString(R.string.gerente))
+        mutableStateOf("")
     }
-    var celular by remember {
-        mutableStateOf("11989898989")
+    var telefone by remember {
+        mutableStateOf("")
     }
     var email by remember {
-        mutableStateOf("joaosilva@gmail.com")
+        mutableStateOf("")
     }
     val photo by remember {
         mutableStateOf(if (cargo == resources.getString(R.string.garcom)) R.drawable.garcom else R.drawable.manager)
     }
+
+    LaunchedEffect(Unit) {
+        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+    }
+    nome = currentUser?.name ?: ""
+    cargo = currentUser?.cargo ?: ""
+    telefone = currentUser?.telefone ?: ""
+    email = currentUser?.email ?: ""
+
+    Log.d("ViewPerfilScreen", "currentUser: $currentUser")
 
     Scaffold(
         bottomBar = {
@@ -83,13 +102,15 @@ fun ViewPerfilScreen(
                     onClick = onViewPerfil,
                     navController = navController
                 )
-            }
-            else {
+            } else if (cargo == resources.getString(R.string.gerente)) {
                 BottomBarGerente(
                     onClick = onViewPerfil,
                     navController = navController
                 )
             }
+//            else {
+//                Toast.makeText(context, "Cargo não identificado", Toast.LENGTH_SHORT).show()
+//            }
         }
     ) { padding ->
         Surface(
@@ -102,10 +123,10 @@ fun ViewPerfilScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 80.dp),
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.Center,
+                    horizontalArrangement = Arrangement.Start,
                     modifier = Modifier
                         .width(320.dp)
                         .height(150.dp)
@@ -121,16 +142,24 @@ fun ViewPerfilScreen(
                 }
 
 
-                InfoPerfil(titulo = "Nome", valorCampo = nome) {
+                nome?.let {
+                    InfoPerfil(titulo = "Nome", valorCampo = it) {
+                    }
                 }
 
-                InfoPerfil(titulo = "Cargo", valorCampo = cargo) {
+                cargo?.let {
+                    InfoPerfil(titulo = "Cargo", valorCampo = it) {
+                    }
                 }
 
-                InfoPerfil(titulo = "Celular", valorCampo = celular) {
+                telefone?.let {
+                    InfoPerfil(titulo = "Celular", valorCampo = it) {
+                    }
                 }
 
-                InfoPerfil(titulo = "E-mail", valorCampo = email) {
+                email?.let {
+                    InfoPerfil(titulo = "E-mail", valorCampo = it) {
+                    }
                 }
 
                 Row(
@@ -142,7 +171,10 @@ fun ViewPerfilScreen(
                 ) {
                     Button(
                         onClick = {
-                            onViewPerfil("login")
+                            coroutineScope.launch {
+                                DataStoreUtils(context = context).limparDados()
+                                onViewPerfil("login")
+                            }
                         },
                         modifier = Modifier
                             .height(45.dp)
@@ -184,17 +216,19 @@ fun InfoPerfil(
     mudaValor: (String) -> Unit
 ) {
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+    Column(
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .width(320.dp)
-            .height(80.dp)
+            .height(100.dp)
+            .padding(bottom = 15.dp)
     ) {
         Text(
             modifier = Modifier
                 .padding(top = 10.dp)
-                .height(30.dp),
-            text = "$titulo:",
+                .height(35.dp),
+            text = "$titulo",
             color = Black,
             fontSize = 24.sp,
             fontFamily = JostBold
@@ -203,7 +237,7 @@ fun InfoPerfil(
         Text(
             modifier = Modifier
                 .padding(top = 10.dp)
-                .height(30.dp),
+                .height(50.dp),
             text = valorCampo,
             color = Black,
             fontSize = 22.sp

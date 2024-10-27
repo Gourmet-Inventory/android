@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class User(
     val email : String,
-    val password : String,
-    val role : String,
+    val senha : String,
+    val cargo : String,
     val name : String,
-    val phone : String,
+    val telefone : String,
 )
 
 data class UserResponse(val users: List<User>)

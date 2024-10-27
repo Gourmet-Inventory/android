@@ -89,7 +89,7 @@ fun ListaComprasScreen(
                     onClick = {
                         Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
 
-                        if (currentUser?.role == context.resources.getString(R.string.gerente)) {
+                        if (currentUser?.cargo == context.resources.getString(R.string.gerente)) {
                             onListaComprasClick("perfil")
                         } else {
                             Toast.makeText(context, "Acesso restrito a Gerentes", Toast.LENGTH_SHORT).show()
