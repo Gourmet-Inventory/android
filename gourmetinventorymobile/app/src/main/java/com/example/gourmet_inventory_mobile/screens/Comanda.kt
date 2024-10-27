@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -59,6 +60,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
+import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 
 //class ComandaActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -345,30 +347,58 @@ fun ComandaPreview() {
 
 @Composable
 fun ItensComanda(pedidos: List<Pedido>, onComandaViewClick: (String) -> Unit) {
+
     Box(
         modifier = Modifier
             .height(350.dp)
             .fillMaxWidth()
     ) {
-        val listScrollState = rememberLazyListState()
-        LazyColumn(
-            state = listScrollState,
+//        val listScrollState = rememberLazyListState()
+//
+//        DrawScrollableView(
+//            content = {
+//                LazyColumn(
+//                    state = listScrollState,
+//                    modifier = Modifier
+//                        .height(345.dp)
+//                        .width(325.dp)
+//                        .padding(top = 3.dp, start = 8.dp, end = 0.dp, bottom = 3.dp),
+////                .verticalScroll(rememberScrollState(), true),
+//                    verticalArrangement = Arrangement.Top
+//                ) {
+//                    items(pedidos) { pedido ->
+//                        ItemComanda(
+//                            pedido = pedido,
+//                            onComandaViewClick = onComandaViewClick,
+//                            pedidios = pedidos
+//                        )
+//                    }
+//                }
+//            },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .fillMaxHeight()
+//        )
+        DrawScrollableView(
+            content = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 3.dp, start = 8.dp, end = 8.dp, bottom = 3.dp)
+                ) {
+                    pedidos.forEach { pedido ->
+                        ItemComanda(
+                            pedido = pedido,
+                            onComandaViewClick = onComandaViewClick,
+                            pedidios = pedidos
+                        )
+                    }
+                }
+            },
             modifier = Modifier
-                .height(345.dp)
-                .width(325.dp)
-                .fillMaxSize()
-                .padding(top = 3.dp, start = 8.dp, end = 8.dp, bottom = 3.dp),
-//                .verticalScroll(rememberScrollState(), true),
-            verticalArrangement = Arrangement.Top
-        ) {
-            items(pedidos) { pedido ->
-                ItemComanda(
-                    pedido = pedido,
-                    onComandaViewClick = onComandaViewClick,
-                    pedidios = pedidos
-                )
-            }
-        }
+                .fillMaxWidth()
+                .fillMaxHeight()
+        )
     }
 }
 
@@ -391,7 +421,9 @@ fun ItemComanda(pedido: Pedido, onComandaViewClick: (String) -> Unit, pedidios: 
             textDecoration = TextDecoration.Underline
         )
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(end = 8.dp)
         ) {
             Text(text = "R$${pedido.preco * pedido.quantidade},00")
             Icon(

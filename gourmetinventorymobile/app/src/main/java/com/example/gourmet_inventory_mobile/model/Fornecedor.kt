@@ -1,5 +1,9 @@
 package com.example.gourmet_inventory_mobile.model
 
+import kotlinx.serialization.Serializable
+
+
+@Serializable
 data class Fornecedor (
     val idFornecedor: Long,
     val nomeFornecedor: String,
@@ -16,3 +20,5 @@ data class Fornecedor (
     val telefone : String,
     val categoria : String
 )
+
+data class FornecedorResponse(val fornecedores: List<Fornecedor>)

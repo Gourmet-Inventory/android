@@ -1,5 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,12 +43,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import kotlinx.coroutines.flow.first
 
 //class ListaComprasActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +71,13 @@ fun ListaComprasScreen(
     navController: NavController,
     onListaComprasClick: (String) -> Unit,
 ) {
+    val context = LocalContext.current
+
+    var currentUser: User? by remember { mutableStateOf(null) }
+    LaunchedEffect(Unit) {
+        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+    }
+
     Scaffold(
         topBar = {
             Row(
@@ -71,10 +85,15 @@ fun ListaComprasScreen(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                OutlinedButton (
+                OutlinedButton(
                     onClick = {
-                        onListaComprasClick("perfil")
-                    },
+                        Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
+
+                        if (currentUser?.cargo == context.resources.getString(R.string.gerente)) {
+                            onListaComprasClick("perfil")
+                        } else {
+                            Toast.makeText(context, "Acesso restrito a Gerentes", Toast.LENGTH_SHORT).show()
+                        }                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Laranja,
                         contentColor = White
