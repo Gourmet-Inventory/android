@@ -53,4 +53,11 @@ class DataStoreUtils(private val context: Context) {
             prefs[USER_DATA_KEY] = jsonString
         }
     }
+
+    suspend fun limparDados() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(TOKEN_KEY)
+            preferences.remove(USER_DATA_KEY)
+        }
+    }
 }

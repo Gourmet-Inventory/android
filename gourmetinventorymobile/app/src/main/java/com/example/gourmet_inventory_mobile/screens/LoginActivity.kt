@@ -59,16 +59,14 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-//    viewModel: LoginViewModel = viewModel(),
     onLoginClick: (User) -> Unit
 ) {
     Surface(modifier = Modifier.fillMaxSize(), color = GI_AzulMarinho) {
-//        val loginState by viewModel.loginState.collectAsState()
         val viewModel = koinViewModel<LoginViewModel>()
         val loginState by viewModel.loginState.collectAsState()
 
         var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
+        var senha by remember { mutableStateOf("") }
         var emailError by remember { mutableStateOf<String?>(null) }
         var passwordError by remember { mutableStateOf<String?>(null) }
         var user: User? by remember { mutableStateOf(null) }
@@ -137,9 +135,9 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             OutlinedTextField(
-                value = password,
+                value = senha,
                 onValueChange = {
-                    password = it
+                    senha = it
                     passwordError = validatePassword(it)
                 },
                 placeholder = {
@@ -182,11 +180,11 @@ fun LoginScreen(
             Button(
                 onClick = {
                     val emailValidation = validateEmail(email)
-                    val passwordValidation = validatePassword(password)
+                    val passwordValidation = validatePassword(senha)
 
                     if (emailValidation == null && passwordValidation == null) {
-                        Log.d("LoginScreen", "Email: $email, Password: $password")
-                        viewModel.login(context, email, password)
+                        Log.d("LoginScreen", "Email: $email, Password: $senha")
+                        viewModel.login(context, email, senha)
                     } else {
                         emailError = emailValidation
                         passwordError = passwordValidation
@@ -202,33 +200,29 @@ fun LoginScreen(
                     contentColor = colorResource(id = R.color.white)
                 ),
             ) {
-                Text(
-                    text = "Entrar",
-                    color = GI_AzulMarinho,
-                    fontSize = 18.sp,
-                )
+                if (loginState is LoginState.Loading) {
+                    CircularProgressIndicator(color = GI_AzulMarinho)
+                } else {
+                    Text(
+                        text = "Entrar",
+                        color = GI_AzulMarinho,
+                        fontSize = 18.sp,
+                    )
+                }
             }
-            when (loginState) {
-                is LoginState.Loading -> {
-                    CircularProgressIndicator()
-                }
-                is LoginState.Success -> {
-                    LaunchedEffect(Unit) {
-                        val user = (loginState as LoginState.Success).user
-                        Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
-                        onLoginClick(user)
-                    }
-                }
 
-                is LoginState.Error -> {
-                    LaunchedEffect(Unit) {
-                        Log.e("LoginScreen", "ERRO: " + (loginState as LoginState.Error).message)
-                        Toast.makeText(context, "Erro ao fazer login", Toast.LENGTH_SHORT).show()
-                    }
+            LaunchedEffect(loginState) {
+                if (loginState is LoginState.Success) {
+                    val user = (loginState as LoginState.Success).user
+                    Toast.makeText(context, "Login efetuado com sucesso!", Toast.LENGTH_SHORT).show()
+                    onLoginClick(user)
                 }
+            }
 
-                else -> {
-                    // Estado ocioso, faz nada
+            LaunchedEffect(loginState) {
+                if (loginState is LoginState.Error) {
+                    Log.e("LoginScreen", "ERRO: " + (loginState as LoginState.Error).message)
+                    Toast.makeText(context, "Erro ao fazer login", Toast.LENGTH_SHORT).show()
                 }
             }
         }
