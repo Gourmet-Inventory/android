@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gourmet_inventory_mobile.model.Fornecedor
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
@@ -109,23 +110,32 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("listaFornecedor") {
+                        composable("listaFornecedor/{fornecedorItem}") { backStackEntry ->
+                            val fornecedorId = backStackEntry.arguments?.getString("fornecedorId")
                             ListaFornecedoresScreen(
                                 navController = navController,
+                                fornecedorId = fornecedorId,
                                 onListaFornecedoresClick = { route ->
                                     navController.navigate(route)
                                 }
                             )
                         }
 
-                        composable("fornecedorView") {
-                            VizuFornScreen(
-                                onVizuFornVoltarClick = {
-                                    clickedAction = "Voltar"
-                                    navController.popBackStack()
-                                }
-                            )
+                        composable("fornecedorView") { backStackEntry ->
+                            val fornecedor = backStackEntry.arguments?.getParcelable<Fornecedor>("fornecedor")
+
+                            fornecedor?.let {
+                                VizuFornScreen(
+                                    fornecedor = it,
+                                    onVizuFornVoltarClick = {
+                                        clickedAction = "Voltar"
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
                         }
+
+
 
                         composable("listaEstoque") {
                             ListaEstoqueScreen(

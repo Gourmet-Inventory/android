@@ -1,9 +1,12 @@
 package com.example.gourmet_inventory_mobile.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 
 @Serializable
+@Parcelize
 data class Fornecedor (
     val idFornecedor: Long,
     val nomeFornecedor: String,
@@ -19,6 +22,6 @@ data class Fornecedor (
     val numeracaoLogradouro: String,
     val telefone : String,
     val categoria : String
-)
+) : Parcelable
 
 data class FornecedorResponse(val fornecedores: List<Fornecedor>)

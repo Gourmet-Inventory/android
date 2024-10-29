@@ -71,7 +71,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun ListaFornecedoresScreen(
     navController: NavController,
-    onListaFornecedoresClick: (String) -> Unit,
+    fornecedorId: String?,
+    onListaFornecedoresClick: (String) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -193,7 +194,8 @@ fun ListaFornecedoresScreen(
 fun ListaFornecedoresPreview() {
     ListaFornecedoresScreen(
         navController = NavController(LocalContext.current),
-        onListaFornecedoresClick = {},
+        fornecedorId = null,
+        onListaFornecedoresClick = {}
     )
 }
 
@@ -248,7 +250,7 @@ fun ItemListaFornecedor(
                 RoundedCornerShape(8.dp)
             )
             .clickable(onClick = {
-                onListaFornecedoresClick("fornecedorView")
+                onListaFornecedoresClick("listaFornecedor/${fornecedorItem}")
             }),
         verticalAlignment = Alignment.CenterVertically
     ) {

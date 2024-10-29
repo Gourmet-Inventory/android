@@ -3,8 +3,10 @@ package com.example.gourmet_inventory_mobile
 import android.util.Log
 import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepository
 import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepositoryLocalImpl
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepository
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepositoryLocalImpl
 import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
@@ -20,8 +22,8 @@ val appModule = module {
     }
 
     single<UsuarioRepository> {
-        UsuarioRepositoryImpl(get())
-//        UsuarioRepositoryLocalImpl()
+//        UsuarioRepositoryImpl(get())
+        UsuarioRepositoryLocalImpl()
     }
 
     viewModel<LoginViewModel> {
@@ -35,8 +37,8 @@ val appModule = module {
     }
 
     single<FornecedorRepository> {
-        FornecedorRepositoryImpl(get())
-//        FornecedorRepositoryLocalImpl()
+//        FornecedorRepositoryImpl(get())
+        FornecedorRepositoryLocalImpl()
     }
 
     viewModel<FornViewModel> {
