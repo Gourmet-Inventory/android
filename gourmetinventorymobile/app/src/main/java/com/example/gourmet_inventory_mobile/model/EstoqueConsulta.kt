@@ -1,5 +1,8 @@
 package com.example.gourmet_inventory_mobile.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 data class EstoqueConsulta (
@@ -17,3 +20,6 @@ data class EstoqueConsulta (
     val dtaCadastro: LocalDate,
     val dtaAviso: LocalDate
 )
+
+data class EstoqueConsultaResponse(val listaEstoque: List<EstoqueConsulta>)
+

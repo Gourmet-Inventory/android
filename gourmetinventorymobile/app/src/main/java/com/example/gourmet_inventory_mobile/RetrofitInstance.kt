@@ -2,6 +2,7 @@ package com.example.gourmet_inventory_mobile
 
 import android.content.Context
 import android.util.Log
+import com.example.gourmet_inventory_mobile.service.EstoqueService
 import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
@@ -79,6 +80,10 @@ object RetrofitInstance {
 
     val serviceFornecedor by lazy {
         api.create(FornecedorService::class.java)
+    }
+
+    val serviceEstoque by lazy {
+        api.create(EstoqueService::class.java)
     }
     //nova service aqui
 
