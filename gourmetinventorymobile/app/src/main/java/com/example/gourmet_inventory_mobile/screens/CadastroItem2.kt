@@ -1,5 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import SharedViewModel
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,10 +16,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -26,10 +28,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,62 +41,110 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
-
-//class Cadastro2Activity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                Cadastro2Screen()
-//
-//            }
-//        }
-//    }
-//}
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueCriacaoState
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun CadastroItem2Screen(
-    onCadastroItem2AnteriorClick: () -> Unit,
-    onCadastroItemCadastrarClick: () -> Unit
+    sharedViewModel: SharedViewModel,
+    onCadastroItem2AnteriorClick: (EstoqueCriacao?) -> Unit,
+    onCadastroItemCadastrarClick: (EstoqueConsulta?) -> Unit,
+    estoque: EstoqueCriacao?
 ) {
+    val estoque by sharedViewModel.estoque.collectAsState()
+    Log.d("CadastroItem2Screen", "Estoque: $estoque")
+
     var qtdUnitaria by remember {
-        mutableStateOf("")
-    }
-    var tipoMedida by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.unitario.toString() else ""
+        )
     }
     var valorMedida by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.valorMedida.toString() else ""
+        )
     }
     var dataCadastro by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else ""
+        )
     }
     var dataAviso by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else ""
+        )
     }
+    var localArmazenamento by remember {
+        mutableStateOf(
+            if (estoque != null) estoque!!.localArmazenamento else ""
+        )
+    }
+    var tipoMedida by remember {
+        mutableStateOf(
+            if (estoque != null) estoque!!.tipoMedida.name else ""
+        )
+    }
+
+    // Erros
+    var valorMedidaErro by remember { mutableStateOf(false) }
+    var dataCadastroErro by remember { mutableStateOf(false) }
+    var dataAvisoErro by remember { mutableStateOf(false) }
+    var dataAvisoAnteriorErro by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color.White)) {
+    val viewModel = koinViewModel<EstoqueViewModel>()
+    val estoqueState by viewModel.estoqueCriacaoState.collectAsState()
 
+    fun criarEstoqueAtualizado(): EstoqueCriacao? {
+        Log.d("CadastroItem2Screen", "Criando EstoqueCriacao")
+        return try {
+            EstoqueCriacao(
+                lote = estoque?.lote ?: "",
+                manipulado = estoque?.manipulado ?: false,
+                nome = estoque?.nome ?: "",
+                categoria = estoque?.categoria ?: "",
+                tipoMedida = Medidas.valueOf(tipoMedida),
+                unitario = qtdUnitaria.toIntOrNull() ?: 0,
+                valorMedida = valorMedida.toDoubleOrNull() ?: 0.0,
+                localArmazenamento = localArmazenamento,
+                dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),  // Certifique-se de que isso está correto
+                dtaAviso = LocalDate.parse(dataAviso, dateFormatter),  // E isso também
+                marca = estoque?.marca ?: ""
+            )
+        } catch (e: Exception) {
+            Log.e("CadastroItem2Screen", "Erro ao criar EstoqueCriacao: ${e.message}")
+            null
+        }
+    }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.White)
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Cabeçalho
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -101,10 +152,19 @@ fun CadastroItem2Screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
-                    onCadastroItem2AnteriorClick()
+                    val novoEstoque = estoque.copy(
+                        unitario = qtdUnitaria.toInt(),
+                        valorMedida = valorMedida.toDouble(),
+                        dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                        localArmazenamento = localArmazenamento,
+                        tipoMedida = Medidas.valueOf(tipoMedida)
+                    )
+                    sharedViewModel.atualizarEstoque(novoEstoque)
+                    onCadastroItem2AnteriorClick(estoque)
                 }) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+                        imageVector = Icons.Default.KeyboardArrowLeft,
                         contentDescription = "Voltar",
                         Modifier.size(44.dp),
                         tint = Color.Black
@@ -112,232 +172,333 @@ fun CadastroItem2Screen(
                 }
             }
 
+            // Título
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Cadastrar Item:",
-                    modifier = Modifier,
                     color = Black,
                     textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        fontSize = 35.sp,
-                        fontFamily = JostBold
-                    )
+                    style = TextStyle(fontSize = 35.sp, fontFamily = JostBold)
                 )
             }
-            Column (
-                modifier = Modifier
-                    .padding(top = 20.dp),
+
+            Column(
+                modifier = Modifier.padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                Row (
+            ) {
+                LocalArmazenamentoSelectBox(
+                    localArmazenamento,
+                    onLocalArmazenamentoChange = { localArmazenamento = it })
+
+                Row(
                     modifier = Modifier
                         .width(350.dp)
                         .height(100.dp),
                     horizontalArrangement = Arrangement.Start,
-                    verticalAlignment = Alignment.CenterVertically){
-
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         fontSize = 22.sp,
-                        modifier = Modifier
-                            .width(160.dp),
+                        modifier = Modifier.width(160.dp),
                         text = "Quantidade Unitária:"
                     )
 
                     OutlinedTextField(
                         value = qtdUnitaria,
-                        onValueChange = {qtdUnitaria = it},
+                        onValueChange = { qtdUnitaria = it },
                         modifier = Modifier
                             .background(color = White, shape = RoundedCornerShape(5.dp))
-                            .border(
-                                width = 1.dp,
-                                color = Color.Black
-                            )
+                            .border(1.dp, Color.Black)
                             .width(180.dp),
                         singleLine = true,
                     )
                 }
 
-                Row {
-                    InputCadastro2(titulo = "Data Cadastro", placeholder = "dd/mm/aaaa", valorCampo = dataCadastro, mudaValor = { novoValor ->
-                        dataCadastro = novoValor })
-
-                    InputCadastro2(titulo = "Data Aviso", placeholder = "dd/mm/aaaa", valorCampo = dataAviso, mudaValor = { novoValor ->
-                        dataAviso = novoValor })
-                }
-
-                Column (modifier = Modifier, verticalArrangement = Arrangement.spacedBy(50.dp)) {
-                    Row (
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        InputCadastro2(titulo = "Data Cadastro", placeholder = "dd/mm/aaaa", valorCampo = dataCadastro, mudaValor = { novoValor ->
-                            dataCadastro = novoValor })
-                        Row (
-//                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier
-                                .padding(top = 30.dp)
-                        ) {
-
-                            AddrReceita(onAddClick = {})
-                        }
-                    }
+                Row(
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TipoMedidaSelectBox(tipoMedida, onTipoMedidaChange = { tipoMedida = it })
+                    InputCadastro2(
+                        titulo = "Valor Medida",
+                        placeholder = "",
+                        valorCampo = valorMedida,
+                        mudaValor = { novoValor ->
+                            valorMedida = novoValor
+                            valorMedidaErro = novoValor.toDoubleOrNull()?.let { it <= 0 } ?: true
+                        },
+                        isErro = valorMedidaErro,
+                        mensagemErro = "Valor deve ser um número positivo"
+                    )
                 }
 
                 Row {
-                    InputCadastro2(titulo = "Tipo Medida", placeholder = "", valorCampo = tipoMedida, mudaValor = { novoValor ->
-                        tipoMedida = novoValor })
+                    InputCadastro2(
+                        titulo = "Data Cadastro",
+                        placeholder = "dd/mm/aaaa",
+                        valorCampo = dataCadastro,
+                        mudaValor = { novoValor ->
+                            dataCadastro = novoValor
+                            dataCadastroErro = try {
+                                LocalDate.parse(novoValor, dateFormatter)
+                                false
+                            } catch (e: Exception) {
+                                true
+                            }
+                        },
+                        isErro = dataCadastroErro,
+                        mensagemErro = "Data inválida (dd/mm/aaaa)"
+                    )
 
-                    InputCadastro2(titulo = "Valor Medida", placeholder = "", valorCampo = valorMedida, mudaValor = { novoValor ->
-                        valorMedida = novoValor })
+                    InputCadastro2(
+                        titulo = "Data Aviso",
+                        placeholder = "dd/mm/aaaa",
+                        valorCampo = dataAviso,
+                        mudaValor = { novoValor ->
+                            dataAviso = novoValor
+                            dataAvisoErro = try {
+                                val avisoDate = LocalDate.parse(novoValor, dateFormatter)
+                                val cadastroDate = LocalDate.parse(dataCadastro, dateFormatter)
+                                dataAvisoAnteriorErro = avisoDate.isBefore(cadastroDate)
+                                false
+                            } catch (e: Exception) {
+                                true
+                            }
+                        },
+                        isErro = dataAvisoErro || dataAvisoAnteriorErro,
+                        mensagemErro = if (dataAvisoErro) "Data inválida (dd/mm/aaaa)" else "Data Aviso não pode ser anterior à Data Cadastro"
+                    )
                 }
             }
 
-            Column( 
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ImagemPasso2(onCadastroItemAnteriorClick = onCadastroItem2AnteriorClick)
+                ImagemPasso2(onCadastroItemAnteriorClick = {
+                    val novoEstoque = estoque.copy(
+                        unitario = qtdUnitaria.toInt(),
+                        valorMedida = valorMedida.toDouble(),
+                        dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                    )
+                    sharedViewModel.atualizarEstoque(novoEstoque)
+                    onCadastroItem2AnteriorClick(estoque)
+                })
 
                 Button(
                     onClick = {
-                        Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
-                            .show()
-                        onCadastroItemCadastrarClick()
+                        // Verifica se há erros
+                        valorMedidaErro = valorMedida.toDoubleOrNull()?.let { it <= 0 } ?: true
+                        dataCadastroErro = try {
+                            LocalDate.parse(dataCadastro, dateFormatter); false
+                        } catch (e: Exception) {
+                            true
+                        }
+                        dataAvisoErro = try {
+                            LocalDate.parse(dataAviso, dateFormatter); false
+                        } catch (e: Exception) {
+                            true
+                        }
+                        dataAvisoAnteriorErro = try {
+                            val avisoDate = LocalDate.parse(dataAviso, dateFormatter)
+                            val cadastroDate = LocalDate.parse(dataCadastro, dateFormatter)
+                            avisoDate.isBefore(cadastroDate)
+                        } catch (e: Exception) {
+                            false
+                        }
+
+                        if (!valorMedidaErro && !dataCadastroErro && !dataAvisoErro && !dataAvisoAnteriorErro) {
+                            criarEstoqueAtualizado()?.let { novoEstoque ->
+                                Log.d("CadastroItem2Screen", "Cadastrando Estoque: $novoEstoque")
+                                sharedViewModel.atualizarEstoque(novoEstoque)
+                                viewModel.cadastrarEstoque(context, novoEstoque)
+                            }
+                        }
                     },
                     modifier = Modifier
                         .height(55.dp)
                         .width(155.dp),
                     shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Laranja
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = GI_Laranja)
                 ) {
-                    Text(
-                        text = "Cadastrar",
-                        color = Black,
-                        fontSize = 18.sp
-                    )
+                    if (estoqueState is EstoqueCriacaoState.Loading) {
+                        CircularProgressIndicator(color = GI_AzulMarinho)
+                    } else {
+                        Text(text = "Cadastrar", color = Black, fontSize = 18.sp)
+                    }
                 }
             }
+
+            LaunchedEffect(estoqueState) {
+                if (estoqueState is EstoqueCriacaoState.Success) {
+                    Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
+                        .show()
+                    onCadastroItemCadastrarClick((estoqueState as EstoqueCriacaoState.Success).estoqueConsulta)
+                }
+            }
+
+            LaunchedEffect(estoqueState) {
+                if (estoqueState is EstoqueCriacaoState.Error) {
+                    Log.e(
+                        "CadastroItem2Screen",
+                        "ERRO: " + (estoqueState as EstoqueCriacaoState.Error).message
+                    )
+                    Toast.makeText(context, "Erro ao cadastrar item", Toast.LENGTH_SHORT).show()
+                }
+            }
+
         }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(top = 100.dp),
-//            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
-//        ) {
-//            DownBarCadastroItemActivityScreen2()
-//        }
     }
 }
 
-@Preview
+
+@Preview(showBackground = true)
 @Composable
 fun Cadastro2ScreenPreview() {
     CadastroItem2Screen(
         onCadastroItem2AnteriorClick = {},
-        onCadastroItemCadastrarClick = {}
+        onCadastroItemCadastrarClick = {},
+        estoque = EstoqueCriacao(
+            lote = "123",
+            manipulado = true,
+            nome = "Nome",
+            categoria = "Categoria",
+            tipoMedida = Medidas.UNIDADE,
+            unitario = 1,
+            valorMedida = 1.0,
+            localArmazenamento = "Local",
+            dtaCadastro = LocalDate.now(),
+            dtaAviso = LocalDate.now(),
+            marca = "Marca"
+        ),
+        sharedViewModel = SharedViewModel()
     )
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectBox() {
+fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("Selecione") }
-    val options = listOf("Unidade", "Kg", "Litros", "Caixas")
-
-    Column(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
     ) {
-        // Campo do Select Box
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
+        Column {
+            Text(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(30.dp),
+                text = "Tipo Medida:",
+                color = Black,
+                fontSize = 22.sp
+            )
             OutlinedTextField(
                 value = selectedOption,
                 onValueChange = { },
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Tipo Medida") },
+                modifier = Modifier
+                    .width(160.dp)
+                    .background(color = White, shape = RoundedCornerShape(5.dp))
+                    .menuAnchor(),
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 },
-                readOnly = true
+                readOnly = true,
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
             )
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
-                options.forEach { selectionOption ->
+                Medidas.values().forEach { selectionOption ->
                     DropdownMenuItem(
-                        text = { Text(selectionOption) },
+                        text = { Text(selectionOption.name) },
                         onClick = {
-                            selectedOption = selectionOption
+                            onTipoMedidaChange(selectionOption.name)
                             expanded = false
                         }
                     )
                 }
             }
         }
-
-        // Outro campo de input como no exemplo "Valor Medida"
-        OutlinedTextField(
-            value = "",
-            onValueChange = { },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Valor Medida") }
-        )
     }
 }
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun addReceita(){
-    Button(
-        modifier = Modifier
-            .height(55.dp).padding(top = 10.dp),
-        onClick = {
-            /*TODO*/
-        },
-        shape = RoundedCornerShape(5.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = GI_Laranja,
-            contentColor = White
-        )
-    ) {
-        Text(
-            text = "+",
-            color = White,
-            fontSize = 22.sp
-        )
-    }
-}
+fun LocalArmazenamentoSelectBox(
+    selectedOption: String,
+    onLocalArmazenamentoChange: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val options = listOf("Cozinha", "Armário", "Geladeira", "Freezer")
 
-@Composable
-fun AddrReceita(onAddClick: () -> Unit) {
-    SmallFloatingActionButton(
-        onClick = onAddClick,
-        containerColor = GI_Laranja,
-        contentColor = White,
-        modifier = Modifier.width(70.dp).height(60.dp),
-        shape = RoundedCornerShape(10.dp),
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
     ) {
-        Icon(Icons.Filled.Add, "")
+        Row(
+            modifier = Modifier
+                .width(350.dp)
+                .height(100.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(30.dp),
+                    text = "Local Armazenamento:",
+                    color = Black,
+                    fontSize = 22.sp
+                )
+                OutlinedTextField(
+                    value = selectedOption,
+                    onValueChange = { },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = White, shape = RoundedCornerShape(5.dp))
+                        .menuAnchor(),
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                    readOnly = true,
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    options.forEach { selectionOption ->
+                        DropdownMenuItem(
+                            text = { Text(selectionOption) },
+                            onClick = {
+                                onLocalArmazenamentoChange(selectionOption)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -346,21 +507,22 @@ fun InputCadastro2(
     titulo: String,
     placeholder: String,
     valorCampo: String,
-    mudaValor: (String) -> Unit
+    mudaValor: (String) -> Unit,
+    isErro: Boolean,
+    mensagemErro: String
 ) {
-
-    Row (
+    Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .width(180.dp)
             .height(140.dp)
 
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .size(width = 350.dp, height = 100.dp)
-        ){
+        ) {
             Text(
                 modifier = Modifier
                     .padding(top = 10.dp)
@@ -371,18 +533,18 @@ fun InputCadastro2(
 //                fontFamily = JostRegular
             )
             OutlinedTextField(
-
                 value = valorCampo,
                 onValueChange = { novoValorDoCampo ->
-                mudaValor(novoValorDoCampo)
-                 },
+                    mudaValor(novoValorDoCampo)
+                },
                 modifier = Modifier
                     .height(55.dp)
                     .width(160.dp)
                     .background(color = White, shape = RoundedCornerShape(5.dp))
                     .border(
                         width = 1.dp,
-                        color = Color.Black
+                        color = if (isErro) Color.Red else Color.Black,
+                        shape = RoundedCornerShape(5.dp)
                     ),
                 placeholder = {
                     Text(
@@ -390,87 +552,24 @@ fun InputCadastro2(
                         fontSize = 18.sp,
                     )
                 },
-                singleLine = true
-
+                singleLine = true,
+                isError = isErro,
             )
+            if (isErro) {
+                Text(
+                    text = mensagemErro,
+                    color = Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
         }
-
     }
 }
 
-//@Composable
-//fun DownBarCadastroItemActivityScreen2() {
-//    val context = LocalContext.current
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(color = GI_AzulMarinho)
-//            .heightIn(70.dp),
-////        horizontalArrangement = Arrangement.SpaceEvenly,
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.fornecedores_db),
-//            contentDescription = "Ação 1",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-////        Spacer(modifier = Modifier.height(60.dp))
-//        Image(
-//            painter = painterResource(id = R.drawable.opened_box),
-//            contentDescription = "Ação 2",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.cart),
-//            contentDescription = "Ação 3",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.account_icon),
-//            contentDescription = "Ação 4",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//    }
-//}
-
-//@Preview
-//@Composable
-//fun DownBarCadastroItemActivityPreview2() {
-//    DownBarCadastroItemActivityScreen2()
-//}
-
-
 @Composable
 fun ImagemPasso2(
+    estoque: EstoqueCriacao? = null,
     onCadastroItemAnteriorClick: () -> Unit = {}
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
@@ -484,7 +583,9 @@ fun ImagemPasso2(
     ) {
         RadioButton(
             selected = selectedOptionIndex == 0,
-            onClick = { onCadastroItemAnteriorClick() }
+            onClick = {
+                onCadastroItemAnteriorClick()
+            }
         )
         RadioButton(
             selected = selectedOptionIndex == 1,

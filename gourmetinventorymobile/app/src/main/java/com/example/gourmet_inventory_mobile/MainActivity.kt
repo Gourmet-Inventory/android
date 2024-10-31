@@ -1,5 +1,7 @@
 package com.example.gourmet_inventory_mobile
 
+import CadastroItemScreen
+import SharedViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.gourmet_inventory_mobile.model.Fornecedor
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
@@ -33,7 +38,12 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
 
 
@@ -55,16 +65,21 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     val navController = rememberNavController()
                     var clickedAction by remember { mutableStateOf("") }
+                    val sharedViewModel: SharedViewModel =
+                        androidx.lifecycle.viewmodel.compose.viewModel()
+                    val estoque by sharedViewModel.estoque.collectAsState()
+                    val viewModelEstoque = koinViewModel<EstoqueViewModel>()
 
                     NavHost(navController = navController, startDestination = "login") {
 
                         composable("perfil") {
                             EscolhaPerfilScreen(onPerfilClick = { perfil ->
-                                val destination = if (perfil == resources.getString(R.string.garcom)) {
-                                    "cardapio"
-                                } else {
-                                    "listaEstoque"
-                                }
+                                val destination =
+                                    if (perfil == resources.getString(R.string.garcom)) {
+                                        "cardapio"
+                                    } else {
+                                        "listaEstoque"
+                                    }
                                 navController.navigate(destination)
                             })
                         }
@@ -112,22 +127,36 @@ class MainActivity : ComponentActivity() {
                         composable("listaFornecedor") {
                             ListaFornecedoresScreen(
                                 navController = navController,
+                                fornecedorId = null,
                                 onListaFornecedoresClick = { route ->
                                     navController.navigate(route)
                                 }
                             )
                         }
 
-                        composable("fornecedorView") {
-                            VizuFornScreen(
-                                onVizuFornVoltarClick = {
-                                    clickedAction = "Voltar"
-                                    navController.popBackStack()
+                        composable("fornecedorView/{idFornecedor}") { backStackEntry ->
+                            val idFornecedor = backStackEntry.arguments?.getString("idFornecedor")?.toIntOrNull()
+                            val viewModel = koinViewModel<FornViewModel>()
+
+                            idFornecedor?.let { id ->
+                                val fornecedor = viewModel.data.find { it.idFornecedor == id.toLong() }
+
+                                fornecedor?.let { forn ->
+                                    VizuFornScreen(
+                                        fornecedor = forn,
+                                        onVizuFornVoltarClick = {
+                                            navController.popBackStack()
+                                        }
+                                    )
                                 }
-                            )
+                            }
                         }
 
                         composable("listaEstoque") {
+                            val context = LocalContext.current
+                            LaunchedEffect(Unit) {
+                                viewModelEstoque.obterListaEstoque(context)
+                            }
                             ListaEstoqueScreen(
                                 navController = navController,
                                 onListaEstoqueClick = { route ->
@@ -191,27 +220,31 @@ class MainActivity : ComponentActivity() {
 
                         composable("cadastrarItemEstoque") {
                             CadastroItemScreen(
-                                onCadastroItemVoltarClick = {
-                                    clickedAction = "Voltar"
-                                    navController.popBackStack()
-                                },
+                                sharedViewModel = sharedViewModel,
                                 onCadastroItemProximoClick = {
-                                    clickedAction = "Próximo"
+                                    Log.d(
+                                        "MainActivity - onCadastroItemProximoClick()",
+                                        "estoque: ${sharedViewModel.estoque.value}"
+                                    )
                                     navController.navigate("cadastrarItemEstoque2")
+                                },
+                                onCadastroItemVoltarClick = {
+                                    navController.popBackStack()
                                 }
                             )
                         }
 
                         composable("cadastrarItemEstoque2") {
                             CadastroItem2Screen(
+                                estoque = estoque,
                                 onCadastroItem2AnteriorClick = {
-                                    clickedAction = "Voltar"
                                     navController.popBackStack()
                                 },
-                                onCadastroItemCadastrarClick = {
-                                    clickedAction = "Cadastrar"
+                                onCadastroItemCadastrarClick = { estoqueConsulta ->
                                     navController.navigate("listaEstoque")
-                                }
+//                                    { popUpTo("cadastrarItemEstoque2") { inclusive = true } }
+                                },
+                                sharedViewModel = sharedViewModel
                             )
                         }
 

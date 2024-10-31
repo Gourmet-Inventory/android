@@ -9,6 +9,7 @@ data class User(
     val cargo : String,
     val name : String,
     val telefone : String,
+    val empresa : Empresa
 )
 
 data class UserResponse(val users: List<User>)

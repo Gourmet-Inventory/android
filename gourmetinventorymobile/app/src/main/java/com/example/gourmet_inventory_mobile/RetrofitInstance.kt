@@ -2,9 +2,14 @@ package com.example.gourmet_inventory_mobile
 
 import android.content.Context
 import android.util.Log
+import com.example.gourmet_inventory_mobile.service.EstoqueService
 import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.example.gourmet_inventory_mobile.utils.LocalDateDeserializer
+import com.example.gourmet_inventory_mobile.utils.LocalDateSerializer
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
@@ -13,8 +18,14 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
 
 object RetrofitInstance {
+
+    val gson: Gson = GsonBuilder()
+        .registerTypeAdapter(LocalDate::class.java, LocalDateSerializer())
+        .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer())
+        .create()
 
     private val api by lazy {
         Log.d("RetrofitInstance - api", "Iniciando RetrofitInstance")
@@ -22,7 +33,7 @@ object RetrofitInstance {
             .Builder()
             .client(client)
             .baseUrl(BuildConfig.API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
     }
 
@@ -80,6 +91,11 @@ object RetrofitInstance {
     val serviceFornecedor by lazy {
         api.create(FornecedorService::class.java)
     }
+
+    val serviceEstoque by lazy {
+        api.create(EstoqueService::class.java)
+    }
+
     //nova service aqui
 
 }
