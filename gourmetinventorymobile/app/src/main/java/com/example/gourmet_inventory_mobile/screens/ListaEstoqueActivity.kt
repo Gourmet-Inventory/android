@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Empresa
-import com.example.gourmet_inventory_mobile.model.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
@@ -131,7 +131,8 @@ fun ListaEstoqueScreen(
                     25.0,
                     "Local1",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(10)
+                    LocalDate.now().plusDays(10),
+                    "Marca1"
                 ),
                 EstoqueConsulta(
                     2,
@@ -146,7 +147,8 @@ fun ListaEstoqueScreen(
                     15.0,
                     "Local2",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(20)
+                    LocalDate.now().plusDays(20),
+                    "Marca2"
                 ),
                 EstoqueConsulta(
                     3,
@@ -161,7 +163,8 @@ fun ListaEstoqueScreen(
                     12.0,
                     "Local3",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(30)
+                    LocalDate.now().plusDays(30),
+                    "Marca3"
                 ),
                 EstoqueConsulta(
                     4,
@@ -176,7 +179,8 @@ fun ListaEstoqueScreen(
                     24.0,
                     "Local4",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(40)
+                    LocalDate.now().plusDays(40),
+                    "Marca4"
                 ),
                 EstoqueConsulta(
                     5,
@@ -191,7 +195,8 @@ fun ListaEstoqueScreen(
                     28.0,
                     "Local5",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(50)
+                    LocalDate.now().plusDays(50),
+                    "Marca5"
                 ),
                 EstoqueConsulta(
                     6,
@@ -206,7 +211,8 @@ fun ListaEstoqueScreen(
                     31.5,
                     "Local6",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(60)
+                    LocalDate.now().plusDays(60),
+                    "Marca6"
                 ),
                 EstoqueConsulta(
                     7,
@@ -221,7 +227,8 @@ fun ListaEstoqueScreen(
                     11.0,
                     "Local7",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(70)
+                    LocalDate.now().plusDays(70),
+                    "Marca7"
                 ),
                 EstoqueConsulta(
                     8,
@@ -236,7 +243,8 @@ fun ListaEstoqueScreen(
                     15.0,
                     "Local8",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(80)
+                    LocalDate.now().plusDays(80),
+                    "Marca8"
                 ),
                 EstoqueConsulta(
                     9,
@@ -251,7 +259,8 @@ fun ListaEstoqueScreen(
                     20.0,
                     "Local9",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(90)
+                    LocalDate.now().plusDays(90),
+                    "Marca9"
                 ),
                 EstoqueConsulta(
                     10,
@@ -266,7 +275,8 @@ fun ListaEstoqueScreen(
                     18.0,
                     "Local10",
                     LocalDate.now(),
-                    LocalDate.now().plusDays(100)
+                    LocalDate.now().plusDays(100),
+                    "Marca10"
                 )
             )
 

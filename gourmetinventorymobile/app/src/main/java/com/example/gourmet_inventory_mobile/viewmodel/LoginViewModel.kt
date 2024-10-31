@@ -46,7 +46,8 @@ class LoginViewModel (private val usuarioRepository: UsuarioRepository): ViewMod
                         senha = senha,
                         cargo = loginResponse.cargo,
                         name = loginResponse.nome,
-                        telefone = loginResponse.celular
+                        telefone = loginResponse.celular,
+                        empresa = loginResponse.empresa
                     )
                     Log.d("LoginViewModel", "User: $user")
 

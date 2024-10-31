@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.model.Comanda
+import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
@@ -107,10 +108,11 @@ fun ComandaListScreen(
             var selectedOptionIndex by remember { mutableStateOf(0) }
             var isSent: String by remember { mutableStateOf("not_sent") }
 
+            val empresa = Empresa(1, "123456789")
             val userGarcom1 =
-                User("garcomum@gmail.com", "123456", "garçom", "Garçom Um", "11999999999")
+                User("garcomum@gmail.com", "123456", "garçom", "Garçom Um", "11999999999", empresa)
             val userGarcom2 =
-                User("garcomdois@gmail.com", "123456", "garçom", "Garçom Dois", "11999999999")
+                User("garcomdois@gmail.com", "123456", "garçom", "Garçom Dois", "11999999999", empresa)
 
             val comandas = listOf(
                 Comanda("Mesa 1", "João Silva", "Comanda 123", userGarcom1),
