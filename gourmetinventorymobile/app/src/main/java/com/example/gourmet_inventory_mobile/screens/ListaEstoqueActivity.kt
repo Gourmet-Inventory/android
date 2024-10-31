@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Empresa
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
@@ -56,8 +56,12 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import com.example.gourmet_inventory_mobile.utils.LoadingList
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import kotlinx.coroutines.flow.first
+import org.koin.compose.viewmodel.koinViewModel
 import java.time.LocalDate
 
 @Composable
@@ -117,174 +121,19 @@ fun ListaEstoqueScreen(
 
             val empresa = Empresa(idEmpresa = 1L, nomeFantasia = "Empresa A")
 
-            val listaEstoqueConsulta = listOf(
-                EstoqueConsulta(
-                    1,
-                    empresa,
-                    true,
-                    "Lote1",
-                    "Item1",
-                    "Categoria1",
-                    Medidas.UNIDADE,
-                    10,
-                    2.5,
-                    25.0,
-                    "Local1",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(10),
-                    "Marca1"
-                ),
-                EstoqueConsulta(
-                    2,
-                    empresa,
-                    false,
-                    "Lote2",
-                    "Item2",
-                    "Categoria2",
-                    Medidas.QUILOGRAMA,
-                    5,
-                    3.0,
-                    15.0,
-                    "Local2",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(20),
-                    "Marca2"
-                ),
-                EstoqueConsulta(
-                    3,
-                    empresa,
-                    true,
-                    "Lote3",
-                    "Item3",
-                    "Categoria3",
-                    Medidas.LITRO,
-                    8,
-                    1.5,
-                    12.0,
-                    "Local3",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(30),
-                    "Marca3"
-                ),
-                EstoqueConsulta(
-                    4,
-                    empresa,
-                    false,
-                    "Lote4",
-                    "Item4",
-                    "Categoria4",
-                    Medidas.UNIDADE,
-                    12,
-                    2.0,
-                    24.0,
-                    "Local4",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(40),
-                    "Marca4"
-                ),
-                EstoqueConsulta(
-                    5,
-                    empresa,
-                    true,
-                    "Lote5",
-                    "Item5",
-                    "Categoria5",
-                    Medidas.QUILOGRAMA,
-                    7,
-                    4.0,
-                    28.0,
-                    "Local5",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(50),
-                    "Marca5"
-                ),
-                EstoqueConsulta(
-                    6,
-                    empresa,
-                    false,
-                    "Lote6",
-                    "Item6",
-                    "Categoria6",
-                    Medidas.LITRO,
-                    9,
-                    3.5,
-                    31.5,
-                    "Local6",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(60),
-                    "Marca6"
-                ),
-                EstoqueConsulta(
-                    7,
-                    empresa,
-                    true,
-                    "Lote7",
-                    "Item7",
-                    "Categoria7",
-                    Medidas.UNIDADE,
-                    11,
-                    1.0,
-                    11.0,
-                    "Local7",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(70),
-                    "Marca7"
-                ),
-                EstoqueConsulta(
-                    8,
-                    empresa,
-                    false,
-                    "Lote8",
-                    "Item8",
-                    "Categoria8",
-                    Medidas.QUILOGRAMA,
-                    6,
-                    2.5,
-                    15.0,
-                    "Local8",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(80),
-                    "Marca8"
-                ),
-                EstoqueConsulta(
-                    9,
-                    empresa,
-                    true,
-                    "Lote9",
-                    "Item9",
-                    "Categoria9",
-                    Medidas.LITRO,
-                    4,
-                    5.0,
-                    20.0,
-                    "Local9",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(90),
-                    "Marca9"
-                ),
-                EstoqueConsulta(
-                    10,
-                    empresa,
-                    false,
-                    "Lote10",
-                    "Item10",
-                    "Categoria10",
-                    Medidas.UNIDADE,
-                    3,
-                    6.0,
-                    18.0,
-                    "Local10",
-                    LocalDate.now(),
-                    LocalDate.now().plusDays(100),
-                    "Marca10"
-                )
-            )
+            // Obtém o ViewModel do Koin
+            val viewModel = koinViewModel<EstoqueViewModel>()
+
+            val listaEstoque = viewModel.data
+            val isLoading = viewModel.isLoading
+
 
             // Filtra a lista com base no texto da pesquisa
-            val filteredEstoque = listaEstoqueConsulta.filter {
-                it.nome.contains(texto, ignoreCase = true) ||
-                        it.categoria.contains(texto, ignoreCase = true) ||
-                        it.localArmazenamento.contains(texto, ignoreCase = true)
+            val filteredEstoque = listaEstoque.filter { estoqueItem ->
+                estoqueItem.nome.contains(texto, ignoreCase = true)
+//                it.nome.contains(texto, ignoreCase = true) ||
+//                        it.categoria.contains(texto, ignoreCase = true) ||
+//                        it.localArmazenamento.contains(texto, ignoreCase = true)
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
@@ -316,11 +165,28 @@ fun ListaEstoqueScreen(
                             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
                     )
 
-                    // Lista de Fornecedores Filtrada
-                    ItensListaEstoque(
-                        estoque = filteredEstoque,
-                        onListaEstoqueClick = onListaEstoqueClick
-                    )
+                    if (isLoading) {
+//                        CircularProgressIndicator()
+                        LoadingList()
+                    } else {
+                        if (filteredEstoque.isEmpty()) {
+                            Row (
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalArrangement = Arrangement.Center
+                            ){
+                                Text(
+                                    text = "Nenhum fornecedor encontrado",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.padding(top = 20.dp)
+                                )
+                            }
+                        } else {
+                            ItensListaEstoque(
+                                estoque = filteredEstoque,
+                                onListaEstoqueClick = onListaEstoqueClick
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.weight(1f))
                 }
