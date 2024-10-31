@@ -38,7 +38,10 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -65,6 +68,7 @@ class MainActivity : ComponentActivity() {
                     val sharedViewModel: SharedViewModel =
                         androidx.lifecycle.viewmodel.compose.viewModel()
                     val estoque by sharedViewModel.estoque.collectAsState()
+                    val viewModelEstoque = koinViewModel<EstoqueViewModel>()
 
                     NavHost(navController = navController, startDestination = "login") {
 
@@ -149,6 +153,10 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("listaEstoque") {
+                            val context = LocalContext.current
+                            LaunchedEffect(Unit) {
+                                viewModelEstoque.obterListaEstoque(context)
+                            }
                             ListaEstoqueScreen(
                                 navController = navController,
                                 onListaEstoqueClick = { route ->

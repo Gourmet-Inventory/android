@@ -1,5 +1,4 @@
 package com.example.gourmet_inventory_mobile.screens
-
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -29,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,9 +44,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Empresa
-import com.example.gourmet_inventory_mobile.model.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -58,8 +58,9 @@ import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 import com.example.gourmet_inventory_mobile.utils.LoadingList
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
-import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import org.koin.compose.viewmodel.koinViewModel
 import java.time.LocalDate
@@ -70,8 +71,6 @@ fun ListaEstoqueScreen(
     onListaEstoqueClick: (String) -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
-    Log.d("ListaEstoqueScreen", "")
-
     val context = LocalContext.current
 
     var currentUser: User? by remember { mutableStateOf(null) }
@@ -114,26 +113,39 @@ fun ListaEstoqueScreen(
         }
     ) { padding ->
         Surface(modifier = Modifier.fillMaxSize()) {
-            val context = LocalContext.current
 
-            // Estado para o texto do campo de pesquisa
             var texto by remember { mutableStateOf("") }
-
-            val empresa = Empresa(idEmpresa = 1L, nomeFantasia = "Empresa A")
 
             // Obtém o ViewModel do Koin
             val viewModel = koinViewModel<EstoqueViewModel>()
+            val estoqueState by viewModel.estoqueConsultaState.collectAsState()
 
-            val listaEstoque = viewModel.data
-            val isLoading = viewModel.isLoading
+            val isLoading = estoqueState is EstoqueConsultaState.Loading
 
+            val listaEstoque = (estoqueState as? EstoqueConsultaState.Success)?.estoqueConsulta ?: emptyList()
+//            List(1) { EstoqueConsulta(
+//                1,
+//                Empresa(1, "nome"),
+//                true,
+//                "lote",
+//                "nome",
+//                "categoria",
+//                Medidas.UNIDADE,
+//                1,
+//                1.0,
+//                1.0,
+//                "localArmazenamento",
+//                LocalDate.now(),
+//                LocalDate.now().plusDays(1),
+//                "marca"
+//            ) }
+            Log.d("ListaEstoqueScreen", "listaEstoque: $listaEstoque")
 
             // Filtra a lista com base no texto da pesquisa
             val filteredEstoque = listaEstoque.filter { estoqueItem ->
-                estoqueItem.nome.contains(texto, ignoreCase = true)
-//                it.nome.contains(texto, ignoreCase = true) ||
-//                        it.categoria.contains(texto, ignoreCase = true) ||
-//                        it.localArmazenamento.contains(texto, ignoreCase = true)
+                estoqueItem.nome.contains(texto, ignoreCase = true) ||
+                        estoqueItem.categoria.contains(texto, ignoreCase = true) ||
+                        estoqueItem.localArmazenamento.contains(texto, ignoreCase = true)
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
@@ -181,6 +193,7 @@ fun ListaEstoqueScreen(
                                 )
                             }
                         } else {
+                            Log.d("ListaEstoqueScreen", "filteredEstoque: $filteredEstoque")
                             ItensListaEstoque(
                                 estoque = filteredEstoque,
                                 onListaEstoqueClick = onListaEstoqueClick

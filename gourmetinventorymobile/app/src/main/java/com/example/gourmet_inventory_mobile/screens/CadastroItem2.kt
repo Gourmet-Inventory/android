@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -29,7 +28,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,7 +54,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
-import com.example.gourmet_inventory_mobile.viewmodel.EstoqueState
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueCriacaoState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import java.time.LocalDate
@@ -113,7 +111,7 @@ fun CadastroItem2Screen(
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
     val viewModel = koinViewModel<EstoqueViewModel>()
-    val estoqueState by viewModel.estoqueState.collectAsState()
+    val estoqueState by viewModel.estoqueCriacaoState.collectAsState()
 
     fun criarEstoqueAtualizado(): EstoqueCriacao? {
         Log.d("CadastroItem2Screen", "Criando EstoqueCriacao")
@@ -336,7 +334,7 @@ fun CadastroItem2Screen(
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = GI_Laranja)
                 ) {
-                    if (estoqueState is EstoqueState.Loading) {
+                    if (estoqueState is EstoqueCriacaoState.Loading) {
                         CircularProgressIndicator(color = GI_AzulMarinho)
                     } else {
                         Text(text = "Cadastrar", color = Black, fontSize = 18.sp)
@@ -345,18 +343,18 @@ fun CadastroItem2Screen(
             }
 
             LaunchedEffect(estoqueState) {
-                if (estoqueState is EstoqueState.Success) {
+                if (estoqueState is EstoqueCriacaoState.Success) {
                     Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
                         .show()
-                    onCadastroItemCadastrarClick((estoqueState as EstoqueState.Success).estoqueConsulta)
+                    onCadastroItemCadastrarClick((estoqueState as EstoqueCriacaoState.Success).estoqueConsulta)
                 }
             }
 
             LaunchedEffect(estoqueState) {
-                if (estoqueState is EstoqueState.Error) {
+                if (estoqueState is EstoqueCriacaoState.Error) {
                     Log.e(
                         "CadastroItem2Screen",
-                        "ERRO: " + (estoqueState as EstoqueState.Error).message
+                        "ERRO: " + (estoqueState as EstoqueCriacaoState.Error).message
                     )
                     Toast.makeText(context, "Erro ao cadastrar item", Toast.LENGTH_SHORT).show()
                 }

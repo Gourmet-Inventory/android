@@ -5,8 +5,13 @@ import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepo
 import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepositoryImpl
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepository
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
+import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImplLocal
+import com.example.gourmet_inventory_mobile.service.EstoqueService
 import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.LoginViewModel
 import org.koin.core.module.dsl.viewModel
@@ -50,7 +55,7 @@ val appModule = module {
 
     single<EstoqueRepository> {
         EstoqueRepositoryImpl(get())
-//        EstoqueRepositoryLocalImpl()
+//        EstoqueRepositoryImplLocal()
     }
 
     viewModel<EstoqueViewModel> {
