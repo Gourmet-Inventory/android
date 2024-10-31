@@ -78,6 +78,7 @@ fun ListaFornecedoresScreen(
     val context = LocalContext.current
 
     var currentUser: User? by remember { mutableStateOf(null) }
+
     LaunchedEffect(Unit) {
         currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
     }
@@ -250,7 +251,7 @@ fun ItemListaFornecedor(
                 RoundedCornerShape(8.dp)
             )
             .clickable(onClick = {
-                onListaFornecedoresClick("listaFornecedor/${fornecedorItem}")
+                onListaFornecedoresClick("fornecedorView/${fornecedorItem.idFornecedor}")
             }),
         verticalAlignment = Alignment.CenterVertically
     ) {

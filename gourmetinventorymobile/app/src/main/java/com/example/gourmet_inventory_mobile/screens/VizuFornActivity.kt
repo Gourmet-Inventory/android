@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Fornecedor
+import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
@@ -48,37 +49,47 @@ fun VizuFornScreen(
     fornecedor: Fornecedor,
     onVizuFornVoltarClick: () -> Unit
 ) {
+
+    val context = LocalContext.current
+    val resources = context.resources
+    var currentForn: Fornecedor? by remember { mutableStateOf(null) }
+
+    var nomeFornecedor by remember {
+        mutableStateOf("")
+    }
     var cnpj by remember {
-        mutableStateOf("08.792.981/0001-69")
+        mutableStateOf("")
     }
     var cep by remember {
-        mutableStateOf("02050202")
+        mutableStateOf("")
     }
     var logradouro by remember {
-        mutableStateOf("Rua Antônio Bento")
+        mutableStateOf("")
     }
     var complemento by remember {
-        mutableStateOf("Padaria João")
+        mutableStateOf("")
     }
     var bairro by remember {
-        mutableStateOf("Joaquim")
+        mutableStateOf("")
     }
     var localidade by remember {
-        mutableStateOf("Curitiba")
+        mutableStateOf("")
     }
     var uf by remember {
-        mutableStateOf("PR")
+        mutableStateOf("")
     }
     var numeracao by remember {
-        mutableStateOf("12")
+        mutableStateOf("")
     }
     var telefone by remember {
-        mutableStateOf("11989898989")
+        mutableStateOf("")
     }
     var categoria by remember {
-        mutableStateOf("Frios")
+        mutableStateOf("")
     }
 
+    nomeFornecedor = fornecedor?.nomeFornecedor ?: ""
+    cnpj = fornecedor?.cnpj ?: ""
     cnpj = fornecedor?.cnpj ?: ""
     cep = fornecedor?.cep ?: ""
     logradouro = fornecedor?.logradouro ?: ""
@@ -134,7 +145,7 @@ fun VizuFornScreen(
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
-                        text = "Kibon",
+                        text = fornecedor.nomeFornecedor,
                         modifier = Modifier,
                         color = Black,
                         textAlign = TextAlign.Center,
@@ -146,53 +157,44 @@ fun VizuFornScreen(
                 }
 
                 cnpj?.let {
-                    InfoForn(titulo = "Nome", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "CNPJ", valorCampo = it)
+
                 }
 
                 cep?.let {
-                    InfoForn(titulo = "CEP", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "CEP", valorCampo = it)
                 }
 
                 logradouro?.let {
-                    InfoForn(titulo = "Logradouro", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "Logradouro", valorCampo = it)
                 }
 
                 complemento?.let {
-                    InfoForn(titulo = "Complemento", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "Complemento", valorCampo = it)
                 }
 
                 bairro?.let {
-                    InfoForn(titulo = "Bairro", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "Bairro", valorCampo = it)
                 }
 
                 localidade?.let {
-                    InfoForn(titulo = "Localidade", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "Localidade", valorCampo = it)
                 }
 
                 uf?.let {
-                    InfoForn(titulo = "UF", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "UF", valorCampo = it)
                 }
 
                 numeracao?.let {
-                    InfoForn(titulo = "Numeração", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "Numeração", valorCampo = it)
                 }
 
                 telefone?.let {
-                    InfoForn(titulo = "Telefone", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "Telefone", valorCampo = it)
                 }
 
                 categoria?.let {
-                    InfoForn(titulo = "Categoria", valorCampo = it) {
-                    }
+                    InfoForn(titulo = "Categoria", valorCampo = it)
                 }
 
 
@@ -227,8 +229,7 @@ fun VizuFornScreenPreview() {
 @Composable
 fun InfoForn(
     titulo: String,
-    valorCampo: String,
-    mudaValor: (String) -> Unit
+    valorCampo: String
 ) {
 
     Row(

@@ -34,7 +34,9 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
+import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import org.koin.android.ext.koin.androidContext
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
 
 
@@ -110,30 +112,36 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("listaFornecedor/{fornecedorItem}") { backStackEntry ->
-                            val fornecedorId = backStackEntry.arguments?.getString("fornecedorId")
+                        composable("listaFornecedor") {
                             ListaFornecedoresScreen(
                                 navController = navController,
-                                fornecedorId = fornecedorId,
+                                fornecedorId = null,
                                 onListaFornecedoresClick = { route ->
                                     navController.navigate(route)
                                 }
                             )
                         }
 
-                        composable("fornecedorView") { backStackEntry ->
-                            val fornecedor = backStackEntry.arguments?.getParcelable<Fornecedor>("fornecedor")
+                        composable("fornecedorView/{idFornecedor}") { backStackEntry ->
+                            val idFornecedor = backStackEntry.arguments?.getString("idFornecedor")?.toIntOrNull()
+                            val viewModel = koinViewModel<FornViewModel>()
 
-                            fornecedor?.let {
-                                VizuFornScreen(
-                                    fornecedor = it,
-                                    onVizuFornVoltarClick = {
-                                        clickedAction = "Voltar"
-                                        navController.popBackStack()
-                                    }
-                                )
+                            idFornecedor?.let { id ->
+                                val fornecedor = viewModel.data.find { it.idFornecedor == id.toLong() }
+
+                                fornecedor?.let { forn ->
+                                    VizuFornScreen(
+                                        fornecedor = forn,
+                                        onVizuFornVoltarClick = {
+                                            navController.popBackStack()
+                                        }
+                                    )
+                                }
                             }
                         }
+
+
+
 
 
 
