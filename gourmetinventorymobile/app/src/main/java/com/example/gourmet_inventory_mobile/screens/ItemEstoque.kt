@@ -26,6 +26,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
@@ -35,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
@@ -52,9 +57,10 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 
 @Composable
 fun ItemEstoqueScreen(
+    estoqueConsulta: EstoqueConsulta?,
     onItemEstoqueClick: (String) -> Unit,
     onItemEstoqueViewEditarClick: () -> Unit,
-    onItemEstoqueViewExcluirClick: () -> Unit,
+    onItemEstoqueViewExcluirClick: () -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -81,6 +87,31 @@ fun ItemEstoqueScreen(
             }
         }
     ) { padding ->
+
+        var lote by remember { mutableStateOf("") }
+        var categoria by remember { mutableStateOf("") }
+        var marca by remember { mutableStateOf("") }
+        var localArmazenamento by remember { mutableStateOf("") }
+        var quantidadeUnitaria by remember { mutableStateOf("") }
+        var tipoMedida by remember { mutableStateOf("") }
+        var valorMedida by remember { mutableStateOf("") }
+        var valorTotal by remember { mutableStateOf("") }
+        var dataCadastro by remember { mutableStateOf("") }
+        var dataAviso by remember { mutableStateOf("") }
+
+        if (estoqueConsulta != null) {
+            lote = estoqueConsulta.lote
+            categoria = estoqueConsulta.categoria
+            marca = estoqueConsulta.marca
+            localArmazenamento = estoqueConsulta.localArmazenamento
+            quantidadeUnitaria = estoqueConsulta.unitario.toString()
+            tipoMedida = estoqueConsulta.tipoMedida.toString()
+            valorMedida = estoqueConsulta.valorMedida.toString()
+            valorTotal = estoqueConsulta.valorTotal.toString()
+            dataCadastro = estoqueConsulta.dtaCadastro.toString()
+            dataAviso = estoqueConsulta.dtaAviso.toString()
+        }
+
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -105,16 +136,16 @@ fun ItemEstoqueScreen(
                     )
                 }
                 Column() {
-                    InfoItem("Lote:", "Lote 1", topPadding = 25.dp)
-                    InfoItem("Categoria:", "Molhos", topPadding = 22.dp)
-                    InfoItem("Marca:", "Quero", topPadding = 22.dp)
-                    InfoItem("Local Armazenamento:", "Geladeira", topPadding = 22.dp)
-                    InfoItem("Quantidade Unitária:", "3", topPadding = 22.dp)
-                    InfoItem("Tipo Medida:", "GRAMAS", topPadding = 22.dp)
-                    InfoItem("Valor medida:", "500", topPadding = 22.dp)
-                    InfoItem("Valor total:", "1500", topPadding = 22.dp)
-                    InfoItem("Data Cadastro:", "20/05/2024", topPadding = 22.dp)
-                    InfoItem("Data Aviso:", "20/05/2024", topPadding = 22.dp)
+                    InfoItem("Lote:", lote, topPadding = 25.dp)
+                    InfoItem("Categoria:", categoria, topPadding = 22.dp)
+                    InfoItem("Marca:", marca, topPadding = 22.dp)
+                    InfoItem("Local Armazenamento:", localArmazenamento, topPadding = 22.dp)
+                    InfoItem("Quantidade Unitária:", quantidadeUnitaria, topPadding = 22.dp)
+                    InfoItem("Tipo Medida:", tipoMedida, topPadding = 22.dp)
+                    InfoItem("Valor medida:", valorMedida, topPadding = 22.dp)
+                    InfoItem("Valor total:", valorTotal, topPadding = 22.dp)
+                    InfoItem("Data Cadastro:", dataCadastro, topPadding = 22.dp)
+                    InfoItem("Data Aviso:", dataAviso, topPadding = 22.dp)
                 }
                 Row(
                     modifier = Modifier
@@ -195,6 +226,7 @@ fun ItemPreview() {
     ItemEstoqueScreen(
         onItemEstoqueClick = {},
         onItemEstoqueViewEditarClick = {},
-        onItemEstoqueViewExcluirClick = {}
+        onItemEstoqueViewExcluirClick = {},
+        estoqueConsulta = null
     )
 }
