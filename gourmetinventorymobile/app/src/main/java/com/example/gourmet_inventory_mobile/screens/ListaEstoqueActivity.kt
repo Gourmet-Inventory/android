@@ -43,8 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.Empresa
-import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
@@ -60,13 +58,11 @@ import com.example.gourmet_inventory_mobile.utils.LoadingList
 import com.example.gourmet_inventory_mobile.utils.SearchBox
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
-import org.koin.compose.viewmodel.koinViewModel
-import java.time.LocalDate
 
 @Composable
 fun ListaEstoqueScreen(
+    viewModel: EstoqueViewModel,
     navController: NavController,
     onListaEstoqueClick: (String) -> Unit
 ) {
@@ -117,7 +113,6 @@ fun ListaEstoqueScreen(
             var texto by remember { mutableStateOf("") }
 
             // Obtém o ViewModel do Koin
-            val viewModel = koinViewModel<EstoqueViewModel>()
             val estoqueState by viewModel.estoqueConsultaState.collectAsState()
 
             val isLoading = estoqueState is EstoqueConsultaState.Loading
@@ -216,14 +211,14 @@ fun ListaEstoqueScreen(
     }
 }
 
-@Preview
-@Composable
-fun ListaEstoquePreview() {
-    ListaEstoqueScreen(
-        navController = NavController(LocalContext.current),
-        onListaEstoqueClick = {}
-    )
-}
+//@Preview
+//@Composable
+//fun ListaEstoquePreview() {
+//    ListaEstoqueScreen(
+//        navController = NavController(LocalContext.current),
+//        onListaEstoqueClick = {}
+//    )
+//}
 
 @Composable
 fun AddButton(onAddClick: () -> Unit) {

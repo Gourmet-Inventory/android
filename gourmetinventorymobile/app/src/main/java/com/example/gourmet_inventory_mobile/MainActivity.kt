@@ -9,12 +9,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -159,6 +161,7 @@ class MainActivity : ComponentActivity() {
                             }
                             ListaEstoqueScreen(
                                 navController = navController,
+                                viewModel = viewModelEstoque,
                                 onListaEstoqueClick = { route ->
                                     Log.d("MainActivity", "route: $route")
                                     navController.navigate(route)
@@ -188,11 +191,29 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("itemEstoque") {
+//                        composable("itemEstoque") {
+//                            ItemEstoqueScreen(
+//                                onItemEstoqueClick = {
+//                                    clickedAction = "Voltar"
+//                                    navController.navigate("listaEstoque")
+//                                },
+//                                onItemEstoqueViewEditarClick = {
+//                                    clickedAction = "Editar"
+//                                    navController.navigate("editarItemEstoque")
+//                                },
+//                                onItemEstoqueViewExcluirClick = {
+//                                    clickedAction = "Excluir"
+//                                    navController.navigate("deleteConfirmação")
+//                                }
+//                            )
+//                        }
+                        composable("itemEstoque/{estoqueConsulta}") { backStackEntry ->
+                            val estoqueConsulta = backStackEntry.arguments?.getParcelable<EstoqueConsulta>("estoqueConsulta")
                             ItemEstoqueScreen(
+                                estoqueConsulta = estoqueConsulta,
                                 onItemEstoqueClick = {
                                     clickedAction = "Voltar"
-                                    navController.popBackStack()
+                                    navController.navigate("listaEstoque")
                                 },
                                 onItemEstoqueViewEditarClick = {
                                     clickedAction = "Editar"
