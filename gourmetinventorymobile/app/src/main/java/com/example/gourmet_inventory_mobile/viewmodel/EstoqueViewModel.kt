@@ -28,6 +28,13 @@ sealed class EstoqueConsultaState {
     data class Error(val message: String) : EstoqueConsultaState()
 }
 
+sealed class EstoqueDelecaoState {
+    object Idle : EstoqueDelecaoState()
+    object Loading : EstoqueDelecaoState()
+    object Success : EstoqueDelecaoState()
+    data class Error(val message: String) : EstoqueDelecaoState()
+}
+
 class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewModel() {
     private val _estoqueConsultaState = MutableStateFlow<EstoqueConsultaState>(EstoqueConsultaState.Idle)
     val estoqueConsultaState: StateFlow<EstoqueConsultaState> = _estoqueConsultaState
@@ -36,6 +43,9 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
     val estoqueCriacaoState: StateFlow<EstoqueCriacaoState> = _estoqueCriacaoState
     var data = mutableStateListOf<EstoqueConsulta>()
         private set
+
+    private val _deletarEstoqueState = MutableStateFlow<EstoqueDelecaoState>(EstoqueDelecaoState.Idle)
+
 
     fun cadastrarEstoque(context: Context, estoqueCriacao: EstoqueCriacao) {
         _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
@@ -108,17 +118,65 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         }
     }
 
-//    fun getEstoque() {
-//        viewModelScope.launch {
-//            isLoading = true
-//
-//            val response = estoqueRepository.obterEstoque()
-//
-//            if (response.isSuccessful) {
-////                data.addAll(response.body()!!)
-//                data.addAll(response.body() ?: emptyList())
-//            }
-//            isLoading = false
-//        }
-//    }
+    fun atualizarEstoque(context: Context, estoqueCriacao: EstoqueCriacao) {
+        _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
+        Log.d("EstoqueViewModel", "AtualizarEstoque: $estoqueCriacao")
+
+        viewModelScope.launch {
+            val user = DataStoreUtils(context).obterUsuario()?.first()
+            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacao")
+            val idEmpresa = user?.empresa?.idEmpresa
+            Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")
+
+            try {
+                val response = idEmpresa?.let {
+                    estoqueCriacao.toEstoque(user.empresa).let { estoque ->
+                        estoqueRepository.updateEstoque(it, estoque)
+                    }
+                }
+
+                if (response == null) {
+                    Log.d("EstoqueViewModel", "Response é nulo")
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+                    return@launch
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response é bem sucedido e corpo da resposta não é nulo"
+                    )
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Success(response.body()!!)
+                } else {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response não é bem sucedido ou corpo da resposta é nulo"
+                    )
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+                }
+            } catch (e: Exception) {
+                Log.d("EstoqueViewModel", "Erro ao atualizar estoque: ${e.message}")
+                _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+            }
+        }
+    }
+
+    fun deletarEstoque(idItem: Long) {
+
+        viewModelScope.launch {
+            try {
+                val response = estoqueRepository.deleteEstoque(idItem)
+
+                if (response.isSuccessful) {
+                    _deletarEstoqueState.value = EstoqueDelecaoState.Success
+                    Log.d("EstoqueViewModel", "Item deletado com sucesso: $idItem")
+                } else {
+                    // Se a resposta não for bem-sucedida, atualiza o estado para Error
+                    _deletarEstoqueState.value = EstoqueDelecaoState.Error("Erro ao deletar estoque")
+                }
+            } catch (e: Exception) {
+                Log.d("EstoqueViewModel", "Erro ao deletar estoque: ${e.message}")
+                _deletarEstoqueState.value = EstoqueDelecaoState.Error("Erro ao deletar estoque")
+            }
+        }
+    }
 }

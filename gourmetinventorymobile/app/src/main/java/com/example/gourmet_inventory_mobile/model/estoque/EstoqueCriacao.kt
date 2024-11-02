@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.model.estoque
 
+import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.Medidas
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Contextual
@@ -22,4 +23,21 @@ data class EstoqueCriacao (
     @Contextual
     var dtaAviso: LocalDate,
     var marca: String
-) : java.io.Serializable , android.os.Parcelable
+) : java.io.Serializable , android.os.Parcelable {
+    fun toEstoque(empresa: Empresa): Estoque {
+        return Estoque(
+            lote = this.lote,
+            nome = this.nome,
+            categoria = this.categoria,
+            tipoMedida = this.tipoMedida,
+            unitario = this.unitario,
+            valorMedida = this.valorMedida,
+            localArmazenamento = this.localArmazenamento,
+            dtaCadastro = this.dtaCadastro,
+            dtaAviso = this.dtaAviso,
+            marca = this.marca,
+            manipulado = this.manipulado,
+            empresa = empresa
+        )
+    }
+}

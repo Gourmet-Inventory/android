@@ -61,7 +61,7 @@ object RetrofitInstance {
 
             val newRequestBuilder = oldRequest.newBuilder()
 
-            if (oldRequest.url.encodedPath.contains("/usuarios/login")) {
+            if (oldRequest.url.encodedPath.contains("/api/usuarios/login")) {
                 newRequestBuilder.header("Authorization", "")
                 Log.d("ApiInterceptor", "newRequestBuilder: $newRequestBuilder")
             } else{

@@ -57,10 +57,10 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 
 @Composable
 fun ItemEstoqueScreen(
-    estoqueConsulta: EstoqueConsulta?,
+    estoqueConsulta: EstoqueConsulta,
     onItemEstoqueClick: (String) -> Unit,
     onItemEstoqueViewEditarClick: () -> Unit,
-    onItemEstoqueViewExcluirClick: () -> Unit
+    onItemEstoqueViewExcluirClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -112,6 +112,9 @@ fun ItemEstoqueScreen(
             dataAviso = estoqueConsulta.dtaAviso.toString()
         }
 
+
+
+
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -127,7 +130,7 @@ fun ItemEstoqueScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Molho de Tomate",
+                        text = estoqueConsulta.nome,
                         fontSize = 32.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(
@@ -140,7 +143,7 @@ fun ItemEstoqueScreen(
                     InfoItem("Categoria:", categoria, topPadding = 22.dp)
                     InfoItem("Marca:", marca, topPadding = 22.dp)
                     InfoItem("Local Armazenamento:", localArmazenamento, topPadding = 22.dp)
-                    InfoItem("Quantidade Unitária:", quantidadeUnitaria, topPadding = 22.dp)
+                    InfoItem("Quantidade Unitária:", quantidadeUnitaria.toString(), topPadding = 22.dp)
                     InfoItem("Tipo Medida:", tipoMedida, topPadding = 22.dp)
                     InfoItem("Valor medida:", valorMedida, topPadding = 22.dp)
                     InfoItem("Valor total:", valorTotal, topPadding = 22.dp)
@@ -168,7 +171,7 @@ fun ItemEstoqueScreen(
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Edit,
+                            imageVector = Icons.Default.Edit,
                             contentDescription = "Editar"
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -176,9 +179,7 @@ fun ItemEstoqueScreen(
                     }
                     Button(
                         onClick = {
-                            onItemEstoqueViewExcluirClick()
-                            Toast.makeText(context, "Item Excluído com sucesso", Toast.LENGTH_SHORT)
-                                .show()
+                            onItemEstoqueViewExcluirClick("deleteConfirmacao/${estoqueConsulta.idItem}")
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFED5656),
@@ -220,13 +221,13 @@ fun InfoItem(label: String, value: String, topPadding: Dp = 0.dp) {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ItemPreview() {
-    ItemEstoqueScreen(
-        onItemEstoqueClick = {},
-        onItemEstoqueViewEditarClick = {},
-        onItemEstoqueViewExcluirClick = {},
-        estoqueConsulta = null
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ItemPreview() {
+//    ItemEstoqueScreen(
+//        onItemEstoqueClick = {},
+//        onItemEstoqueViewEditarClick = {},
+//        onItemEstoqueViewExcluirClick = {},
+//        estoqueConsulta = {}
+//    )
+//}

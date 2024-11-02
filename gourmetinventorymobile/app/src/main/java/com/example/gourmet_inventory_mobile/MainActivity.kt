@@ -5,6 +5,7 @@ import SharedViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +24,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gourmet_inventory_mobile.model.Fornecedor
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
-import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
@@ -40,10 +40,9 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
-import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -207,37 +206,80 @@ class MainActivity : ComponentActivity() {
 //                                }
 //                            )
 //                        }
-                        composable("itemEstoque/{estoqueConsulta}") { backStackEntry ->
-                            val estoqueConsulta = backStackEntry.arguments?.getParcelable<EstoqueConsulta>("estoqueConsulta")
-                            ItemEstoqueScreen(
-                                estoqueConsulta = estoqueConsulta,
-                                onItemEstoqueClick = {
-                                    clickedAction = "Voltar"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onItemEstoqueViewEditarClick = {
-                                    clickedAction = "Editar"
-                                    navController.navigate("editarItemEstoque")
-                                },
-                                onItemEstoqueViewExcluirClick = {
-                                    clickedAction = "Excluir"
-                                    navController.navigate("deleteConfirmação")
+
+//                        composable("fornecedorView/{idFornecedor}") { backStackEntry ->
+//                            val idFornecedor = backStackEntry.arguments?.getString("idFornecedor")?.toIntOrNull()
+//                            val viewModel = koinViewModel<FornViewModel>()
+//
+//                            idFornecedor?.let { id ->
+//                                val fornecedor = viewModel.data.find { it.idFornecedor == id.toLong() }
+//
+//                                fornecedor?.let { forn ->
+//                                    VizuFornScreen(
+//                                        fornecedor = forn,
+//                                        onVizuFornVoltarClick = {
+//                                            navController.popBackStack()
+//                                        }
+//                                    )
+//                                }
+
+                        composable("itemEstoque/{idItem}") { backStackEntry ->
+                            val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
+
+                            idItem?.let { id ->
+                                val itemEstoque = viewModelEstoque.data.find { it.idItem == id.toLong() }
+                                Log.d("MainActivity", "estoque: $itemEstoque")
+                                Log.d("MainActivity", "idItem: $idItem")
+
+                                itemEstoque?.let { estoqueConsulta ->
+                                    ItemEstoqueScreen(
+                                        estoqueConsulta = estoqueConsulta,
+                                        onItemEstoqueClick = {
+                                            clickedAction = "Voltar"
+                                            navController.navigate("listaEstoque")
+                                        },
+                                        onItemEstoqueViewEditarClick = {
+                                            clickedAction = "Editar"
+                                            Log.d("MainActivity", "Entrou na página de edição")
+                                            navController.navigate("editarItemEstoque/$idItem")
+                                        },
+                                        onItemEstoqueViewExcluirClick = {
+                                            clickedAction = "Excluir"
+                                            navController.navigate("deleteConfirmacao/${idItem}")
+                                        }
+                                    )
                                 }
-                            )
+
+                            }
+
+
                         }
 
-                        composable("deleteConfirmação") {
-                            DeleteCnfirmacaoScreen(
-                                onDeleteConfirmacaoConfirmarClick = {
-                                    clickedAction = "Deletar"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onDeleteConfirmacaoCancelarClick = {
-                                    clickedAction = "Cancelar"
-                                    navController.popBackStack()
-                                }
-                            )
+                        composable("deleteConfirmacao/{idItem}") { backStackEntry ->
+                            // Obtém o idItem como String e converte para Long (ou Int, dependendo do seu modelo)
+                            val idItem = backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
+
+                            if (idItem != null) {
+                                DeleteCnfirmacaoScreen(
+                                    viewModel = viewModelEstoque, // Certifique-se de passar a instância correta da ViewModel
+                                    idItem = idItem, // Passa o ID do item para a tela de confirmação
+                                    onDeleteConfirmacaoConfirmarClick = {
+                                        // Chame a função de deletar do ViewModel
+                                        viewModelEstoque.deletarEstoque(idItem)
+
+                                        // Navegar para a lista de estoque após a exclusão
+                                        navController.navigate("listaEstoque")
+                                    },
+                                    onDeleteConfirmacaoCancelarClick = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            } else {
+                                Log.d("MainActivity", "ID do item inválido")
+                                navController.popBackStack() // Volta para a tela anterior se o ID for inválido
+                            }
                         }
+
 
                         composable("cadastrarItemEstoque") {
                             CadastroItemScreen(
@@ -269,17 +311,27 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("editarItemEstoque") {
-                            EditarScreen(
-                                onEditarItem1ProximoClick = {
-                                    clickedAction = "Próximo"
-                                    navController.navigate("editarItemEstoque2")
-                                },
-                                onEditarItem1AnteriorClick = {
-                                    clickedAction = "Anterior"
-                                    navController.popBackStack()
+                        composable("editarItemEstoque/{idItem}") { backStackEntry ->
+                            val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
+//                            val viewModel = koinViewModel<EstoqueViewModel>()
+
+                            idItem?.let { id ->
+                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
+
+                                estoque?.let { estoque ->
+                                    EditarScreen(
+                                        estoque = estoque,
+                                        sharedViewModel = sharedViewModel,
+                                        onEditarItemVoltarClick = {
+                                            clickedAction = "Voltar"
+                                            navController.popBackStack()
+                                        },
+                                        onEditarItemProximoClick = {
+                                            navController.navigate("editarItemEstoque2")
+                                        }
+                                    )
                                 }
-                            )
+                            }
                         }
 
                         composable("editarItemEstoque2") {
@@ -291,7 +343,8 @@ class MainActivity : ComponentActivity() {
                                 onEditarItem2AnteriorClick = {
                                     clickedAction = "Anterior"
                                     navController.popBackStack()
-                                }
+                                },
+                                sharedViewModel = sharedViewModel
                             )
                         }
 

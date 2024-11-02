@@ -47,4 +47,10 @@ class EstoqueRepositoryImplLocal(): EstoqueRepository {
     ): Response<EstoqueConsulta> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun deleteEstoque(
+        id: Long
+    ): Response<Unit> {
+        TODO("Not yet implemented")
+    }
 }
