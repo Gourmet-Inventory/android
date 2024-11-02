@@ -5,6 +5,7 @@ import SharedViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -224,11 +225,11 @@ class MainActivity : ComponentActivity() {
 
                         composable("itemEstoque/{idItem}") { backStackEntry ->
                             val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
-//                            val viewModel = koinViewModel<EstoqueViewModel>()
 
                             idItem?.let { id ->
                                 val itemEstoque = viewModelEstoque.data.find { it.idItem == id.toLong() }
                                 Log.d("MainActivity", "estoque: $itemEstoque")
+                                Log.d("MainActivity", "idItem: $idItem")
 
                                 itemEstoque?.let { estoqueConsulta ->
                                     ItemEstoqueScreen(
@@ -244,7 +245,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onItemEstoqueViewExcluirClick = {
                                             clickedAction = "Excluir"
-                                            navController.navigate("deleteConfirmação")
+                                            navController.navigate("deleteConfirmacao/${idItem}")
                                         }
                                     )
                                 }
@@ -254,18 +255,31 @@ class MainActivity : ComponentActivity() {
 
                         }
 
-                        composable("deleteConfirmação") {
-                            DeleteCnfirmacaoScreen(
-                                onDeleteConfirmacaoConfirmarClick = {
-                                    clickedAction = "Deletar"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onDeleteConfirmacaoCancelarClick = {
-                                    clickedAction = "Cancelar"
-                                    navController.popBackStack()
-                                }
-                            )
+                        composable("deleteConfirmacao/{idItem}") { backStackEntry ->
+                            // Obtém o idItem como String e converte para Long (ou Int, dependendo do seu modelo)
+                            val idItem = backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
+
+                            if (idItem != null) {
+                                DeleteCnfirmacaoScreen(
+                                    viewModel = viewModelEstoque, // Certifique-se de passar a instância correta da ViewModel
+                                    idItem = idItem, // Passa o ID do item para a tela de confirmação
+                                    onDeleteConfirmacaoConfirmarClick = {
+                                        // Chame a função de deletar do ViewModel
+                                        viewModelEstoque.deletarEstoque(idItem)
+
+                                        // Navegar para a lista de estoque após a exclusão
+                                        navController.navigate("listaEstoque")
+                                    },
+                                    onDeleteConfirmacaoCancelarClick = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            } else {
+                                Log.d("MainActivity", "ID do item inválido")
+                                navController.popBackStack() // Volta para a tela anterior se o ID for inválido
+                            }
                         }
+
 
                         composable("cadastrarItemEstoque") {
                             CadastroItemScreen(

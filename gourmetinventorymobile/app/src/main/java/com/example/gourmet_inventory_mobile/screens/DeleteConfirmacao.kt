@@ -36,6 +36,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Vermelho
 import com.example.gourmet_inventory_mobile.ui.theme.White
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 
 //class DeleteActivity : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +53,9 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 
 @Composable
 fun DeleteCnfirmacaoScreen(
-    onDeleteConfirmacaoConfirmarClick: () -> Unit ,
+    viewModel: EstoqueViewModel,
+    idItem: Long, // Adicione o ID do item a ser excluído
+    onDeleteConfirmacaoConfirmarClick: () -> Unit,
     onDeleteConfirmacaoCancelarClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -62,8 +65,7 @@ fun DeleteCnfirmacaoScreen(
         .background(color = Color.White)) {
 
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -76,18 +78,18 @@ fun DeleteCnfirmacaoScreen(
             )
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ){
                 Button(
                     onClick = {
-                        onDeleteConfirmacaoConfirmarClick()
+                        // Chame a função de deletar do ViewModel
+                        viewModel.deletarEstoque(idItem)
+                        onDeleteConfirmacaoConfirmarClick() // Isso pode ser usado para fechar a tela ou outra lógica
                     },
                     modifier = Modifier
                         .height(45.dp)
                         .width(120.dp),
-//                        .padding(start = 10.dp),
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Verde,
@@ -104,13 +106,12 @@ fun DeleteCnfirmacaoScreen(
                     onClick = {
                         onDeleteConfirmacaoCancelarClick()
                         Toast
-                            .makeText(context, "Exlusão cancelada", Toast.LENGTH_SHORT)
+                            .makeText(context, "Exclusão cancelada", Toast.LENGTH_SHORT)
                             .show()
                     },
                     modifier = Modifier
                         .height(45.dp)
                         .width(120.dp),
-//                        .padding(end = 10.dp),
                     shape = RoundedCornerShape(5.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = GI_Vermelho,
@@ -128,11 +129,12 @@ fun DeleteCnfirmacaoScreen(
     }
 }
 
-@Preview
-@Composable
-fun DeleteScreenPreview() {
-    DeleteCnfirmacaoScreen(
-        onDeleteConfirmacaoConfirmarClick = {},
-        onDeleteConfirmacaoCancelarClick = {},
-    )
-}
+
+//@Preview
+//@Composable
+//fun DeleteScreenPreview() {
+//    DeleteCnfirmacaoScreen(
+//        onDeleteConfirmacaoConfirmarClick = {},
+//        onDeleteConfirmacaoCancelarClick = {},
+//    )
+//}

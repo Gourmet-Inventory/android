@@ -60,7 +60,7 @@ fun ItemEstoqueScreen(
     estoqueConsulta: EstoqueConsulta,
     onItemEstoqueClick: (String) -> Unit,
     onItemEstoqueViewEditarClick: () -> Unit,
-    onItemEstoqueViewExcluirClick: () -> Unit
+    onItemEstoqueViewExcluirClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -179,9 +179,7 @@ fun ItemEstoqueScreen(
                     }
                     Button(
                         onClick = {
-                            onItemEstoqueViewExcluirClick()
-                            Toast.makeText(context, "Item Excluído com sucesso", Toast.LENGTH_SHORT)
-                                .show()
+                            onItemEstoqueViewExcluirClick("deleteConfirmacao/${estoqueConsulta.idItem}")
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFED5656),
