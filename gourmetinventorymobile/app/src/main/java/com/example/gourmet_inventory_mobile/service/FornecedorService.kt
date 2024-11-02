@@ -10,6 +10,6 @@ import retrofit2.http.GET
 
 
 interface FornecedorService {
-    @GET("/fornecedores")
+    @GET("/api/fornecedores")
     suspend fun getFornecedores(): Response<List<Fornecedor>>
 }

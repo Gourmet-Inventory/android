@@ -12,22 +12,22 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface EstoqueService {
-    @GET("/estoque-ingrediente/{idEmpresa}")
+    @GET("/api/estoque-ingrediente/{idEmpresa}")
     suspend fun getEstoque(@Path("idEmpresa") idEmpresa: Long): Response<List<EstoqueConsulta>>
 
-    @POST("/estoque-ingrediente/{idEmpresa}")
+    @POST("/api/estoque-ingrediente/{idEmpresa}")
     suspend fun createEstoque(
         @Path("idEmpresa") idEmpresa: Long,
         @Body estoque: EstoqueCriacao
     ): Response<EstoqueConsulta>
 
-    @PUT("/estoque-ingrediente/atualizar-estoque/{id}")
+    @PUT("/api/estoque-ingrediente/atualizar-estoque/{id}")
     suspend fun updateEstoque(
         @Path("id") idEmpresa: Long,
         @Body estoque: Estoque
     ) : Response<EstoqueConsulta>
 
-    @DELETE("/estoque-ingrediente/deletar-item/{id}")
+    @DELETE("/api/estoque-ingrediente/deletar-item/{id}")
     suspend fun deleteEstoque(
         @Path("id") idItem: Long
     ) : Response<Unit>

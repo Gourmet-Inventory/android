@@ -38,19 +38,6 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_Vermelho
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 
-//class DeleteActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                DeleteScreen()
-//
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun DeleteCnfirmacaoScreen(
     viewModel: EstoqueViewModel,
@@ -106,7 +93,7 @@ fun DeleteCnfirmacaoScreen(
                     onClick = {
                         onDeleteConfirmacaoCancelarClick()
                         Toast
-                            .makeText(context, "Exclusão cancelada", Toast.LENGTH_SHORT)
+                            .makeText(context, "Ação cancelada", Toast.LENGTH_SHORT)
                             .show()
                     },
                     modifier = Modifier

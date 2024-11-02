@@ -31,8 +31,8 @@ sealed class EstoqueConsultaState {
 sealed class EstoqueDelecaoState {
     object Idle : EstoqueDelecaoState()
     object Loading : EstoqueDelecaoState()
-    data class Success (val message: String) : EstoqueDelecaoState()
-    data class Error(val message: String) : EstoqueCriacaoState()
+    object Success : EstoqueDelecaoState()
+    data class Error(val message: String) : EstoqueDelecaoState()
 }
 
 class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewModel() {
@@ -44,9 +44,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
     var data = mutableStateListOf<EstoqueConsulta>()
         private set
 
-    private val _deletarEstoqueState = MutableStateFlow<EstoqueCriacaoState>(EstoqueCriacaoState.Idle)
-
-
+    private val _deletarEstoqueState = MutableStateFlow<EstoqueDelecaoState>(EstoqueDelecaoState.Idle)
 
 
     fun cadastrarEstoque(context: Context, estoqueCriacao: EstoqueCriacao) {
@@ -169,14 +167,15 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
                 val response = estoqueRepository.deleteEstoque(idItem)
 
                 if (response.isSuccessful) {
+                    _deletarEstoqueState.value = EstoqueDelecaoState.Success
                     Log.d("EstoqueViewModel", "Item deletado com sucesso: $idItem")
                 } else {
                     // Se a resposta não for bem-sucedida, atualiza o estado para Error
-                    _deletarEstoqueState.value = EstoqueCriacaoState.Error("Erro ao deletar estoque")
+                    _deletarEstoqueState.value = EstoqueDelecaoState.Error("Erro ao deletar estoque")
                 }
             } catch (e: Exception) {
                 Log.d("EstoqueViewModel", "Erro ao deletar estoque: ${e.message}")
-                _deletarEstoqueState.value = EstoqueCriacaoState.Error("Erro ao deletar estoque")
+                _deletarEstoqueState.value = EstoqueDelecaoState.Error("Erro ao deletar estoque")
             }
         }
     }
