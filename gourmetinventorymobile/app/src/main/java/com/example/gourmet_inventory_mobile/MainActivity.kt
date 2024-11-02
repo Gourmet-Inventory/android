@@ -23,7 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gourmet_inventory_mobile.model.Fornecedor
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
-import com.example.gourmet_inventory_mobile.screens.CadastroItemScreen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
@@ -207,23 +206,52 @@ class MainActivity : ComponentActivity() {
 //                                }
 //                            )
 //                        }
-                        composable("itemEstoque/{estoqueConsulta}") { backStackEntry ->
-                            val estoqueConsulta = backStackEntry.arguments?.getParcelable<EstoqueConsulta>("estoqueConsulta")
-                            ItemEstoqueScreen(
-                                estoqueConsulta = estoqueConsulta,
-                                onItemEstoqueClick = {
-                                    clickedAction = "Voltar"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onItemEstoqueViewEditarClick = {
-                                    clickedAction = "Editar"
-                                    navController.navigate("editarItemEstoque")
-                                },
-                                onItemEstoqueViewExcluirClick = {
-                                    clickedAction = "Excluir"
-                                    navController.navigate("deleteConfirmação")
+
+//                        composable("fornecedorView/{idFornecedor}") { backStackEntry ->
+//                            val idFornecedor = backStackEntry.arguments?.getString("idFornecedor")?.toIntOrNull()
+//                            val viewModel = koinViewModel<FornViewModel>()
+//
+//                            idFornecedor?.let { id ->
+//                                val fornecedor = viewModel.data.find { it.idFornecedor == id.toLong() }
+//
+//                                fornecedor?.let { forn ->
+//                                    VizuFornScreen(
+//                                        fornecedor = forn,
+//                                        onVizuFornVoltarClick = {
+//                                            navController.popBackStack()
+//                                        }
+//                                    )
+//                                }
+
+                        composable("itemEstoque/{idItem}") { backStackEntry ->
+                            val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
+//                            val viewModel = koinViewModel<EstoqueViewModel>()
+
+                            idItem?.let { id ->
+                                val itemEstoque = viewModelEstoque.data.find { it.idItem == id.toLong() }
+                                Log.d("MainActivity", "estoque: $itemEstoque")
+
+                                itemEstoque?.let { estoqueConsulta ->
+                                    ItemEstoqueScreen(
+                                        estoqueConsulta = estoqueConsulta,
+                                        onItemEstoqueClick = {
+                                            clickedAction = "Voltar"
+                                            navController.navigate("listaEstoque")
+                                        },
+                                        onItemEstoqueViewEditarClick = {
+                                            clickedAction = "Editar"
+                                            navController.navigate("editarItemEstoque")
+                                        },
+                                        onItemEstoqueViewExcluirClick = {
+                                            clickedAction = "Excluir"
+                                            navController.navigate("deleteConfirmação")
+                                        }
+                                    )
                                 }
-                            )
+
+                            }
+
+
                         }
 
                         composable("deleteConfirmação") {

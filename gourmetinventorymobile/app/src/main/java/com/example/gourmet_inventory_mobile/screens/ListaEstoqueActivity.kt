@@ -376,7 +376,7 @@ fun ItemListaEstoque(
                 RoundedCornerShape(8.dp)
             )
             .clickable(onClick = {
-                onListaEstoqueClick("itemEstoque")
+                onListaEstoqueClick("itemEstoque/${estoqueItem.idItem}")
             }),
         verticalAlignment = Alignment.CenterVertically
     ) {
