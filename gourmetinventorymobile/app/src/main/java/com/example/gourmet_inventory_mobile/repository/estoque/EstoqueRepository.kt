@@ -11,4 +11,7 @@ interface EstoqueRepository {
     suspend fun createEstoque(idEmpresa: Long ,estoque: EstoqueCriacao) : Response<EstoqueConsulta>
 
     suspend fun updateEstoque(idEmpresa: Long ,estoque: Estoque) : Response<EstoqueConsulta>
+
+    suspend fun deleteEstoque(id: Long) : Response<Unit>
+
 }

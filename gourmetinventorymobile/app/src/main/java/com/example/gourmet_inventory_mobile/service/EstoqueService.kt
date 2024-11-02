@@ -5,6 +5,7 @@ import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -25,4 +26,9 @@ interface EstoqueService {
         @Path("idEmpresa") idEmpresa: Long,
         @Body estoque: Estoque
     ) : Response<EstoqueConsulta>
+
+    @DELETE("/estoque-ingrediente/deletar-item/{id}")
+    suspend fun deleteEstoque(
+        @Path("id") idItem: Long
+    ) : Response<Unit>
 }
