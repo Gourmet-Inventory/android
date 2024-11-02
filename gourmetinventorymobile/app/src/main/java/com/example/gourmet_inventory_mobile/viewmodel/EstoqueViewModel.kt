@@ -108,17 +108,45 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         }
     }
 
-//    fun getEstoque() {
-//        viewModelScope.launch {
-//            isLoading = true
-//
-//            val response = estoqueRepository.obterEstoque()
-//
-//            if (response.isSuccessful) {
-////                data.addAll(response.body()!!)
-//                data.addAll(response.body() ?: emptyList())
-//            }
-//            isLoading = false
-//        }
-//    }
+    fun atualizarEstoque(context: Context, estoqueCriacao: EstoqueCriacao) {
+        _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
+        Log.d("EstoqueViewModel", "AtualizarEstoque: $estoqueCriacao")
+
+        viewModelScope.launch {
+            val user = DataStoreUtils(context).obterUsuario()?.first()
+            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacao")
+            val idEmpresa = user?.empresa?.idEmpresa
+            Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")
+
+            try {
+                val response = idEmpresa?.let {
+                    estoqueCriacao.toEstoque(user.empresa).let { estoque ->
+                        estoqueRepository.updateEstoque(it, estoque)
+                    }
+                }
+
+                if (response == null) {
+                    Log.d("EstoqueViewModel", "Response é nulo")
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+                    return@launch
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response é bem sucedido e corpo da resposta não é nulo"
+                    )
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Success(response.body()!!)
+                } else {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response não é bem sucedido ou corpo da resposta é nulo"
+                    )
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+                }
+            } catch (e: Exception) {
+                Log.d("EstoqueViewModel", "Erro ao atualizar estoque: ${e.message}")
+                _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+            }
+        }
+    }
 }

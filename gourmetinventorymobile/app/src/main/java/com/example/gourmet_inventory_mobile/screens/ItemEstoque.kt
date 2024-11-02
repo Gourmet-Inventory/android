@@ -171,7 +171,7 @@ fun ItemEstoqueScreen(
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Edit,
+                            imageVector = Icons.Default.Edit,
                             contentDescription = "Editar"
                         )
                         Spacer(modifier = Modifier.width(8.dp))

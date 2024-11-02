@@ -125,8 +125,8 @@ fun CadastroItem2Screen(
                 unitario = qtdUnitaria.toIntOrNull() ?: 0,
                 valorMedida = valorMedida.toDoubleOrNull() ?: 0.0,
                 localArmazenamento = localArmazenamento,
-                dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),  // Certifique-se de que isso está correto
-                dtaAviso = LocalDate.parse(dataAviso, dateFormatter),  // E isso também
+                dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
                 marca = estoque?.marca ?: ""
             )
         } catch (e: Exception) {
@@ -238,7 +238,7 @@ fun CadastroItem2Screen(
                             valorMedidaErro = novoValor.toDoubleOrNull()?.let { it <= 0 } ?: true
                         },
                         isErro = valorMedidaErro,
-                        mensagemErro = "Valor deve ser um número positivo"
+                        mensagemErro = "Valor inválido"
                     )
                 }
 
@@ -287,12 +287,12 @@ fun CadastroItem2Screen(
                     .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ImagemPasso2(onCadastroItemAnteriorClick = {
+                Passo2Criacao(onCadastroItemAnteriorClick = {
                     val novoEstoque = estoque.copy(
                         unitario = qtdUnitaria.toInt(),
                         valorMedida = valorMedida.toDouble(),
                         dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
-                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
                     )
                     sharedViewModel.atualizarEstoque(novoEstoque)
                     onCadastroItem2AnteriorClick(estoque)
@@ -517,7 +517,6 @@ fun InputCadastro2(
         modifier = Modifier
             .width(180.dp)
             .height(140.dp)
-
     ) {
         Column(
             modifier = Modifier
@@ -568,8 +567,7 @@ fun InputCadastro2(
 }
 
 @Composable
-fun ImagemPasso2(
-    estoque: EstoqueCriacao? = null,
+fun Passo2Criacao(
     onCadastroItemAnteriorClick: () -> Unit = {}
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }

@@ -20,9 +20,9 @@ interface EstoqueService {
         @Body estoque: EstoqueCriacao
     ): Response<EstoqueConsulta>
 
-    @PUT("/estoque-ingrediente/{idEmpresa}")
+    @PUT("/estoque-ingrediente/atualizar-estoque/{id}")
     suspend fun updateEstoque(
-        @Path("idEmpresa") idEmpresa: Long,
+        @Path("id") idEmpresa: Long,
         @Body estoque: Estoque
     ) : Response<EstoqueConsulta>
 }

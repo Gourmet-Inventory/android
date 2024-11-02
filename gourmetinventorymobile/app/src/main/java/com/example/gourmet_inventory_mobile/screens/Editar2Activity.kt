@@ -1,5 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import SharedViewModel
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,9 +15,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -23,6 +31,8 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,39 +41,94 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
+import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueCriacaoState
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
+import org.koin.compose.viewmodel.koinViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Editar2Screen(
-    onEditarItem2AnteriorClick: () -> Unit,
+    sharedViewModel: SharedViewModel,
+    onEditarItem2AnteriorClick: (EstoqueCriacao?) -> Unit,
     onEditarItem2SalvarClick: () -> Unit
+//    estoque: EstoqueCriacao?
 ) {
+    val estoque by sharedViewModel.estoque.collectAsState()
+    Log.d("Editar2Screen", "estoque: $estoque")
+
     var qtdUnitaria by remember {
-        mutableStateOf("")
-    }
-    var tipoMedida by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.unitario.toString() else ""
+        )
     }
     var valorMedida by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.valorMedida.toString() else ""
+        )
     }
     var dataCadastro by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else ""
+        )
     }
     var dataAviso by remember {
-        mutableStateOf("")
+        mutableStateOf(
+            if (estoque != null) estoque!!.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else ""
+        )
     }
+    var tipoMedida by remember {
+        mutableStateOf(
+            if (estoque != null) estoque!!.tipoMedida.name else ""
+        )
+    }
+
+    // Erros
+    var valorMedidaErro by remember { mutableStateOf(false) }
+    var dataCadastroErro by remember { mutableStateOf(false) }
+    var dataAvisoErro by remember { mutableStateOf(false) }
+    var dataAvisoAnteriorErro by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
+    val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
+    val viewModel = koinViewModel<EstoqueViewModel>()
+    val estoqueState by viewModel.estoqueCriacaoState.collectAsState()
+
+//    fun criarEstoqueAtualizado(): EstoqueCriacao? {
+//        Log.d("Editar2Screen", "Criando EstoqueCriacao")
+//        return try {
+//            EstoqueCriacao(
+//                lote = estoque?.lote ?: "",
+//                manipulado = estoque?.manipulado ?: false,
+//                nome = estoque?.nome ?: "",
+//                categoria = estoque?.categoria ?: "",
+//                tipoMedida = Medidas.valueOf(tipoMedida),
+//                unitario = qtdUnitaria.toIntOrNull() ?: 0,
+//                valorMedida = valorMedida.toDoubleOrNull() ?: 0.0,
+//                localArmazenamento = estoque?.localArmazenamento ?: "",
+//                dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+//                dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+//                marca = estoque?.marca ?: ""
+//            )
+//        } catch (e: Exception) {
+//            Log.e("Editar2Screen", "Erro ao criar EstoqueCriacao: ${e.message}")
+//            null
+//        }
+//    }
 
     Surface(
         modifier = Modifier
@@ -71,10 +136,10 @@ fun Editar2Screen(
             .background(color = Color.White)
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            // Cabeçalho
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,179 +147,310 @@ fun Editar2Screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
-                    onEditarItem2AnteriorClick()
+                    val novoEstoque = estoque.copy(
+                        unitario = qtdUnitaria.toInt(),
+                        valorMedida = valorMedida.toDouble(),
+                        dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                        localArmazenamento = estoque.localArmazenamento,
+                        tipoMedida = Medidas.valueOf(tipoMedida)
+                    )
+                    sharedViewModel.atualizarEstoque(novoEstoque)
+                    onEditarItem2AnteriorClick(novoEstoque)
                 }) {
                     Icon(
-                        imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+                        imageVector = Icons.Default.KeyboardArrowLeft,
                         contentDescription = "Voltar",
                         Modifier.size(44.dp),
                         tint = Color.Black
                     )
                 }
             }
+
+            // Título
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
-//                    .padding(top = 45.dp, start = 26.dp, end = 26.dp),
+                    .height(50.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Editar Item:",
-                    modifier = Modifier,
                     color = Black,
                     textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        fontSize = 35.sp,
-                        fontFamily = JostBold
-                    )
+                    style = TextStyle(fontSize = 35.sp, fontFamily = JostBold)
                 )
             }
-            Row(
-                modifier = Modifier
-                    .width(350.dp)
-                    .height(120.dp),
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
+
+            Column(
+                modifier = Modifier.padding(top = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Text(
-                    fontSize = 22.sp,
+                Row(
                     modifier = Modifier
-                        .width(160.dp),
-                    text = "Quantidade Unitária:"
-                )
+                        .width(350.dp)
+                        .height(100.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        fontSize = 22.sp,
+                        modifier = Modifier.width(160.dp),
+                        text = "Quantidade Unitária:"
+                    )
 
-                OutlinedTextField(
-                    value = qtdUnitaria,
-                    onValueChange = { qtdUnitaria = it },
+                    OutlinedTextField(
+                        value = qtdUnitaria,
+                        onValueChange = { qtdUnitaria = it },
+                        modifier = Modifier
+                            .background(color = White, shape = RoundedCornerShape(5.dp))
+                            .border(1.dp, Color.Black)
+                            .width(180.dp),
+                        singleLine = true,
+                    )
+                }
+
+                Row(
                     modifier = Modifier
-                        .background(color = White, shape = RoundedCornerShape(5.dp))
-                        .border(
-                            width = 1.dp,
-                            color = Color.Black
-                        )
-                        .width(180.dp),
-                    placeholder = {
-                        Text(
-                            text = "3",
-                            fontSize = 18.sp,
-                        )
-                    }
-                )
-            }
-            Row {
-                InputEditar2(
-                    titulo = "Tipo Medida",
-                    placeholder = "GRAMAS",
-                    valorCampo = tipoMedida,
-                    mudaValor = { novoValor ->
-                        tipoMedida = novoValor
-                    })
+                        .padding(top = 20.dp)
+                        .fillMaxWidth()
+                        .height(100.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TipoMedidaSelectBoxEdicao(tipoMedida, onTipoMedidaChange = { tipoMedida = it })
+                    InputEdicao2(
+                        titulo = "Valor Medida",
+                        placeholder = "",
+                        valorCampo = valorMedida,
+                        mudaValor = { novoValor ->
+                            valorMedida = novoValor
+                            valorMedidaErro = novoValor.toDoubleOrNull()?.let { it <= 0 } ?: true
+                        },
+                        isErro = valorMedidaErro,
+                        mensagemErro = "Valor inválido"
+                    )
+                }
 
-                InputEditar2(
-                    titulo = "Valor Medida",
-                    placeholder = "500",
-                    valorCampo = valorMedida,
-                    mudaValor = { novoValor ->
-                        valorMedida = novoValor
-                    })
-            }
+                Row {
+                    InputEdicao2(
+                        titulo = "Data Cadastro",
+                        placeholder = "dd/mm/aaaa",
+                        valorCampo = dataCadastro,
+                        mudaValor = { novoValor ->
+                            dataCadastro = novoValor
+                            dataCadastroErro = try {
+                                LocalDate.parse(novoValor, dateFormatter)
+                                false
+                            } catch (e: Exception) {
+                                true
+                            }
+                        },
+                        isErro = dataCadastroErro,
+                        mensagemErro = "Data inválida (dd/mm/aaaa)"
+                    )
 
-            Row {
-                InputEditar2(
-                    titulo = "Data Cadastro",
-                    placeholder = " 20/05/2024",
-                    valorCampo = dataCadastro,
-                    mudaValor = { novoValor ->
-                        dataCadastro = novoValor
-                    })
-
-                InputEditar2(
-                    titulo = "Data Aviso",
-                    placeholder = " 20/05/2024",
-                    valorCampo = dataAviso,
-                    mudaValor = { novoValor ->
-                        dataAviso = novoValor
-                    })
+                    InputEdicao2(
+                        titulo = "Data Aviso",
+                        placeholder = "dd/mm/aaaa",
+                        valorCampo = dataAviso,
+                        mudaValor = { novoValor ->
+                            dataAviso = novoValor
+                            dataAvisoErro = try {
+                                val avisoDate = LocalDate.parse(novoValor, dateFormatter)
+                                val cadastroDate = LocalDate.parse(dataCadastro, dateFormatter)
+                                dataAvisoAnteriorErro = avisoDate.isBefore(cadastroDate)
+                                false
+                            } catch (e: Exception) {
+                                true
+                            }
+                        },
+                        isErro = dataAvisoErro || dataAvisoAnteriorErro,
+                        mensagemErro = if (dataAvisoErro) "Data inválida (dd/mm/aaaa)" else "Data Aviso não pode ser anterior à Data Cadastro"
+                    )
+                }
             }
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 20.dp),
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                EditImagemPasso2(
-                    onEditarItem2AnteriorClick = onEditarItem2AnteriorClick
-                )
+                Passo2Edicao(onEditarItem2AnteriorClick = {
+                    val novoEstoque = estoque.copy(
+                        unitario = qtdUnitaria.toInt(),
+                        valorMedida = valorMedida.toDouble(),
+                        dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                        localArmazenamento = estoque.localArmazenamento,
+                        tipoMedida = Medidas.valueOf(tipoMedida)
+                    )
+                    sharedViewModel.atualizarEstoque(novoEstoque)
+                    onEditarItem2AnteriorClick(novoEstoque)
+                })
 
                 Button(
                     onClick = {
-                        Toast.makeText(context, "Edição  efetuada com sucesso!", Toast.LENGTH_SHORT)
-                            .show()
-                        onEditarItem2SalvarClick()
+                        // Verifica se há erros
+                        valorMedidaErro = valorMedida.toDoubleOrNull()?.let { it <= 0 } ?: true
+                        dataCadastroErro = try {
+                            LocalDate.parse(dataCadastro, dateFormatter); false
+                        } catch (e: Exception) {
+                            true
+                        }
+                        dataAvisoErro = try {
+                            LocalDate.parse(dataAviso, dateFormatter); false
+                        } catch (e: Exception) {
+                            true
+                        }
+                        dataAvisoAnteriorErro = try {
+                            val avisoDate = LocalDate.parse(dataAviso, dateFormatter)
+                            val cadastroDate = LocalDate.parse(dataCadastro, dateFormatter)
+                            avisoDate.isBefore(cadastroDate)
+                        } catch (e: Exception) {
+                            false
+                        }
+
+                        if (!valorMedidaErro && !dataCadastroErro && !dataAvisoErro && !dataAvisoAnteriorErro) {
+                            sharedViewModel.criarEstoqueAtualizado(
+                                estoque.copy(
+                                    unitario = qtdUnitaria.toInt(),
+                                    valorMedida = valorMedida.toDouble(),
+                                    dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                                    localArmazenamento = estoque.localArmazenamento,
+                                    tipoMedida = Medidas.valueOf(tipoMedida)
+                                )
+                            )
+                            sharedViewModel.estoque.value?.let {
+                                Log.d("Editar2Screen", "ESTOQUE PARA REQUISICAO: $it")
+                                viewModel.atualizarEstoque(context, it)
+                            }
+//                            criarEstoqueAtualizado()?.let { novoEstoque ->
+//                                Log.d("CadastroItem2Screen", "Novo Estoque: $novoEstoque")
+//                                sharedViewModel.atualizarEstoque(novoEstoque)
+//                                viewModel.atualizarEstoque(context, novoEstoque)
+//                            }
+                        }
                     },
                     modifier = Modifier
                         .height(55.dp)
                         .width(155.dp),
                     shape = RoundedCornerShape(5.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = GI_Laranja,
-                        contentColor = colorResource(id = R.color.white)
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = GI_Laranja)
                 ) {
-                    Text(
-                        text = "Salvar",
-                        color = Black,
-                        fontSize = 18.sp
+                    if (estoqueState is EstoqueCriacaoState.Loading) {
+                        CircularProgressIndicator(color = GI_AzulMarinho)
+                    } else {
+                        Text(text = "Editar", color = Black, fontSize = 18.sp)
+                    }
+                }
+            }
+
+            LaunchedEffect(estoqueState) {
+                if (estoqueState is EstoqueCriacaoState.Success) {
+                    Toast.makeText(context, "Edição efetuada com sucesso!", Toast.LENGTH_SHORT)
+                        .show()
+                    onEditarItem2SalvarClick()
+                }
+            }
+
+            LaunchedEffect(estoqueState) {
+                if (estoqueState is EstoqueCriacaoState.Error) {
+                    Log.e(
+                        "Editar2Screen",
+                        "ERRO: " + (estoqueState as EstoqueCriacaoState.Error).message
+                    )
+                    Toast.makeText(context, "Erro ao editar item", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TipoMedidaSelectBoxEdicao(selectedOption: String, onTipoMedidaChange: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        Column {
+            Text(
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .height(30.dp),
+                text = "Tipo Medida:",
+                color = Black,
+                fontSize = 22.sp
+            )
+            OutlinedTextField(
+                value = selectedOption,
+                onValueChange = { },
+                modifier = Modifier
+                    .width(160.dp)
+                    .background(color = White, shape = RoundedCornerShape(5.dp))
+                    .menuAnchor(),
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                readOnly = true,
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                Medidas.values().forEach { selectionOption ->
+                    DropdownMenuItem(
+                        text = { Text(selectionOption.name) },
+                        onClick = {
+                            onTipoMedidaChange(selectionOption.name)
+                            expanded = false
+                        }
                     )
                 }
             }
         }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(top = 100.dp),
-//            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
-//        ) {
-//            DownBarEditar2Screen()
-//        }
     }
 }
 
-@Preview
+
+@Preview(showBackground = true)
 @Composable
-fun Editar2ScreenPreview() {
+fun Edicao2ScreenPreview() {
     Editar2Screen(
-        onEditarItem2AnteriorClick = { },
-        onEditarItem2SalvarClick = { }
+        sharedViewModel = SharedViewModel(),
+        onEditarItem2AnteriorClick = {},
+        onEditarItem2SalvarClick = {}
     )
 }
 
-
 @Composable
-fun InputEditar2(
+fun InputEdicao2(
     titulo: String,
     placeholder: String,
     valorCampo: String,
-    mudaValor: (String) -> Unit
+    mudaValor: (String) -> Unit,
+    isErro: Boolean,
+    mensagemErro: String
 ) {
-
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .width(180.dp)
-            .height(160.dp)
-
+            .height(140.dp)
     ) {
         Column(
             modifier = Modifier
-                .size(width = 350.dp, height = 100.dp),
-
-            ) {
+                .size(width = 350.dp, height = 100.dp)
+        ) {
             Text(
                 modifier = Modifier
                     .padding(top = 10.dp)
@@ -265,7 +461,6 @@ fun InputEditar2(
 //                fontFamily = JostRegular
             )
             OutlinedTextField(
-
                 value = valorCampo,
                 onValueChange = { novoValorDoCampo ->
                     mudaValor(novoValorDoCampo)
@@ -276,24 +471,33 @@ fun InputEditar2(
                     .background(color = White, shape = RoundedCornerShape(5.dp))
                     .border(
                         width = 1.dp,
-                        color = Color.Black
+                        color = if (isErro) Color.Red else Color.Black,
+                        shape = RoundedCornerShape(5.dp)
                     ),
                 placeholder = {
                     Text(
                         text = placeholder,
                         fontSize = 18.sp,
                     )
-                }
-
+                },
+                singleLine = true,
+                isError = isErro,
             )
+            if (isErro) {
+                Text(
+                    text = mensagemErro,
+                    color = Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
         }
-
     }
 }
 
 @Composable
-fun EditImagemPasso2(
-    onEditarItem2AnteriorClick: () -> Unit
+fun Passo2Edicao(
+    onEditarItem2AnteriorClick: (EstoqueCriacao?) -> Unit
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
 
@@ -306,82 +510,13 @@ fun EditImagemPasso2(
     ) {
         RadioButton(
             selected = selectedOptionIndex == 0,
-            onClick = { onEditarItem2AnteriorClick() }
+            onClick = {
+                onEditarItem2AnteriorClick(null)
+            }
         )
         RadioButton(
             selected = selectedOptionIndex == 1,
-            onClick = { selectedOptionIndex == 1 }
+            onClick = { selectedOptionIndex = 1 }
         )
     }
 }
-
-//@Composable
-//fun DownBarEditarScreen2() {
-//    val context = LocalContext.current
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(color = GI_AzulMarinho)
-//            .heightIn(70.dp),
-////        horizontalArrangement = Arrangement.SpaceEvenly,
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.fornecedores_db),
-//            contentDescription = "Ação 1",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 1", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-////        Spacer(modifier = Modifier.height(60.dp))
-//        Image(
-//            painter = painterResource(id = R.drawable.opened_box),
-//            contentDescription = "Ação 2",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 2", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.cart),
-//            contentDescription = "Ação 3",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 3", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.account_icon),
-//            contentDescription = "Ação 4",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    Toast
-//                        .makeText(context, "Ação 4", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//        )
-//    }
-//}
-
-//@Preview
-//@Composable
-//fun DownBarEditarcreenPreview2() {
-//    DownBarEditarScreen()
-//}
-
