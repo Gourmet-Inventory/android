@@ -216,7 +216,7 @@ fun ItemPrato(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                onCardapioClick("cardapioItem")
+                onCardapioClick("cardapioItem/${prato.idPrato}")
             }
     ) {
         Column(

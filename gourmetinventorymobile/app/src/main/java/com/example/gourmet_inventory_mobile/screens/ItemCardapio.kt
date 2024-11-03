@@ -45,13 +45,41 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
 @Composable
-fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String) -> Unit) {
+fun PratoScreen(
+    prato: Prato,
+    navController: NavController,
+    onClickPratoItem: (String) -> Unit,
+    onPratoItemVoltarClick: (String) -> Unit
+) {
+
+    var nome by remember { mutableStateOf("") }
+    var descricao by remember { mutableStateOf("") }
+    var preco by remember { mutableStateOf("") }
+    var alergicosRestricoes by remember { mutableStateOf("") }
+    var categoria by remember { mutableStateOf("") }
+    var receitaPrato by remember { mutableStateOf("") }
+    var foto by remember { mutableStateOf("") }
+    var URLAssinada by remember { mutableStateOf("") }
+
+    if (prato != null){
+        nome = prato.nome
+        descricao = prato.descricao
+        preco = prato.preco.toString()
+        alergicosRestricoes = prato.alergicosRestricoes.toString()
+        categoria = prato.categoria
+        receitaPrato = prato.receitaPrato.toString()
+        foto = prato.foto
+        URLAssinada = prato.URLAssinada
+    }
+    
+
     var contagemPratos by remember {
         mutableStateOf("1")
     }
@@ -77,7 +105,7 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
                     modifier = Modifier
                         .width(370.dp)
                         .padding(top = 20.dp),
-                    text = "X-Burguer",
+                    text = nome,
                     fontFamily = JostBold
                 )
 
@@ -86,8 +114,7 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
                     modifier = Modifier
                         .width(365.dp)
                         .padding(top = 10.dp),
-                    text = "É um prato comum em lanchonetes e fast foods, apreciado pela combinação" +
-                            " harmoniosa de sabores e pela facilidade de preparo."
+                    text = descricao
                 )
 
                 Row(
@@ -183,15 +210,15 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
 }
 
 
-@Preview
-@Composable
-fun PratoPreview() {
-    PratoScreen(
-        navController = NavController(LocalContext.current),
-        onClickPratoItem = { },
-        onPratoItemVoltarClick = { }
-    )
-}
+//@Preview
+//@Composable
+//fun PratoPreview() {
+//    PratoScreen(
+//        navController = NavController(LocalContext.current),
+//        onClickPratoItem = { },
+//        onPratoItemVoltarClick = { }
+//    )
+//}
 
 
 @Composable

@@ -117,6 +117,30 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        composable("cardapioItem/{idPrato}") {backStackEntry ->
+                            val idPrato = backStackEntry.arguments?.getString("idPrato")?.toIntOrNull()
+
+                            idPrato?.let { id ->
+                                val prato = viewModelPrato.data.find { it.idPrato == id.toLong() }
+
+                                prato?.let { prato ->
+                                    PratoScreen(
+                                        prato = prato,
+                                        navController = navController,
+                                        onClickPratoItem = { route ->
+                                            navController.navigate(route)
+                                        },
+                                        onPratoItemVoltarClick = {
+                                            clickedAction = "Voltar"
+                                            navController.popBackStack()
+                                        },
+                                    )
+                                }
+                            }
+
+
+                        }
+
                         composable("comandaList") {
                             ComandaListScreen(
                                 navController = navController,
@@ -351,18 +375,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("cardapioItem") {
-                            PratoScreen(
-                                navController = navController,
-                                onClickPratoItem = { route ->
-                                    navController.navigate(route)
-                                },
-                                onPratoItemVoltarClick = {
-                                    clickedAction = "Voltar"
-                                    navController.popBackStack()
-                                },
-                            )
-                        }
+
                     }
                 }
             }
