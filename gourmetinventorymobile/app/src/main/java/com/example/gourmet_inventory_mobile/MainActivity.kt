@@ -40,13 +40,15 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
+import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
-
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -70,6 +72,8 @@ class MainActivity : ComponentActivity() {
                         androidx.lifecycle.viewmodel.compose.viewModel()
                     val estoque by sharedViewModel.estoque.collectAsState()
                     val viewModelEstoque = koinViewModel<EstoqueViewModel>()
+                    val viewModelListaCompras = koinViewModel<ListaComprasViewModel>()
+                    val viewModelPrato = koinViewModel<PratoViewModel>()
 
                     NavHost(navController = navController, startDestination = "login") {
 
@@ -99,7 +103,13 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("cardapio") {
+                            val context = LocalContext.current
+                            LaunchedEffect(Unit) {
+                                viewModelPrato.getPratos(context)
+                            }
+
                             CardapioListScreen(
+                                viewModel = viewModelPrato,
                                 navController = navController,
                                 onCardapioClick = { route ->
                                     navController.navigate(route)
@@ -169,12 +179,17 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("listaCompras") {
+                            LaunchedEffect(Unit) {
+                                viewModelListaCompras.getListaCompras(appContext)
+                            }
                             ListaComprasScreen(
                                 navController = navController,
+                                viewModel = viewModelListaCompras,
                                 onListaComprasClick = { route ->
                                     navController.navigate(route)
                                 }
                             )
+
                         }
 
                         composable("comandaView") {
@@ -240,8 +255,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onItemEstoqueViewEditarClick = {
                                             clickedAction = "Editar"
-                                            Log.d("MainActivity", "Entrou na página de edição")
-                                            navController.navigate("editarItemEstoque/$idItem")
+                                            navController.navigate("editarItemEstoque")
                                         },
                                         onItemEstoqueViewExcluirClick = {
                                             clickedAction = "Excluir"
@@ -311,27 +325,17 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("editarItemEstoque/{idItem}") { backStackEntry ->
-                            val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
-//                            val viewModel = koinViewModel<EstoqueViewModel>()
-
-                            idItem?.let { id ->
-                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
-
-                                estoque?.let { estoque ->
-                                    EditarScreen(
-                                        estoque = estoque,
-                                        sharedViewModel = sharedViewModel,
-                                        onEditarItemVoltarClick = {
-                                            clickedAction = "Voltar"
-                                            navController.popBackStack()
-                                        },
-                                        onEditarItemProximoClick = {
-                                            navController.navigate("editarItemEstoque2")
-                                        }
-                                    )
+                        composable("editarItemEstoque") {
+                            EditarScreen(
+                                onEditarItem1ProximoClick = {
+                                    clickedAction = "Próximo"
+                                    navController.navigate("editarItemEstoque2")
+                                },
+                                onEditarItem1AnteriorClick = {
+                                    clickedAction = "Anterior"
+                                    navController.popBackStack()
                                 }
-                            }
+                            )
                         }
 
                         composable("editarItemEstoque2") {
@@ -343,8 +347,7 @@ class MainActivity : ComponentActivity() {
                                 onEditarItem2AnteriorClick = {
                                     clickedAction = "Anterior"
                                     navController.popBackStack()
-                                },
-                                sharedViewModel = sharedViewModel
+                                }
                             )
                         }
 
