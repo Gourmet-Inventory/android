@@ -13,14 +13,19 @@ import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImpl
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.repository.estoque.ListaComprasRepositoryImplLocal
+import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepository
+import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.service.EstoqueService
 import com.example.gourmet_inventory_mobile.service.FornecedorService
 import com.example.gourmet_inventory_mobile.service.ListaComprasService
+import com.example.gourmet_inventory_mobile.service.PratoService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.LoginViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -82,4 +87,19 @@ val appModule = module {
     viewModel<ListaComprasViewModel> {
         ListaComprasViewModel(get())
     }
+
+    //Pratos
+    single<PratoService> {
+        RetrofitInstance.servicePrato
+    }
+
+    single<PratoRepository> {
+//        PratoRepositoryImpl(get())
+        PratoRepositoryImplLocal()
+    }
+
+    viewModel<PratoViewModel> {
+        PratoViewModel(get())
+    }
+
 }

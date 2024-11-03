@@ -44,6 +44,7 @@ import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
 import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
@@ -72,6 +73,7 @@ class MainActivity : ComponentActivity() {
                     val estoque by sharedViewModel.estoque.collectAsState()
                     val viewModelEstoque = koinViewModel<EstoqueViewModel>()
                     val viewModelListaCompras = koinViewModel<ListaComprasViewModel>()
+                    val viewModelPrato = koinViewModel<PratoViewModel>()
 
                     NavHost(navController = navController, startDestination = "login") {
 
@@ -101,7 +103,13 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("cardapio") {
+                            val context = LocalContext.current
+                            LaunchedEffect(Unit) {
+                                viewModelPrato.getPratos(context)
+                            }
+
                             CardapioListScreen(
+                                viewModel = viewModelPrato,
                                 navController = navController,
                                 onCardapioClick = { route ->
                                     navController.navigate(route)
