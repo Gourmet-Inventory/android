@@ -43,11 +43,11 @@ import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
-
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -71,6 +71,7 @@ class MainActivity : ComponentActivity() {
                         androidx.lifecycle.viewmodel.compose.viewModel()
                     val estoque by sharedViewModel.estoque.collectAsState()
                     val viewModelEstoque = koinViewModel<EstoqueViewModel>()
+                    val viewModelListaCompras = koinViewModel<ListaComprasViewModel>()
 
                     NavHost(navController = navController, startDestination = "login") {
 
@@ -170,12 +171,17 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("listaCompras") {
+                            LaunchedEffect(Unit) {
+                                viewModelListaCompras.getListaCompras(appContext)
+                            }
                             ListaComprasScreen(
                                 navController = navController,
+                                viewModel = viewModelListaCompras,
                                 onListaComprasClick = { route ->
                                     navController.navigate(route)
                                 }
                             )
+
                         }
 
                         composable("comandaView") {

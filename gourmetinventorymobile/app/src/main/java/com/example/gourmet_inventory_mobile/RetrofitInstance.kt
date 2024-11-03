@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.gourmet_inventory_mobile.service.EstoqueService
 import com.example.gourmet_inventory_mobile.service.FornecedorService
+import com.example.gourmet_inventory_mobile.service.ListaComprasService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.LocalDateDeserializer
@@ -83,6 +84,8 @@ object RetrofitInstance {
             .build()
     }
 
+    //services
+
     val serviceUsuario by lazy {
         Log.d("serviceUsuario", "Iniciando serviceUsuario")
         api.create(UsuarioService::class.java)
@@ -96,6 +99,9 @@ object RetrofitInstance {
         api.create(EstoqueService::class.java)
     }
 
-    //nova service aqui
+    val serviceListaCompras by lazy {
+        api.create(ListaComprasService::class.java)
+    }
+
 
 }

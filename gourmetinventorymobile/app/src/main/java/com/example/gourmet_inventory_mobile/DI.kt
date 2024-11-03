@@ -3,16 +3,23 @@ package com.example.gourmet_inventory_mobile
 import android.util.Log
 import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepository
 import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepositoryLocalImpl
+import com.example.gourmet_inventory_mobile.repository.ListaCompras.ListaComprasRepository
+import com.example.gourmet_inventory_mobile.repository.ListaCompras.ListaComprasRepositoryImpl
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepository
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepositoryLocalImpl
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImpl
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImplLocal
+import com.example.gourmet_inventory_mobile.repository.estoque.ListaComprasRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.service.EstoqueService
 import com.example.gourmet_inventory_mobile.service.FornecedorService
+import com.example.gourmet_inventory_mobile.service.ListaComprasService
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.LoginViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -26,8 +33,8 @@ val appModule = module {
     }
 
     single<UsuarioRepository> {
-        UsuarioRepositoryImpl(get())
-//        UsuarioRepositoryLocalImpl()
+//        UsuarioRepositoryImpl(get())
+        UsuarioRepositoryLocalImpl()
     }
 
     viewModel<LoginViewModel> {
@@ -40,8 +47,8 @@ val appModule = module {
     }
 
     single<FornecedorRepository> {
-        FornecedorRepositoryImpl(get())
-//        FornecedorRepositoryLocalImpl()
+//        FornecedorRepositoryImpl(get())
+        FornecedorRepositoryLocalImpl()
     }
 
     viewModel<FornViewModel> {
@@ -54,11 +61,25 @@ val appModule = module {
     }
 
     single<EstoqueRepository> {
-        EstoqueRepositoryImpl(get())
-//        EstoqueRepositoryImplLocal()
+//        EstoqueRepositoryImpl(get())
+        EstoqueRepositoryImplLocal()
     }
 
     viewModel<EstoqueViewModel> {
         EstoqueViewModel(get())
+    }
+
+    //Lista de compras
+    single<ListaComprasService> {
+        RetrofitInstance.serviceListaCompras
+    }
+
+    single<ListaComprasRepository> {
+//        ListaComprasRepositoryImpl(get())
+        ListaComprasRepositoryImplLocal()
+    }
+
+    viewModel<ListaComprasViewModel> {
+        ListaComprasViewModel(get())
     }
 }

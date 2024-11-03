@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.network
 
+import com.example.gourmet_inventory_mobile.service.UsuarioService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,12 +19,12 @@ object RetrofitInstance {
 
 //    fun gson() : Gson = GsonBuilder().create()
 
-    val apiUser: UserService by lazy {
+    val apiUser: UsuarioService by lazy {
         Retrofit.Builder()
             .baseUrl("")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(UserService::class.java)
+            .create(UsuarioService::class.java)
     }
 }
