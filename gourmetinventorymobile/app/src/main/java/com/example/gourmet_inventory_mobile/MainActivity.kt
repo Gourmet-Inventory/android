@@ -22,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gourmet_inventory_mobile.model.Fornecedor
+import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
@@ -41,10 +42,12 @@ import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
@@ -74,6 +77,7 @@ class MainActivity : ComponentActivity() {
                     val viewModelEstoque = koinViewModel<EstoqueViewModel>()
                     val viewModelListaCompras = koinViewModel<ListaComprasViewModel>()
                     val viewModelPrato = koinViewModel<PratoViewModel>()
+                    val viewModelComanda = koinViewModel<ComandaViewModel>()
 
                     NavHost(navController = navController, startDestination = "login") {
 
@@ -134,6 +138,7 @@ class MainActivity : ComponentActivity() {
                                             clickedAction = "Voltar"
                                             navController.popBackStack()
                                         },
+                                        viewModel = viewModelComanda
                                     )
                                 }
                             }
@@ -217,7 +222,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("comandaView") {
+
                             ComandaViewScreen(
+                                viewModel = viewModelComanda,
                                 navController = navController,
                                 onComandaViewClick = { route ->
                                     navController.navigate(route)
