@@ -53,7 +53,10 @@ import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import kotlinx.coroutines.flow.first
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ComandaListScreen(
@@ -108,28 +111,24 @@ fun ComandaListScreen(
             var selectedOptionIndex by remember { mutableStateOf(0) }
             var isSent: String by remember { mutableStateOf("not_sent") }
 
+            // Obtém o ViewModel do Koin
+            val viewModel = koinViewModel<ComandaViewModel>()
+
+            val listaComandas = viewModel.data
+            val isLoading = viewModel.isLoading
+
             val empresa = Empresa(1, "123456789")
             val userGarcom1 =
                 User("garcomum@gmail.com", "123456", "garçom", "Garçom Um", "11999999999", empresa)
             val userGarcom2 =
                 User("garcomdois@gmail.com", "123456", "garçom", "Garçom Dois", "11999999999", empresa)
 
-            val comandas = listOf(
-                Comanda("Mesa 1", "João Silva", "Comanda 123", userGarcom1),
-                Comanda("Mesa 2", "Maria Oliveira", "Comanda 456", userGarcom1),
-                Comanda("Mesa 3", "Pedro Souza", "Comanda 789", userGarcom1),
-                Comanda("Mesa 4", "Ana Pereira", "Comanda 101", userGarcom2),
-                Comanda("Mesa 5", "Carlos Rodrigues", "Comanda 112", userGarcom2),
-                Comanda("Mesa 6", "Fábio Teixeira", "Comanda 111", userGarcom2),
-                Comanda("Mesa 7", "Gislaino Portoloto", "Comanda 01", userGarcom2),
-            )
+
 
             // Filtra a lista com base no texto da pesquisa e na opção selecionada
-            val filteredComandas = comandas.filter {
-                (selectedOptionIndex != 1 || it.garcom == userGarcom1) &&
-                        (it.mesa.contains(searchText, ignoreCase = true) ||
-                                it.nomeCliente.contains(searchText, ignoreCase = true) ||
-                                it.nomeComanda.contains(searchText, ignoreCase = true))
+            val filteredComandas = listaComandas.filter { comanda ->
+                        comanda.mesa.contains(searchText, ignoreCase = true) ||
+                                comanda.titulo.contains(searchText, ignoreCase = true)
             }
 
             Column(
@@ -347,7 +346,7 @@ fun ItemComanda(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = comanda.nomeComanda,
+                    text = "Comanda ${comanda.id}",
                     fontSize = 20.sp,
                     style = TextStyle(
                         fontFamily = JostBold,
@@ -374,7 +373,7 @@ fun ItemComanda(
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Text(text = comanda.mesa, fontSize = 18.sp)
-                Text(text = comanda.nomeCliente, fontSize = 18.sp)
+                Text(text = comanda.status, fontSize = 18.sp)
             }
         }
     }

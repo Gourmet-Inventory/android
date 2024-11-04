@@ -2,6 +2,7 @@
 
 package com.example.gourmet_inventory_mobile.screens
 
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +40,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -48,21 +49,21 @@ import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 import com.example.gourmet_inventory_mobile.utils.SearchBox
 import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 
 @Composable
 fun CardapioListScreen(
     viewModel: PratoViewModel,
     navController: NavController,
-    onCardapioClick: (String) -> Unit
+    onCardapioClick: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -111,11 +112,9 @@ fun CardapioListScreen(
         Surface(modifier = Modifier.fillMaxSize()) {
             val context = LocalContext.current
             var searchText by remember { mutableStateOf("") }
-            var selectedOptionIndex by remember { mutableStateOf(-1) }
 
             val listaPratos = viewModel.data
             val isLoading = viewModel.isLoading
-
 
             // Filtra a lista com base no texto da pesquisa
             val filteredCardapio = listaPratos.filter { prato ->
@@ -127,16 +126,22 @@ fun CardapioListScreen(
                     .fillMaxSize()
                     .padding(top = 40.dp)
             ) {
-                Text(
-                    text = "Cardápio: ",
-                    modifier = Modifier
-                        .padding(start = 26.dp, top = 35.dp),
-                    style = TextStyle(
-                        fontSize = 30.sp,
-                        color = Black
+                Row {
+                    Text(
+                        text = "Cardápio: ",
+                        modifier = Modifier
+                            .padding(start = 26.dp, top = 35.dp),
+                        style = TextStyle(
+                            fontSize = 30.sp,
+                            color = Black
+                        )
                     )
-                )
-
+                    Button(onClick = {
+                        navController.navigate("comandaView")
+                    }) {
+                        Text(text = "Ver Comanda")
+                    }
+                }
 
                 Row(
                     modifier = Modifier
@@ -164,17 +169,6 @@ fun CardapioListScreen(
         }
     }
 }
-
-//@Preview
-//@Composable
-//fun CardapioListPreview() {
-//    GourmetinventorymobileTheme {
-//        CardapioListScreen(
-//            navController = NavController(LocalContext.current),
-//            onCardapioClick = {}
-//        )
-//    }
-//}
 
 @Composable
 fun ItensCardapio(
