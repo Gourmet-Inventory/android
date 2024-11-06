@@ -9,7 +9,9 @@ import retrofit2.Response
 interface ComandaRepository {
     suspend fun getAllComandas() : Response<List<Comanda>>
 
-//    suspend fun createComanda(comanda: Comanda) : Response<Comanda>
+    suspend fun getLastComanda() : Response<Comanda>
+
+    suspend fun createComanda(comanda: Comanda) : Response<Comanda>
 //
 //    suspend fun updateComanda(id: Long, updatedComanda: Comanda) : Response<Comanda>
 //

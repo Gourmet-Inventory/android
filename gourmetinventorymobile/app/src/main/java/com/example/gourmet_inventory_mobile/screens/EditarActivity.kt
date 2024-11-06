@@ -379,7 +379,6 @@ fun EdicaoScreenPreview(): Unit {
         onEditarItemProximoClick = {},
         estoque = EstoqueConsulta(
             idItem = 1,
-            empresa = Empresa(1, "Empresa Teste"),
             manipulado = false,
             lote = "Lote Teste",
             nome = "Nome Teste",

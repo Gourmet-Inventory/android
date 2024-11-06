@@ -2,7 +2,6 @@
 
 package com.example.gourmet_inventory_mobile.screens
 
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -40,13 +39,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
+import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.ui.theme.Black
+import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.White
@@ -54,14 +57,16 @@ import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import com.example.gourmet_inventory_mobile.utils.LoadingList
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 
 @Composable
 fun CardapioListScreen(
-    viewModel: PratoViewModel,
+    pratoViewModel: PratoViewModel,
+    comandaViewModel: ComandaViewModel,
     navController: NavController,
     onCardapioClick: (String) -> Unit,
 ) {
@@ -113,8 +118,8 @@ fun CardapioListScreen(
             val context = LocalContext.current
             var searchText by remember { mutableStateOf("") }
 
-            val listaPratos = viewModel.data
-            val isLoading = viewModel.isLoading
+            val listaPratos = pratoViewModel.data
+            val isLoading = pratoViewModel.isLoading
 
             // Filtra a lista com base no texto da pesquisa
             val filteredCardapio = listaPratos.filter { prato ->
@@ -124,9 +129,13 @@ fun CardapioListScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 40.dp)
+                    .padding(top = 45.dp)
             ) {
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
                     Text(
                         text = "Cardápio: ",
                         modifier = Modifier
@@ -136,9 +145,25 @@ fun CardapioListScreen(
                             color = Black
                         )
                     )
-                    Button(onClick = {
-                        navController.navigate("comandaView")
-                    }) {
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 16.dp, end = 16.dp)
+                            .width(140.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_AzulMarinho,
+                            contentColor = White
+                        ),
+                        onClick = {
+                            if(comandaViewModel.listaPratosComanda.value.isNullOrEmpty() == true) {
+                                Toast.makeText(
+                                    context,
+                                    "Adicione itens à comanda",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                navController.navigate("comandaView")
+                            }
+                        }) {
                         Text(text = "Ver Comanda")
                     }
                 }
@@ -158,6 +183,34 @@ fun CardapioListScreen(
                             .padding(bottom = 25.dp)
                             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
                     )
+                }
+
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                    ) {
+                        LoadingList()
+                    }
+
+                } else {
+                    if (filteredCardapio.isEmpty()) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Nenhum prato encontrado",
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(top = 20.dp)
+                            )
+                        }
+                    } else {
+                        Log.d("ListaEstoqueScreen", "filteredEstoque: $filteredCardapio")
+                        ItensCardapio(
+                            pratos = filteredCardapio,
+                            onCardapioClick = onCardapioClick
+                        )
+                    }
                 }
 
                 ItensCardapio(
@@ -186,7 +239,7 @@ fun ItensCardapio(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, bottom = 70.dp)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                 ) {
                     pratos.forEach { prato ->
                         ItemPrato(
@@ -229,7 +282,7 @@ fun ItemPrato(
                 textAlign = TextAlign.Start
             )
             Text(
-                text = prato.descricao, // Exibindo a descrição do prato
+                text = prato.descricao,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 8.dp, top = 4.dp),
                 textAlign = TextAlign.Start
@@ -242,16 +295,31 @@ fun ItemPrato(
             )
         }
         Image(
-            painter = painterResource(id = R.drawable.prato_exemplo),
+            painter = painterResource(id = R.drawable.bro),
             contentDescription = "Imagem do prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(100.dp)
+                .height(150.dp)
         )
     }
     Divider(
         color = Color.Black,
         thickness = 1.dp,
         modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardapioListScreenPreview() {
+    CardapioListScreen(
+        pratoViewModel = PratoViewModel(PratoRepositoryImplLocal()),
+        navController = NavController(
+            context = LocalContext.current
+        ),
+        onCardapioClick = {},
+        comandaViewModel = ComandaViewModel(
+            ComandaRepositoryImplLocal(),
+        )
     )
 }

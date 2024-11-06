@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
@@ -120,7 +121,7 @@ fun CadastroItem2Screen(
                 lote = estoque?.lote ?: "",
                 manipulado = estoque?.manipulado ?: false,
                 nome = estoque?.nome ?: "",
-                categoria = estoque?.categoria ?: "",
+                categoria = estoque?.categoria ?: CategoriaEstoque.values().first().toString(),
                 tipoMedida = Medidas.valueOf(tipoMedida),
                 unitario = qtdUnitaria.toIntOrNull() ?: 0,
                 valorMedida = valorMedida.toDoubleOrNull() ?: 0.0,
@@ -375,7 +376,7 @@ fun Cadastro2ScreenPreview() {
             lote = "123",
             manipulado = true,
             nome = "Nome",
-            categoria = "Categoria",
+            categoria = CategoriaEstoque.CARNES_VERMELHAS.toString(),
             tipoMedida = Medidas.UNIDADE,
             unitario = 1,
             valorMedida = 1.0,

@@ -101,7 +101,7 @@ fun ItemEstoqueScreen(
 
         if (estoqueConsulta != null) {
             lote = estoqueConsulta.lote
-            categoria = estoqueConsulta.categoria
+            categoria = estoqueConsulta.categoria ?: ""
             marca = estoqueConsulta.marca
             localArmazenamento = estoqueConsulta.localArmazenamento
             quantidadeUnitaria = estoqueConsulta.unitario.toString()
@@ -111,8 +111,6 @@ fun ItemEstoqueScreen(
             dataCadastro = estoqueConsulta.dtaCadastro.toString()
             dataAviso = estoqueConsulta.dtaAviso.toString()
         }
-
-
 
 
         Surface(

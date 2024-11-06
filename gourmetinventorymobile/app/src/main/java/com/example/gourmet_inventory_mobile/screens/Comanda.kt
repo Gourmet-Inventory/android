@@ -1,7 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,32 +22,45 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaCriacaoSate
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 
 @Composable
@@ -57,11 +70,18 @@ fun ComandaViewScreen(
     onComandaViewClick: (String) -> Unit,
     onComandaViewVoltarClick: () -> Unit
 ) {
+    var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val pedidos = viewModel.listaPratosComanda
+//    val pedidos = viewModel.listaPratosComanda
+    val pedidos by viewModel.listaPratosComanda.collectAsState()
+
+    val comandaCriacaoSate by viewModel.comandaCriacaoState.collectAsState()
+    val comanda = viewModel.comandaAtual.collectAsState()
 
     val total = pedidos.sumOf { it.preco }
 //    var isSent by remember { mutableStateOf(false) } // Estado do status
+    val titulo by remember { mutableStateOf("") }
+    val mesa by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -173,8 +193,9 @@ fun ComandaViewScreen(
                 ) {
                     Button(
                         onClick = {
-                            onComandaViewClick("comandaList")
-                            Toast.makeText(context, "Comanda enviada", Toast.LENGTH_SHORT).show()
+                            showDialog = true
+//                            onComandaViewClick("comandaList")
+//                            Toast.makeText(context, "Comanda enviada", Toast.LENGTH_SHORT).show()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = GI_Verde, contentColor = Color.White
@@ -194,7 +215,8 @@ fun ComandaViewScreen(
                     }
                     Button(
                         onClick = {
-                            onComandaViewClick("comandaList")
+                            viewModel.limparComanda()
+                            onComandaViewClick("cardapio")
                             Toast.makeText(context, "Comanda cancelada", Toast.LENGTH_SHORT).show()
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -239,6 +261,32 @@ fun ComandaViewScreen(
                     )
                 }
             }
+
+            if(comandaCriacaoSate is ComandaCriacaoSate.Success){
+                onComandaViewClick("comandaList")
+                Toast.makeText(
+                    context,
+                    "Comanda criada com sucesso",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    context,
+                    "Erro ao criar comanda",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            if (showDialog) {
+                DadosPostComanda(
+                    viewModel = viewModel,
+                    showDialog = showDialog,
+                    onDismiss = { showDialog = false },
+                    comandaCriacaoState = comandaCriacaoSate,
+                    context = context,
+                    onComandaViewClick = onComandaViewClick
+                )
+            }
         }
     }
 }
@@ -264,7 +312,8 @@ fun ItensComanda(
                     pedidos.forEach { pedido ->
                         ItemComanda(
                             pedido = pedido,
-                            onComandaViewClick = onComandaViewClick
+                            onComandaViewClick = onComandaViewClick,
+                            viewModel = viewModel
                         )
                     }
                 }
@@ -277,7 +326,7 @@ fun ItensComanda(
 }
 
 @Composable
-fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit) {
+fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit, viewModel: ComandaViewModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -306,14 +355,122 @@ fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit) {
                     .padding(start = 8.dp)
                     .size(30.dp)
 //                    .clip(RoundedCornerShape(8.dp))
-//                    .clickable {
-//                        removerItemComanda(pedido, pedidios)
-//                    }
+                    .clickable {
+                        viewModel.removerPrato(pedido)
+                    }
             )
         }
     }
 }
 
+@Composable
+fun DadosPostComanda(
+    context: Context,
+    viewModel: ComandaViewModel,
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    comandaCriacaoState: ComandaCriacaoSate,
+    onComandaViewClick: (String) -> Unit
+) {
+    if (showDialog) {
+        var titulo by remember { mutableStateOf("") }
+        var mesa by remember { mutableStateOf("") }
+
+        AlertDialog(
+            modifier = Modifier
+                .background(Color.Transparent, shape = RoundedCornerShape(10.dp)),
+            onDismissRequest = { onDismiss() },
+
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Comanda:",
+                        modifier = Modifier
+                            .padding(bottom = 16.dp)
+                            .align(Alignment.CenterVertically),
+                    )
+                }
+            },
+
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = titulo,
+                        onValueChange = {
+                            titulo = it
+                            viewModel.updateComandaAtualTitulo(it)
+                        },
+                        label = { Text("Título") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = mesa,
+                        onValueChange = {
+                            mesa = it
+                            viewModel.updateComandaAtualMesa(it)
+                        },
+                        label = { Text("Mesa") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+
+            confirmButton = {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            viewModel.createComanda()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_Laranja,
+                            contentColor = Black
+                        ),
+                        shape = RoundedCornerShape(5.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(75.dp)
+                            .padding(bottom = 30.dp),
+                    ) {
+                        if (comandaCriacaoState is ComandaCriacaoSate.Loading) {
+                            CircularProgressIndicator(color = GI_BrancoFundo)
+                        } else {
+                            Text(
+                                text = "CONFIRMAR",
+                                style = TextStyle(
+                                    fontSize = 17.sp,
+                                    fontFamily = JostBold
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DadosPostComandaPreview() {
+    DadosPostComanda(
+        showDialog = true,
+        onDismiss = { },
+        viewModel = viewModel(),
+        comandaCriacaoState = ComandaCriacaoSate.Idle,
+        context = LocalContext.current,
+        onComandaViewClick = { }
+    )
+}
 //fun removerItemComanda(pedido: Prato, pedidos: List<Prato>): List<Prato> {
 //    val pedidosAtualizados = pedidos.toMutableList()
 //    pedidosAtualizados.remove(pedido)

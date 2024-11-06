@@ -7,7 +7,7 @@ import retrofit2.http.Path
 
 interface ListaComprasService {
 
-    @GET("/api/ListaCompras/listaCompras")
+    @GET("/api/ListaCompras/listaCompras/{idEmpresa}")
     suspend fun getListaCompras(@Path("idEmpresa") idEmpresa: Long): Response<List<ItemListaCompras>>
 
 }

@@ -13,4 +13,12 @@ class ComandaRepositoryImpl(private val service: ComandaService) : ComandaReposi
     override suspend fun getAllComandas(): Response<List<Comanda>> {
         return service.getAllComandas()
     }
+
+    override suspend fun getLastComanda(): Response<Comanda> {
+        return service.getLastComanda()
+    }
+
+    override suspend fun createComanda(comanda: Comanda): Response<Comanda> {
+        return service.createComanda(comanda)
+    }
 }

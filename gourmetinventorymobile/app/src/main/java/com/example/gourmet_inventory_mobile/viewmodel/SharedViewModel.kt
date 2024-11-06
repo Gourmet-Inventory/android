@@ -1,12 +1,12 @@
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.model.Medidas
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -19,7 +19,7 @@ class SharedViewModel constructor() : ViewModel() {
             lote = "",
             manipulado = false,
             nome = "",
-            categoria = "",
+            categoria = CategoriaEstoque.CARNES_VERMELHAS.toString(),
             tipoMedida = Medidas.UNIDADE,
             unitario = 1,
             valorMedida = 1.0,
@@ -48,7 +48,7 @@ class SharedViewModel constructor() : ViewModel() {
                 lote = estoque?.lote ?: "",
                 manipulado = estoque?.manipulado ?: false,
                 nome = estoque?.nome ?: "",
-                categoria = estoque?.categoria ?: "",
+                categoria = estoque?.categoria ?: CategoriaEstoque.CARNES_VERMELHAS.toString(),
                 tipoMedida = estoque?.tipoMedida ?: Medidas.UNIDADE,
                 unitario = estoque?.unitario ?: 0,
                 valorMedida = estoque?.valorMedida ?: 0.0,

@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Parcelize
 data class Ingrediente (
-    val nome: String,
-    val tipoMedida: Medidas,
+    val nome: String?,
+    val tipoMedida: String,
     val valorMedida: Double,
     val exibirConca: String
 ) : Parcelable

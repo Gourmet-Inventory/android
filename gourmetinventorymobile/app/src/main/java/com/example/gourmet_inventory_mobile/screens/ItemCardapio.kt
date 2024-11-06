@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -54,6 +55,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
+import kotlinx.coroutines.flow.count
 
 @Composable
 fun PratoScreen(
@@ -72,7 +74,7 @@ fun PratoScreen(
     fun adicionarPratoNaComanda() {
         viewModel.adicionarPrato(prato)
         onClickPratoItem("cardapio")
-        Log.d("PratoScreen", "Prato adicionado: ${listaPratosComanda.size} - $listaPratosComanda")
+        Log.d("PratoScreen", "Prato adicionado: ${listaPratosComanda.value.size} - $listaPratosComanda")
     }
 
 
@@ -92,8 +94,8 @@ fun PratoScreen(
         alergicosRestricoes = prato.alergicosRestricoes.toString()
         categoria = prato.categoria
         receitaPrato = prato.receitaPrato.toString()
-        foto = prato.foto
-        URLAssinada = prato.URLAssinada
+        foto = prato.foto ?: ""
+        URLAssinada = prato.URLAssinada ?: ""
     }
 
     Log.d("PratoScreen", "Prato: $listaPratosComanda")
@@ -238,11 +240,12 @@ fun PratoScreen(
 fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String) -> Unit) {
     Box {
         Image(
-            painter = painterResource(id = R.drawable.prato),
+            painter = painterResource(id = R.drawable.bro),
             contentDescription = "Prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
+                .height(300.dp)
         )
         IconButton(
             onClick = { onPratoItemVoltarClick("Voltar") },

@@ -1,6 +1,6 @@
 package com.example.gourmet_inventory_mobile.model.estoque
 
-import com.example.gourmet_inventory_mobile.model.Empresa
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Medidas
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Contextual
@@ -11,7 +11,6 @@ import java.time.LocalDate
 @Parcelize
 data class EstoqueConsulta (
     val idItem: Long,
-    val empresa: Empresa,
     val manipulado: Boolean,
     val lote : String,
     val nome: String,
@@ -31,7 +30,7 @@ data class EstoqueConsulta (
         return EstoqueCriacao(
             lote = this.lote,
             nome = this.nome,
-            categoria = this.categoria,
+            categoria = this.categoria.toString(),
             tipoMedida = this.tipoMedida,
             unitario = this.unitario,
             valorMedida = this.valorMedida,

@@ -14,7 +14,6 @@ import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImpl
-import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.repository.estoque.ListaComprasRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImpl
@@ -43,8 +42,8 @@ val appModule = module {
     }
 
     single<UsuarioRepository> {
-//        UsuarioRepositoryImpl(get())
-        UsuarioRepositoryLocalImpl()
+        UsuarioRepositoryImpl(get())
+//        UsuarioRepositoryLocalImpl()
     }
 
     viewModel<LoginViewModel> {
@@ -57,8 +56,8 @@ val appModule = module {
     }
 
     single<FornecedorRepository> {
-//        FornecedorRepositoryImpl(get())
-        FornecedorRepositoryLocalImpl()
+        FornecedorRepositoryImpl(get())
+//        FornecedorRepositoryLocalImpl()
     }
 
     viewModel<FornViewModel> {
@@ -71,8 +70,8 @@ val appModule = module {
     }
 
     single<EstoqueRepository> {
-//        EstoqueRepositoryImpl(get())
-        EstoqueRepositoryImplLocal()
+        EstoqueRepositoryImpl(get())
+//        EstoqueRepositoryImplLocal()
     }
 
     viewModel<EstoqueViewModel> {
@@ -85,8 +84,8 @@ val appModule = module {
     }
 
     single<ListaComprasRepository> {
-//        ListaComprasRepositoryImpl(get())
-        ListaComprasRepositoryImplLocal()
+        ListaComprasRepositoryImpl(get())
+//        ListaComprasRepositoryImplLocal()
     }
 
     viewModel<ListaComprasViewModel> {
@@ -99,8 +98,8 @@ val appModule = module {
     }
 
     single<PratoRepository> {
-//        PratoRepositoryImpl(get())
-        PratoRepositoryImplLocal()
+        PratoRepositoryImpl(get())
+//        PratoRepositoryImplLocal()
     }
 
     viewModel<PratoViewModel> {
@@ -113,8 +112,8 @@ val appModule = module {
     }
 
     single<ComandaRepository> {
-//        ComandaRepositoryImpl(get())
-        ComandaRepositoryImplLocal()
+        ComandaRepositoryImpl(get())
+//        ComandaRepositoryImplLocal()
     }
 
     viewModel<ComandaViewModel> {

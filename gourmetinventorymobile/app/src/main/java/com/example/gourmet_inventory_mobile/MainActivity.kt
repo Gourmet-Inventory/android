@@ -1,11 +1,11 @@
 package com.example.gourmet_inventory_mobile
 
 import CadastroItemScreen
+import EditarScreen
 import SharedViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,16 +21,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gourmet_inventory_mobile.model.Fornecedor
-import com.example.gourmet_inventory_mobile.model.Prato
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
 import com.example.gourmet_inventory_mobile.screens.DeleteCnfirmacaoScreen
 import com.example.gourmet_inventory_mobile.screens.Editar2Screen
-import com.example.gourmet_inventory_mobile.screens.EditarScreen
 import com.example.gourmet_inventory_mobile.screens.EscolhaPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.ItemEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
@@ -41,14 +37,12 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
-import com.google.gson.Gson
-import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -113,11 +107,12 @@ class MainActivity : ComponentActivity() {
                             }
 
                             CardapioListScreen(
-                                viewModel = viewModelPrato,
+                                pratoViewModel = viewModelPrato,
                                 navController = navController,
                                 onCardapioClick = { route ->
                                     navController.navigate(route)
-                                }
+                                },
+                                comandaViewModel = viewModelComanda
                             )
                         }
 
@@ -286,7 +281,7 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onItemEstoqueViewEditarClick = {
                                             clickedAction = "Editar"
-                                            navController.navigate("editarItemEstoque")
+                                            navController.navigate("editarItemEstoque/$idItem")
                                         },
                                         onItemEstoqueViewExcluirClick = {
                                             clickedAction = "Excluir"
@@ -356,17 +351,27 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("editarItemEstoque") {
-                            EditarScreen(
-                                onEditarItem1ProximoClick = {
-                                    clickedAction = "Próximo"
-                                    navController.navigate("editarItemEstoque2")
-                                },
-                                onEditarItem1AnteriorClick = {
-                                    clickedAction = "Anterior"
-                                    navController.popBackStack()
+                        composable("editarItemEstoque/{idItem}") { backStackEntry ->
+                            val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
+//                            val viewModel = koinViewModel<EstoqueViewModel>()
+
+                            idItem?.let { id ->
+                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
+
+                                estoque?.let { estoque ->
+                                    EditarScreen(
+                                        estoque = estoque,
+                                        sharedViewModel = sharedViewModel,
+                                        onEditarItemVoltarClick = {
+                                            clickedAction = "Voltar"
+                                            navController.popBackStack()
+                                        },
+                                        onEditarItemProximoClick = {
+                                            navController.navigate("editarItemEstoque2")
+                                        }
+                                    )
                                 }
-                            )
+                            }
                         }
 
                         composable("editarItemEstoque2") {
@@ -378,7 +383,8 @@ class MainActivity : ComponentActivity() {
                                 onEditarItem2AnteriorClick = {
                                     clickedAction = "Anterior"
                                     navController.popBackStack()
-                                }
+                                },
+                                sharedViewModel = sharedViewModel
                             )
                         }
 

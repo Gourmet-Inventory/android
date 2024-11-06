@@ -6,10 +6,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Comanda(
-    val id: Long,
-    val titulo: String,
-    val mesa: String,
+    val id: Long? = null,
+    var titulo: String,
+    var mesa: String,
     val itens: List<Prato>,
-    val status: String,
+    var status: String,
     val total: Double
 )

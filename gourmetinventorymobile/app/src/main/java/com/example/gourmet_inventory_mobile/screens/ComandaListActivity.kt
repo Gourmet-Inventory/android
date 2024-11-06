@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Comanda
 import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.User
@@ -70,6 +71,8 @@ fun ComandaListScreen(
         currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
     }
 
+    val resourses = context.resources
+
     Scaffold(
         topBar = {
             Row(
@@ -81,7 +84,7 @@ fun ComandaListScreen(
                     onClick = {
                         Log.d("ListaEstoqueScreen", "currentUser: ${currentUser}")
 
-                        if (currentUser?.cargo == "Gerente") {
+                        if (currentUser?.cargo == resourses.getString(R.string.gerente)) {
                             onComandaClick("perfil")
                         } else {
                             Toast.makeText(
@@ -191,78 +194,6 @@ fun ComandaListScreen(
                     onComandaClick = onComandaClick,
                     isSent = isSent
                 )
-
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(start = 26.dp, end = 26.dp, bottom = 70.dp)
-//                ) {
-//                    items(filteredComandas) { comanda ->
-//                        Row(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(vertical = 8.dp)
-//                                .background(White.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
-//                                .border(1.dp, Black, RoundedCornerShape(8.dp))
-//                                .clickable {
-////                                    onComandaListComandaView()
-//                                    onComandaClick("comandaView")
-//                                },
-//                            verticalAlignment = Alignment.CenterVertically
-//                        ) {
-//                            Column(
-//                                modifier = Modifier
-//                                    .weight(1f)
-//                            ) {
-//                                Row(
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .background(
-//                                            GI_AzulMarinho,
-//                                            RoundedCornerShape(
-//                                                bottomEnd = 0.dp,
-//                                                bottomStart = 0.dp,
-//                                                topEnd = 8.dp,
-//                                                topStart = 8.dp
-//                                            )
-//                                        ),
-//                                    verticalAlignment = Alignment.CenterVertically,
-//                                    horizontalArrangement = Arrangement.SpaceAround
-//                                ) {
-//                                    Text(
-//                                        text = comanda.nomeComanda,
-//                                        fontSize = 20.sp,
-//                                        style = TextStyle(
-//                                            fontFamily = JostBold,
-//                                            color = White
-//                                        ),
-//                                        modifier = Modifier
-////                                            .fillMaxWidth()
-//                                            .padding(8.dp),
-////                                        textAlign = TextAlign.Center
-//                                    )
-//                                    Box(
-//                                        modifier = Modifier
-//                                            .size(24.dp)
-//                                            .background(
-//                                                if (isSent == "enviado") Color.Red else if (isSent == "pendente") Color.Yellow else Color.Gray,
-//                                                shape = RoundedCornerShape(12.dp)
-//                                            )
-//                                    )
-//                                }
-//                                Row(
-//                                    modifier = Modifier
-//                                        .fillMaxWidth()
-//                                        .padding(top = 10.dp, bottom = 10.dp),
-//                                    horizontalArrangement = Arrangement.SpaceAround
-//                                ) {
-//                                    Text(text = comanda.mesa, fontSize = 18.sp)
-//                                    Text(text = comanda.nomeCliente, fontSize = 18.sp)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
             }
         }
     }

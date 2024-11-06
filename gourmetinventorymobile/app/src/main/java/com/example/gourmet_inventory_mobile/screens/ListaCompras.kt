@@ -74,13 +74,13 @@ fun ListaComprasScreen(
 
         Surface(modifier = Modifier.fillMaxSize()) {
             var texto by remember { mutableStateOf("") }
-//            val viewModel = koinViewModel<ListaComprasViewModel>()
+
             val listaCompras = viewModel.data
             val isLoading = viewModel.isLoading
 
             Log.d("ListaComprasScreen", "listaCompras: $listaCompras")
 
-            val checkedState = remember { mutableStateListOf(*Array(listaCompras.size) { false }) }
+//            val checkedState = remember { mutableStateListOf(*Array(listaCompras.size) { false }) }
 
             val filteredItems = listaCompras.filter { item ->
                 item.nome.contains(texto, ignoreCase = true)
@@ -141,16 +141,22 @@ fun ListaComprasScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 5.dp)
-                                    .background(if (checkedState[index]) Color.LightGray else Color.Transparent),
+                                    .padding(
+//                                        vertical = 5.dp,
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = 16.dp,
+                                        bottom = 8.dp
+                                    ),
+//                                    .background(if (checkedState[index]) Color.LightGray else Color.Transparent),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Checkbox(
-                                    checked = checkedState[index],
-                                    onCheckedChange = { isChecked ->
-                                        checkedState[index] = isChecked
-                                    },
-                                )
+//                                Checkbox(
+//                                    checked = checkedState[index],
+//                                    onCheckedChange = { isChecked ->
+//                                        checkedState[index] = isChecked
+//                                    },
+//                                )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(text = item.nome)
                                 Spacer(modifier = Modifier.weight(1f))
@@ -179,7 +185,7 @@ fun ListaComprasSearchBox(searchText: String, onSearchTextChanged: (String) -> U
         onValueChange = onSearchTextChanged,
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
+            .height(75.dp)
             .padding(10.dp)
             .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
         placeholder = {

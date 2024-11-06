@@ -70,9 +70,8 @@ fun DeleteCnfirmacaoScreen(
             ){
                 Button(
                     onClick = {
-                        // Chame a função de deletar do ViewModel
                         viewModel.deletarEstoque(idItem)
-                        onDeleteConfirmacaoConfirmarClick() // Isso pode ser usado para fechar a tela ou outra lógica
+                        onDeleteConfirmacaoConfirmarClick()
                     },
                     modifier = Modifier
                         .height(45.dp)

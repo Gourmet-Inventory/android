@@ -43,20 +43,23 @@ class ListaComprasViewModel(private val listaComprasRepository: ListaComprasRepo
 
                 if (response == null) {
                    Log.d("ListaComprasViewModel", "Response é nulo")
+                    isLoading = false
 
                 } else{
                     if (response.isSuccessful && response.body() != null) {
 
                         Log.d("ListaComprasViewModel", "Response deu certo!")
-                        data.addAll(response.body()!!)
+                        data.removeAll(data)
+                        data.addAll(response.body()?: emptyList())
                         Log.d("ListaComprasViewModel", "data: $data")
+                        isLoading = false
                     }
                 }
 
             }catch (e: Exception){
                 Log.d("ListaComprasViewModel", "Erro ao obter lista de compras: ${e.message}")
+                isLoading = false
             }
-
         }
     }
 }

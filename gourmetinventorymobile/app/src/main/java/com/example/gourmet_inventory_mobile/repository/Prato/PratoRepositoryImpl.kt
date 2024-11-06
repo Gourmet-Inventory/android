@@ -9,5 +9,4 @@ class PratoRepositoryImpl(private val servicePrato: PratoService) : PratoReposit
     override suspend fun getPratos(idEmpresa: Long): Response<List<Prato>> {
         return servicePrato.getPratos(idEmpresa)
     }
-
 }

@@ -13,21 +13,24 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ComandaService {
-    @GET("/comandas")
+    @GET("/api/comandas")
     suspend fun getAllComandas(): Response<List<Comanda>>
 
-    @POST("/comandas")
+    @GET("/api/comandas/last")
+    suspend fun getLastComanda(): Response<Comanda>
+
+    @POST("/api/comandas")
     suspend fun createComanda(
         @Body comanda: Comanda
     ): Response<Comanda>
 
-    @PUT("/comandas/{id}")
+    @PUT("/api/comandas/{id}")
     suspend fun updateComanda(
         @Path("id") id: Long,
         @Body updatedComanda: Comanda
     ) : Response<Comanda>
 
-    @DELETE("/comandas/{id}")
+    @DELETE("/api/comandas/{id}")
     suspend fun deleteComanda(
         @Path("id") id: Long
     ) : Response<Unit>
