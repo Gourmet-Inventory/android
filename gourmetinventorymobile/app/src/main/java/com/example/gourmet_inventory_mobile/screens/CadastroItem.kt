@@ -14,6 +14,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -34,7 +38,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.forEach
+import androidx.core.graphics.values
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
+import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
@@ -51,7 +59,11 @@ fun CadastroItemScreen(
 
     var nome by remember { mutableStateOf(estoque.nome) }
     var lote by remember { mutableStateOf(estoque.lote) }
-    var categoria by remember { mutableStateOf(estoque.categoria) }
+    var selectedCategory by remember {
+        mutableStateOf(
+            if (estoque != null) estoque!!.tipoMedida.name else ""
+        )
+    }
     var marca by remember { mutableStateOf(estoque.marca) }
 
     // Erros
@@ -116,10 +128,18 @@ fun CadastroItemScreen(
                         loteErro = lote.isBlank()
                     }, loteErro, "Campo obrigatório")
 
-                    InputCadastro("Categoria", categoria, { novoValor ->
-                        categoria = novoValor
-                        categoriaErro = categoria.isBlank()
-                    }, categoriaErro, "Campo obrigatório")
+//                    InputCadastro("Categoria", categoria, { novoValor ->
+//                        categoria = novoValor
+//                        categoriaErro = categoria.isBlank()
+//                    }, categoriaErro, "Campo obrigatório")
+
+                    CategoriaEstoqueSelectBox(
+                        selectedOption = selectedCategory,
+                        onCategoriaEstoqueChange = { newCategory ->
+                            selectedCategory = newCategory
+                            // Update your UI or logic based on the selected category
+                        }
+                    )
 
                     InputCadastro("Marca", marca, { novoValor ->
                         marca = novoValor
@@ -130,13 +150,13 @@ fun CadastroItemScreen(
                     ImagemPasso1(
                         nome = nome,
                         lote = lote,
-                        categoria = categoria,
+                        categoria = selectedCategory,
                         marca = marca,
                         onCadastroItemProximoClick = {
                             val novoEstoque = estoque.copy(
                                 nome = nome,
                                 lote = lote,
-                                categoria = categoria,
+                                categoria = selectedCategory,
                                 marca = marca
                             )
                             sharedViewModel.atualizarEstoque(novoEstoque)
@@ -157,7 +177,7 @@ fun CadastroItemScreen(
                             // Atualiza os erros ao clicar em "Próximo"
                             nomeErro = nome.isBlank()
                             loteErro = lote.isBlank()
-                            categoriaErro = categoria.isBlank()
+                            categoriaErro = selectedCategory.isBlank()
                             marcaErro = marca.isBlank()
 
                             // Se não houver erros, navegue para a próxima tela
@@ -165,7 +185,7 @@ fun CadastroItemScreen(
                                 val novoEstoque = estoque.copy(
                                     nome = nome,
                                     lote = lote,
-                                    categoria = categoria,
+                                    categoria = selectedCategory,
                                     marca = marca
                                 )
                                 sharedViewModel.atualizarEstoque(novoEstoque)
@@ -286,12 +306,90 @@ fun ImagemPasso1(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategoriaEstoqueSelectBox(selectedOption: String, onCategoriaEstoqueChange: (String) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded }
+    ) {
+        Row(
+            modifier = Modifier
+                .width(350.dp)
+                .height(100.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .height(30.dp),
+                    text = "Categoria Estoque:",
+                    color = Black,
+                    fontSize = 22.sp
+                )
+                OutlinedTextField(
+                    value = selectedOption,
+                    onValueChange = { },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = White, shape = RoundedCornerShape(5.dp))
+                        .menuAnchor(),
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                    readOnly = true,
+                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    CategoriaEstoque.values().forEach { selectionOption ->
+                        DropdownMenuItem(
+                            text = { Text(selectionOption.name) },
+                            onClick = {
+                                onCategoriaEstoqueChange(
+                                    selectionOption.name
+                                )
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+//            ExposedDropdownMenu(
+//                expanded = expanded,
+//                onDismissRequest = { expanded = false }
+//            ) {
+//                Medidas.values().forEach { selectionOption ->
+//                    DropdownMenuItem(
+//                        text = { Text(selectionOption.name) },
+//                        onClick = {
+//                            onTipoMedidaChange(selectionOption.name)
+//                            expanded = false
+//                        }
+//                    )
+//                }
+//            }
+            }
+        }
+    }
+}
+
+
 @Preview
 @Composable
-fun CadastroScreenPreview() {
+fun CadastroScreenPreview(): Unit {
     CadastroItemScreen(
+        sharedViewModel = SharedViewModel(),
         onCadastroItemVoltarClick = {},
-        onCadastroItemProximoClick = {},
-        sharedViewModel = SharedViewModel()
+        onCadastroItemProximoClick = {}
     )
 }

@@ -1,16 +1,12 @@
 package com.example.gourmet_inventory_mobile.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,19 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Fornecedor
-import com.example.gourmet_inventory_mobile.model.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
-import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 
 @Composable
@@ -49,7 +41,6 @@ fun VizuFornScreen(
     fornecedor: Fornecedor,
     onVizuFornVoltarClick: () -> Unit
 ) {
-
     val context = LocalContext.current
     val resources = context.resources
     var currentForn: Fornecedor? by remember { mutableStateOf(null) }
@@ -139,7 +130,7 @@ fun VizuFornScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(100.dp)
+                        .height(80.dp)
                         .padding(top = 20.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Top
@@ -208,18 +199,18 @@ fun VizuFornScreen(
 fun VizuFornScreenPreview() {
     VizuFornScreen(
         fornecedor = Fornecedor(
-            idFornecedor =  1,
+            idFornecedor = 1,
             nomeFornecedor = "Fornecedor 1",
             cnpj = "CNPJ 1",
-            cep =  "string",
+            cep = "string",
             logradouro = "string",
-            complemento= "string",
+            complemento = "string",
             bairro = "string",
-            localidade ="string",
-            uf ="string",
+            localidade = "string",
+            uf = "string",
             numeracaoLogradouro = "string",
             telefone = "string",
-            categoria= "string"
+            categoria = "string"
         ),
         onVizuFornVoltarClick = {},
     )
@@ -231,12 +222,12 @@ fun InfoForn(
     titulo: String,
     valorCampo: String
 ) {
-
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+    Column(
+//        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .width(320.dp)
-            .height(58.dp)
+            .height(70.dp)
     ) {
         Text(
             modifier = Modifier
@@ -245,13 +236,14 @@ fun InfoForn(
             text = "$titulo:",
             color = Black,
             fontSize = 21.sp,
-            fontFamily = JostBold
+            fontFamily = JostBold,
+            textDecoration = TextDecoration.Underline
         )
 
         Text(
             modifier = Modifier
-                .padding(top = 10.dp)
-                .height(30.dp),
+                .padding(top = 3.dp)
+                .height(25.dp),
             text = valorCampo,
             color = Black,
             fontSize = 21.sp

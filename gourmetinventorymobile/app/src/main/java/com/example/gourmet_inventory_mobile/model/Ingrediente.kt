@@ -5,11 +5,10 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Comanda(
-    val id: Long? = null,
-    var titulo: String,
-    var mesa: String,
-    val itens: List<Prato>,
-    var status: String,
-    val total: Double
-)
+@Parcelize
+data class Ingrediente (
+    val nome: String?,
+    val tipoMedida: String,
+    val valorMedida: Double,
+    val exibirConca: String
+) : Parcelable

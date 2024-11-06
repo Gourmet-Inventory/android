@@ -1,7 +1,6 @@
 package com.example.gourmet_inventory_mobile.screens
 
 import android.util.Log
-import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,12 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -37,7 +32,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.gourmet_inventory_mobile.model.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Fornecedor
 import com.example.gourmet_inventory_mobile.model.User
@@ -214,13 +208,11 @@ fun ItensListaFornecedor(
             modifier = Modifier,
             content = {
                 Column(
-//        state = listScrollState,
                     modifier = Modifier
 //                .height(345.dp)
 //                .width(325.dp)
                         .fillMaxSize()
                         .padding(top = 3.dp, bottom = 3.dp, end = 10.dp),
-//            .verticalScroll(rememberScrollState(), true),
                     verticalArrangement = Arrangement.Top
                 ) {
                     fornecedores.forEach() { fornecedor ->

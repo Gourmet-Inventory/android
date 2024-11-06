@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.model.estoque
 
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.google.gson.annotations.SerializedName

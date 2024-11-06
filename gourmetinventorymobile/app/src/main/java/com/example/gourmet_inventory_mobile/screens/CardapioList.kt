@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -44,22 +46,29 @@ import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
+import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.ui.theme.Black
+import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
-import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
-import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import com.example.gourmet_inventory_mobile.utils.LoadingList
 import com.example.gourmet_inventory_mobile.utils.SearchBox
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
 import kotlinx.coroutines.flow.first
 
 @Composable
 fun CardapioListScreen(
+    pratoViewModel: PratoViewModel,
+    comandaViewModel: ComandaViewModel,
     navController: NavController,
-    onCardapioClick: (String) -> Unit
+    onCardapioClick: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -108,51 +117,56 @@ fun CardapioListScreen(
         Surface(modifier = Modifier.fillMaxSize()) {
             val context = LocalContext.current
             var searchText by remember { mutableStateOf("") }
-            var selectedOptionIndex by remember { mutableStateOf(-1) }
 
-            val pratos = listOf(
-                Prato("Feijoada", 25.0, "4 pessoas"),
-                Prato("Lasanha", 30.0, "6 pessoas"),
-                Prato("Moqueca", 35.0, "5 pessoas"),
-                Prato("Strogonoff", 28.0, "4 pessoas"),
-                Prato("Churrasco", 50.0, "10 pessoas"),
-                Prato("Pizza", 20.0, "3 pessoas"),
-                Prato("Sushi", 40.0, "2 pessoas")
-            )
+            val listaPratos = pratoViewModel.data
+            val isLoading = pratoViewModel.isLoading
 
             // Filtra a lista com base no texto da pesquisa
-            val filteredCardapio = pratos.filter {
-                it.nome.contains(searchText, ignoreCase = true) ||
-                        try {
-                            it.preco == searchText.toDouble()
-                        } catch (e: NumberFormatException) {
-                            false
-                        } ||
-                        it.rendimento.contains(searchText, ignoreCase = true)
+            val filteredCardapio = listaPratos.filter { prato ->
+                prato.nome.contains(searchText, ignoreCase = true)
             }
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 40.dp)
+                    .padding(top = 45.dp)
             ) {
-                Text(
-                    text = "Cardápio: ",
-                    modifier = Modifier
-                        .padding(start = 26.dp, top = 35.dp),
-                    style = TextStyle(
-                        fontSize = 30.sp,
-                        color = Black
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = "Cardápio: ",
+                        modifier = Modifier
+                            .padding(start = 26.dp, top = 35.dp),
+                        style = TextStyle(
+                            fontSize = 30.sp,
+                            color = Black
+                        )
                     )
-                )
-
-                // Campo de Pesquisa
-//                CardapioSearchBox(
-//                    searchText = searchText,
-//                    mudaValorCampo = { novoValorCampo: String ->
-//                        searchText = novoValorCampo
-//                    }
-//                )
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 16.dp, end = 16.dp)
+                            .width(140.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = GI_AzulMarinho,
+                            contentColor = White
+                        ),
+                        onClick = {
+                            if(comandaViewModel.listaPratosComanda.value.isNullOrEmpty() == true) {
+                                Toast.makeText(
+                                    context,
+                                    "Adicione itens à comanda",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                navController.navigate("comandaView")
+                            }
+                        }) {
+                        Text(text = "Ver Comanda")
+                    }
+                }
 
                 Row(
                     modifier = Modifier
@@ -171,83 +185,41 @@ fun CardapioListScreen(
                     )
                 }
 
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                    ) {
+                        LoadingList()
+                    }
+
+                } else {
+                    if (filteredCardapio.isEmpty()) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Nenhum prato encontrado",
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(top = 20.dp)
+                            )
+                        }
+                    } else {
+                        Log.d("ListaEstoqueScreen", "filteredEstoque: $filteredCardapio")
+                        ItensCardapio(
+                            pratos = filteredCardapio,
+                            onCardapioClick = onCardapioClick
+                        )
+                    }
+                }
+
                 ItensCardapio(
                     pratos = filteredCardapio,
                     onCardapioClick = onCardapioClick
                 )
 
-//                LazyColumn(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .weight(1f)
-//                        .padding(start = 26.dp, end = 26.dp, bottom = 70.dp)
-//                ) {
-//                    items(filteredCardapio) { prato ->
-//                        Row(
-//                            modifier = Modifier
-//                                .fillMaxWidth()
-//                                .padding(vertical = 8.dp)
-//                                .clickable {
-//                                    onCardapioClick("cardapioItem")
-//                                }
-//                        ) {
-//                            Column(
-//                                modifier = Modifier
-//                                    .weight(1f)
-//                            ) {
-//                                Text(
-//                                    text = prato.nome,
-//                                    fontSize = 20.sp,
-//                                    style = TextStyle(
-//                                        fontFamily = JostBold,
-//                                        color = Black
-//                                    ),
-//                                    modifier = Modifier
-//                                        .padding(start = 8.dp),
-//                                    textAlign = TextAlign.Start
-//                                )
-//                                Text(
-//                                    text = prato.rendimento,
-//                                    fontSize = 18.sp,
-//                                    modifier = Modifier.padding(start = 8.dp),
-//                                    textAlign = TextAlign.Start
-//                                )
-//                                Text(
-//                                    text = "R$" + prato.preco.toString(),
-//                                    fontSize = 18.sp,
-//                                    modifier = Modifier.padding(start = 8.dp, top = 14.dp),
-//                                    textAlign = TextAlign.Start
-//                                )
-//
-//                            }
-//                            Image(
-//                                painter = painterResource(id = R.drawable.prato_exemplo),
-//                                contentDescription = "Imagem do prato",
-//                                contentScale = ContentScale.Crop,
-//                                modifier = Modifier
-//                                    .height(100.dp)
-//                            )
-//                        }
-//                        Divider(
-//                            color = Color.Black,
-//                            thickness = 1.dp,
-//                            modifier = Modifier.padding(vertical = 8.dp)
-//                        )
-//                    }
-//                }
             }
         }
-    }
-}
-
-@Preview
-@Composable
-fun CardapioListPreview() {
-    GourmetinventorymobileTheme {
-        CardapioListScreen(
-            navController = NavController(LocalContext.current),
-            onCardapioClick = {}
-        )
     }
 }
 
@@ -267,7 +239,7 @@ fun ItensCardapio(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, bottom = 70.dp)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
                 ) {
                     pratos.forEach { prato ->
                         ItemPrato(
@@ -291,7 +263,7 @@ fun ItemPrato(
             .fillMaxWidth()
             .padding(vertical = 8.dp)
             .clickable {
-                onCardapioClick("cardapioItem")
+                onCardapioClick("cardapioItem/${prato.idPrato}")
             }
     ) {
         Column(
@@ -310,9 +282,9 @@ fun ItemPrato(
                 textAlign = TextAlign.Start
             )
             Text(
-                text = prato.rendimento,
-                fontSize = 18.sp,
-                modifier = Modifier.padding(start = 8.dp),
+                text = prato.descricao,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 8.dp, top = 4.dp),
                 textAlign = TextAlign.Start
             )
             Text(
@@ -321,19 +293,33 @@ fun ItemPrato(
                 modifier = Modifier.padding(start = 8.dp, top = 14.dp),
                 textAlign = TextAlign.Start
             )
-
         }
         Image(
-            painter = painterResource(id = R.drawable.prato_exemplo),
+            painter = painterResource(id = R.drawable.bro),
             contentDescription = "Imagem do prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(100.dp)
+                .height(150.dp)
         )
     }
     Divider(
         color = Color.Black,
         thickness = 1.dp,
         modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CardapioListScreenPreview() {
+    CardapioListScreen(
+        pratoViewModel = PratoViewModel(PratoRepositoryImplLocal()),
+        navController = NavController(
+            context = LocalContext.current
+        ),
+        onCardapioClick = {},
+        comandaViewModel = ComandaViewModel(
+            ComandaRepositoryImplLocal(),
+        )
     )
 }

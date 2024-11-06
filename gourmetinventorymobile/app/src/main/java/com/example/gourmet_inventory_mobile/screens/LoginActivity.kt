@@ -85,7 +85,7 @@ fun LoginScreen(
                     .padding(bottom = 90.dp, start = 0.dp),
             ) {
                 Text(
-                    text = "BEM VINDO AO SEU ESTOQUE!",
+                    text = "BEM-VINDO AO SEU ESTOQUE!",
                     style = TextStyle(
                         fontSize = 20.sp,
                         color = Color(WHITE),

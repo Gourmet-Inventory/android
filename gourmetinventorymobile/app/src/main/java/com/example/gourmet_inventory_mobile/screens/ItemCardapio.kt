@@ -2,6 +2,7 @@
 
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -45,16 +48,59 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
+import kotlinx.coroutines.flow.count
 
 @Composable
-fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String) -> Unit) {
-    var contagemPratos by remember {
-        mutableStateOf("1")
+fun PratoScreen(
+    viewModel: ComandaViewModel,
+    prato: Prato,
+    navController: NavController,
+    onClickPratoItem: (String) -> Unit,
+    onPratoItemVoltarClick: (String) -> Unit,
+) {
+    // Lista de pratos adicionados à comanda
+
+    // Acesso à lista de pratos adicionados à comanda
+    val listaPratosComanda = viewModel.listaPratosComanda
+
+    // Função para adicionar o prato atual à lista de comanda
+    fun adicionarPratoNaComanda() {
+        viewModel.adicionarPrato(prato)
+        onClickPratoItem("cardapio")
+        Log.d("PratoScreen", "Prato adicionado: ${listaPratosComanda.value.size} - $listaPratosComanda")
     }
+
+
+    var nome by remember { mutableStateOf("") }
+    var descricao by remember { mutableStateOf("") }
+    var preco by remember { mutableStateOf("") }
+    var alergicosRestricoes by remember { mutableStateOf("") }
+    var categoria by remember { mutableStateOf("") }
+    var receitaPrato by remember { mutableStateOf("") }
+    var foto by remember { mutableStateOf("") }
+    var URLAssinada by remember { mutableStateOf("") }
+
+    if (prato != null) {
+        nome = prato.nome
+        descricao = prato.descricao
+        preco = prato.preco.toString()
+        alergicosRestricoes = prato.alergicosRestricoes.toString()
+        categoria = prato.categoria
+        receitaPrato = prato.receitaPrato.toString()
+        foto = prato.foto ?: ""
+        URLAssinada = prato.URLAssinada ?: ""
+    }
+
+    Log.d("PratoScreen", "Prato: $listaPratosComanda")
+
+    var contagemPratos by remember { mutableStateOf("1") }
 
     Scaffold(
         topBar = { FotoTop(onClickPratoItem, onPratoItemVoltarClick) }
@@ -64,20 +110,17 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            val context = LocalContext.current
-            var selectedOptionIndex by remember { mutableStateOf(-1) }
-
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
+                // Exibição dos dados do prato
                 Text(
                     fontSize = 27.sp,
                     modifier = Modifier
                         .width(370.dp)
                         .padding(top = 20.dp),
-                    text = "X-Burguer",
+                    text = nome,
                     fontFamily = JostBold
                 )
 
@@ -86,8 +129,7 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
                     modifier = Modifier
                         .width(365.dp)
                         .padding(top = 10.dp),
-                    text = "É um prato comum em lanchonetes e fast foods, apreciado pela combinação" +
-                            " harmoniosa de sabores e pela facilidade de preparo."
+                    text = descricao
                 )
 
                 Row(
@@ -152,7 +194,7 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
                 )
 
                 Button(
-                    onClick = { onClickPratoItem("cardapio") },
+                    onClick = { adicionarPratoNaComanda() },
                     modifier = Modifier
                         .width(150.dp)
                         .padding(top = 20.dp),
@@ -160,7 +202,7 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
                     colors = ButtonDefaults.buttonColors(GI_Laranja),
                 ) {
                     Text(
-                        text = "FINALIZAR",
+                        text = "ADICIONAR",
                         color = Black,
                         fontSize = 16.sp
                     )
@@ -183,26 +225,27 @@ fun PratoScreen(navController: NavController, onClickPratoItem: (String) -> Unit
 }
 
 
-@Preview
-@Composable
-fun PratoPreview() {
-    PratoScreen(
-        navController = NavController(LocalContext.current),
-        onClickPratoItem = { },
-        onPratoItemVoltarClick = { }
-    )
-}
+//@Preview
+//@Composable
+//fun PratoPreview() {
+//    PratoScreen(
+//        navController = NavController(LocalContext.current),
+//        onClickPratoItem = { },
+//        onPratoItemVoltarClick = { }
+//    )
+//}
 
 
 @Composable
 fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String) -> Unit) {
     Box {
         Image(
-            painter = painterResource(id = R.drawable.prato),
+            painter = painterResource(id = R.drawable.bro),
             contentDescription = "Prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
+                .height(300.dp)
         )
         IconButton(
             onClick = { onPratoItemVoltarClick("Voltar") },

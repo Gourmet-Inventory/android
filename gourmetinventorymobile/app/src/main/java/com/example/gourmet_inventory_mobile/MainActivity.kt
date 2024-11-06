@@ -1,11 +1,11 @@
 package com.example.gourmet_inventory_mobile
 
 import CadastroItemScreen
+import EditarScreen
 import SharedViewModel
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,15 +21,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gourmet_inventory_mobile.model.Fornecedor
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
 import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
 import com.example.gourmet_inventory_mobile.screens.DeleteCnfirmacaoScreen
 import com.example.gourmet_inventory_mobile.screens.Editar2Screen
-import com.example.gourmet_inventory_mobile.screens.EditarScreen
 import com.example.gourmet_inventory_mobile.screens.EscolhaPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.ItemEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
@@ -40,13 +37,15 @@ import com.example.gourmet_inventory_mobile.screens.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
+import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
-
 
 class MainActivity : ComponentActivity() {
     companion object {
@@ -70,6 +69,9 @@ class MainActivity : ComponentActivity() {
                         androidx.lifecycle.viewmodel.compose.viewModel()
                     val estoque by sharedViewModel.estoque.collectAsState()
                     val viewModelEstoque = koinViewModel<EstoqueViewModel>()
+                    val viewModelListaCompras = koinViewModel<ListaComprasViewModel>()
+                    val viewModelPrato = koinViewModel<PratoViewModel>()
+                    val viewModelComanda = koinViewModel<ComandaViewModel>()
 
                     NavHost(navController = navController, startDestination = "login") {
 
@@ -99,12 +101,44 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("cardapio") {
+                            val context = LocalContext.current
+                            LaunchedEffect(Unit) {
+                                viewModelPrato.getPratos(context)
+                            }
+
                             CardapioListScreen(
+                                pratoViewModel = viewModelPrato,
                                 navController = navController,
                                 onCardapioClick = { route ->
                                     navController.navigate(route)
-                                }
+                                },
+                                comandaViewModel = viewModelComanda
                             )
+                        }
+
+                        composable("cardapioItem/{idPrato}") {backStackEntry ->
+                            val idPrato = backStackEntry.arguments?.getString("idPrato")?.toIntOrNull()
+
+                            idPrato?.let { id ->
+                                val prato = viewModelPrato.data.find { it.idPrato == id.toLong() }
+
+                                prato?.let { prato ->
+                                    PratoScreen(
+                                        prato = prato,
+                                        navController = navController,
+                                        onClickPratoItem = { route ->
+                                            navController.navigate(route)
+                                        },
+                                        onPratoItemVoltarClick = {
+                                            clickedAction = "Voltar"
+                                            navController.popBackStack()
+                                        },
+                                        viewModel = viewModelComanda
+                                    )
+                                }
+                            }
+
+
                         }
 
                         composable("comandaList") {
@@ -169,16 +203,23 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("listaCompras") {
+                            LaunchedEffect(Unit) {
+                                viewModelListaCompras.getListaCompras(appContext)
+                            }
                             ListaComprasScreen(
                                 navController = navController,
+                                viewModel = viewModelListaCompras,
                                 onListaComprasClick = { route ->
                                     navController.navigate(route)
                                 }
                             )
+
                         }
 
                         composable("comandaView") {
+
                             ComandaViewScreen(
+                                viewModel = viewModelComanda,
                                 navController = navController,
                                 onComandaViewClick = { route ->
                                     navController.navigate(route)
@@ -240,7 +281,6 @@ class MainActivity : ComponentActivity() {
                                         },
                                         onItemEstoqueViewEditarClick = {
                                             clickedAction = "Editar"
-                                            Log.d("MainActivity", "Entrou na página de edição")
                                             navController.navigate("editarItemEstoque/$idItem")
                                         },
                                         onItemEstoqueViewExcluirClick = {
@@ -348,18 +388,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("cardapioItem") {
-                            PratoScreen(
-                                navController = navController,
-                                onClickPratoItem = { route ->
-                                    navController.navigate(route)
-                                },
-                                onPratoItemVoltarClick = {
-                                    clickedAction = "Voltar"
-                                    navController.popBackStack()
-                                },
-                            )
-                        }
+
                     }
                 }
             }
