@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Comanda
 
 import android.util.Log
 import android.widget.Toast
@@ -43,7 +43,7 @@ import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Comanda
 import com.example.gourmet_inventory_mobile.model.Empresa
-import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -55,7 +55,6 @@ import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 import com.example.gourmet_inventory_mobile.utils.SearchBox
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
-import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import kotlinx.coroutines.flow.first
 import org.koin.compose.viewmodel.koinViewModel
 

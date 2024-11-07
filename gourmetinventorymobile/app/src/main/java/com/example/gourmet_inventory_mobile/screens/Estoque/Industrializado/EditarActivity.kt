@@ -1,3 +1,6 @@
+package com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado
+
+import SharedViewModel
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,7 +43,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
@@ -138,7 +140,7 @@ fun EditarScreen(
                         categoriaErro = categoria.isBlank()
                     }, categoriaErro, "Campo obrigatório")
 
-                    LocalArmazenamentoSelectBox(
+                    LocalArmazenamentoSelectBoxEditar(
                         selectedOption = localArmazenamento,
                         onLocalArmazenamentoChange = { novoValor ->
                             localArmazenamento = novoValor
@@ -264,7 +266,7 @@ data class ErrosEdicao(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LocalArmazenamentoSelectBox(
+fun LocalArmazenamentoSelectBoxEditar(
     selectedOption: String,
     onLocalArmazenamentoChange: (String) -> Unit
 ) {
