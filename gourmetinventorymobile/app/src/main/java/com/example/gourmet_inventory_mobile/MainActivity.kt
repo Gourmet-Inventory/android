@@ -1,7 +1,7 @@
 package com.example.gourmet_inventory_mobile
 
-import CadastroItemScreen
-import EditarScreen
+import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.CadastroItemScreen
+import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.EditarScreen
 import SharedViewModel
 import android.content.Context
 import android.os.Bundle
@@ -21,21 +21,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.gourmet_inventory_mobile.screens.CadastroItem2Screen
-import com.example.gourmet_inventory_mobile.screens.CardapioListScreen
-import com.example.gourmet_inventory_mobile.screens.ComandaListScreen
-import com.example.gourmet_inventory_mobile.screens.ComandaViewScreen
+import com.example.gourmet_inventory_mobile.DI.appModule
+import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.CadastroItem2Screen
+import com.example.gourmet_inventory_mobile.screens.Cardapio.CardapioListScreen
+import com.example.gourmet_inventory_mobile.screens.Comanda.ComandaListScreen
+import com.example.gourmet_inventory_mobile.screens.Comanda.ComandaViewScreen
 import com.example.gourmet_inventory_mobile.screens.DeleteCnfirmacaoScreen
-import com.example.gourmet_inventory_mobile.screens.Editar2Screen
-import com.example.gourmet_inventory_mobile.screens.EscolhaPerfilScreen
-import com.example.gourmet_inventory_mobile.screens.ItemEstoqueScreen
+import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.Editar2Screen
+import com.example.gourmet_inventory_mobile.screens.Usuario.EscolhaPerfilScreen
+import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.ItemEstoqueScreen
 import com.example.gourmet_inventory_mobile.screens.ListaComprasScreen
-import com.example.gourmet_inventory_mobile.screens.ListaEstoqueScreen
-import com.example.gourmet_inventory_mobile.screens.ListaFornecedoresScreen
-import com.example.gourmet_inventory_mobile.screens.LoginScreen
-import com.example.gourmet_inventory_mobile.screens.PratoScreen
-import com.example.gourmet_inventory_mobile.screens.ViewPerfilScreen
-import com.example.gourmet_inventory_mobile.screens.VizuFornScreen
+import com.example.gourmet_inventory_mobile.screens.Estoque.ListaEstoqueScreen
+import com.example.gourmet_inventory_mobile.screens.Fornecedor.ListaFornecedoresScreen
+import com.example.gourmet_inventory_mobile.screens.Usuario.LoginScreen
+import com.example.gourmet_inventory_mobile.screens.Cardapio.PratoScreen
+import com.example.gourmet_inventory_mobile.screens.Usuario.ViewPerfilScreen
+import com.example.gourmet_inventory_mobile.screens.Fornecedor.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
@@ -217,7 +218,6 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("comandaView") {
-
                             ComandaViewScreen(
                                 viewModel = viewModelComanda,
                                 navController = navController,

@@ -1,7 +1,7 @@
 package com.example.gourmet_inventory_mobile.repository.Usuario
 
-import com.example.gourmet_inventory_mobile.model.LoginRequest
-import com.example.gourmet_inventory_mobile.model.LoginResponse
+import com.example.gourmet_inventory_mobile.model.Usuario.LoginRequest
+import com.example.gourmet_inventory_mobile.model.Usuario.LoginResponse
 import com.example.gourmet_inventory_mobile.service.UsuarioService
 import retrofit2.Response
 

@@ -16,18 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.ui.theme.*
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import kotlinx.coroutines.flow.first
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ListaComprasScreen(
