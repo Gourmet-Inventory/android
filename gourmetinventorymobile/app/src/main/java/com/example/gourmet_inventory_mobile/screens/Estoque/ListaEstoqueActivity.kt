@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Estoque
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -43,8 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -182,7 +183,7 @@ fun ListaEstoqueScreen(
                                 horizontalArrangement = Arrangement.Center
                             ){
                                 Text(
-                                    text = "Nenhum fornecedor encontrado",
+                                    text = "Nenhum estoque encontrado",
                                     fontSize = 20.sp,
                                     modifier = Modifier.padding(top = 20.dp)
                                 )
@@ -211,10 +212,13 @@ fun ListaEstoqueScreen(
     }
 }
 
-//@Preview
+//@Preview(showSystemUi = true)
 //@Composable
 //fun ListaEstoquePreview() {
 //    ListaEstoqueScreen(
+//        viewModel = EstoqueViewModel(
+//            estoqueRepository = EstoqueRepository()
+//        ),
 //        navController = NavController(LocalContext.current),
 //        onListaEstoqueClick = {}
 //    )
@@ -227,7 +231,7 @@ fun AddButton(onAddClick: () -> Unit) {
         containerColor = GI_AzulMarinho,
         contentColor = White,
         modifier = Modifier.width(70.dp),
-        shape = RoundedCornerShape(20.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Icon(Icons.Filled.Add, "")
     }
@@ -283,7 +287,7 @@ fun EscolhaTipoDeEstoque(
                             .padding(bottom = 30.dp),
                     ) {
                         Text(
-                            text = "SIMPLES",
+                            text = "INDUSTRIALIZADO",
                             style = TextStyle(
                                 fontSize = 17.sp,
                                 fontFamily = JostBold
@@ -340,13 +344,9 @@ fun ItensListaEstoque(
                 .fillMaxHeight(),
             content = {
                 Column(
-        //        state = listScrollState,
                     modifier = Modifier
-//                .height(345.dp)
-//                .width(325.dp)
                         .fillMaxSize()
                         .padding(top = 3.dp, bottom = 3.dp, end = 10.dp),
-//            .verticalScroll(rememberScrollState(), true),
                     verticalArrangement = Arrangement.Top
                 ) {
                     estoque.forEach() { estoqueItem ->
@@ -426,3 +426,15 @@ fun ItemListaEstoque(
         }
     }
 }
+
+//@Preview(showSystemUi = true)
+//@Composable
+//fun ListaEstoquePreview() {
+//    ListaEstoqueScreen(
+//        viewModel = EstoqueViewModel(
+//            estoqueRepository = EstoqueRepository()
+//        ),
+//        navController = NavController(LocalContext.current),
+//        onListaEstoqueClick = {}
+//    )
+//}

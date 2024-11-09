@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepository
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import kotlinx.coroutines.flow.MutableStateFlow

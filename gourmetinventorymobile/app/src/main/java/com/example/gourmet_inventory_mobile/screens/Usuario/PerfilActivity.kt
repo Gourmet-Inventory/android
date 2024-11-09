@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Usuario
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

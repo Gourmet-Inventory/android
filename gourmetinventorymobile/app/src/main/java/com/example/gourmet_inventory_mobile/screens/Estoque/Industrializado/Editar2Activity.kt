@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado
 
 import SharedViewModel
 import android.util.Log
@@ -46,10 +46,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.model.Medidas
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
@@ -62,14 +60,14 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun CadastroItem2Screen(
+fun Editar2Screen(
     sharedViewModel: SharedViewModel,
-    onCadastroItem2AnteriorClick: (EstoqueCriacao?) -> Unit,
-    onCadastroItemCadastrarClick: (EstoqueConsulta?) -> Unit,
-    estoque: EstoqueCriacao?
+    onEditarItem2AnteriorClick: (EstoqueCriacao?) -> Unit,
+    onEditarItem2SalvarClick: () -> Unit
+//    estoque: EstoqueCriacao?
 ) {
     val estoque by sharedViewModel.estoque.collectAsState()
-    Log.d("CadastroItem2Screen", "Estoque: $estoque")
+    Log.d("Editar2Screen", "estoque: $estoque")
 
     var qtdUnitaria by remember {
         mutableStateOf(
@@ -91,11 +89,6 @@ fun CadastroItem2Screen(
             if (estoque != null) estoque!!.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else ""
         )
     }
-    var localArmazenamento by remember {
-        mutableStateOf(
-            if (estoque != null) estoque!!.localArmazenamento else ""
-        )
-    }
     var tipoMedida by remember {
         mutableStateOf(
             if (estoque != null) estoque!!.tipoMedida.name else ""
@@ -114,27 +107,27 @@ fun CadastroItem2Screen(
     val viewModel = koinViewModel<EstoqueViewModel>()
     val estoqueState by viewModel.estoqueCriacaoState.collectAsState()
 
-    fun criarEstoqueAtualizado(): EstoqueCriacao? {
-        Log.d("CadastroItem2Screen", "Criando EstoqueCriacao")
-        return try {
-            EstoqueCriacao(
-                lote = estoque?.lote ?: "",
-                manipulado = estoque?.manipulado ?: false,
-                nome = estoque?.nome ?: "",
-                categoria = estoque?.categoria ?: CategoriaEstoque.values().first().toString(),
-                tipoMedida = Medidas.valueOf(tipoMedida),
-                unitario = qtdUnitaria.toIntOrNull() ?: 0,
-                valorMedida = valorMedida.toDoubleOrNull() ?: 0.0,
-                localArmazenamento = localArmazenamento,
-                dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
-                dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
-                marca = estoque?.marca ?: ""
-            )
-        } catch (e: Exception) {
-            Log.e("CadastroItem2Screen", "Erro ao criar EstoqueCriacao: ${e.message}")
-            null
-        }
-    }
+//    fun criarEstoqueAtualizado(): EstoqueCriacao? {
+//        Log.d("Editar2Screen", "Criando EstoqueCriacao")
+//        return try {
+//            EstoqueCriacao(
+//                lote = estoque?.lote ?: "",
+//                manipulado = estoque?.manipulado ?: false,
+//                nome = estoque?.nome ?: "",
+//                categoria = estoque?.categoria ?: "",
+//                tipoMedida = Medidas.valueOf(tipoMedida),
+//                unitario = qtdUnitaria.toIntOrNull() ?: 0,
+//                valorMedida = valorMedida.toDoubleOrNull() ?: 0.0,
+//                localArmazenamento = estoque?.localArmazenamento ?: "",
+//                dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+//                dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+//                marca = estoque?.marca ?: ""
+//            )
+//        } catch (e: Exception) {
+//            Log.e("Editar2Screen", "Erro ao criar EstoqueCriacao: ${e.message}")
+//            null
+//        }
+//    }
 
     Surface(
         modifier = Modifier
@@ -158,11 +151,11 @@ fun CadastroItem2Screen(
                         valorMedida = valorMedida.toDouble(),
                         dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
                         dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
-                        localArmazenamento = localArmazenamento,
+                        localArmazenamento = estoque.localArmazenamento,
                         tipoMedida = Medidas.valueOf(tipoMedida)
                     )
                     sharedViewModel.atualizarEstoque(novoEstoque)
-                    onCadastroItem2AnteriorClick(estoque)
+                    onEditarItem2AnteriorClick(novoEstoque)
                 }) {
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowLeft,
@@ -182,7 +175,7 @@ fun CadastroItem2Screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Cadastrar Item:",
+                    text = "Editar Item:",
                     color = Black,
                     textAlign = TextAlign.Center,
                     style = TextStyle(fontSize = 35.sp, fontFamily = JostBold)
@@ -193,10 +186,6 @@ fun CadastroItem2Screen(
                 modifier = Modifier.padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LocalArmazenamentoSelectBox(
-                    localArmazenamento,
-                    onLocalArmazenamentoChange = { localArmazenamento = it })
-
                 Row(
                     modifier = Modifier
                         .width(350.dp)
@@ -229,8 +218,8 @@ fun CadastroItem2Screen(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TipoMedidaSelectBox(tipoMedida, onTipoMedidaChange = { tipoMedida = it })
-                    InputCadastro2(
+                    TipoMedidaSelectBoxEdicao(tipoMedida, onTipoMedidaChange = { tipoMedida = it })
+                    InputEdicao2(
                         titulo = "Valor Medida",
                         placeholder = "",
                         valorCampo = valorMedida,
@@ -244,7 +233,7 @@ fun CadastroItem2Screen(
                 }
 
                 Row {
-                    InputCadastro2(
+                    InputEdicao2(
                         titulo = "Data Cadastro",
                         placeholder = "dd/mm/aaaa",
                         valorCampo = dataCadastro,
@@ -261,7 +250,7 @@ fun CadastroItem2Screen(
                         mensagemErro = "Data inválida (dd/mm/aaaa)"
                     )
 
-                    InputCadastro2(
+                    InputEdicao2(
                         titulo = "Data Aviso",
                         placeholder = "dd/mm/aaaa",
                         valorCampo = dataAviso,
@@ -288,15 +277,17 @@ fun CadastroItem2Screen(
                     .padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Passo2Criacao(onCadastroItemAnteriorClick = {
+                Passo2Edicao(onEditarItem2AnteriorClick = {
                     val novoEstoque = estoque.copy(
                         unitario = qtdUnitaria.toInt(),
                         valorMedida = valorMedida.toDouble(),
                         dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
-                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                        localArmazenamento = estoque.localArmazenamento,
+                        tipoMedida = Medidas.valueOf(tipoMedida)
                     )
                     sharedViewModel.atualizarEstoque(novoEstoque)
-                    onCadastroItem2AnteriorClick(estoque)
+                    onEditarItem2AnteriorClick(novoEstoque)
                 })
 
                 Button(
@@ -322,11 +313,25 @@ fun CadastroItem2Screen(
                         }
 
                         if (!valorMedidaErro && !dataCadastroErro && !dataAvisoErro && !dataAvisoAnteriorErro) {
-                            criarEstoqueAtualizado()?.let { novoEstoque ->
-                                Log.d("CadastroItem2Screen", "Cadastrando Estoque: $novoEstoque")
-                                sharedViewModel.atualizarEstoque(novoEstoque)
-                                viewModel.cadastrarEstoque(context, novoEstoque)
+                            sharedViewModel.criarEstoqueAtualizado(
+                                estoque.copy(
+                                    unitario = qtdUnitaria.toInt(),
+                                    valorMedida = valorMedida.toDouble(),
+                                    dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                                    localArmazenamento = estoque.localArmazenamento,
+                                    tipoMedida = Medidas.valueOf(tipoMedida)
+                                )
+                            )
+                            sharedViewModel.estoque.value?.let {
+                                Log.d("Editar2Screen", "ESTOQUE PARA REQUISICAO: $it")
+                                viewModel.atualizarEstoque(context, it)
                             }
+//                            criarEstoqueAtualizado()?.let { novoEstoque ->
+//                                Log.d("CadastroItem2Screen", "Novo Estoque: $novoEstoque")
+//                                sharedViewModel.atualizarEstoque(novoEstoque)
+//                                viewModel.atualizarEstoque(context, novoEstoque)
+//                            }
                         }
                     },
                     modifier = Modifier
@@ -338,26 +343,26 @@ fun CadastroItem2Screen(
                     if (estoqueState is EstoqueCriacaoState.Loading) {
                         CircularProgressIndicator(color = GI_AzulMarinho)
                     } else {
-                        Text(text = "Cadastrar", color = Black, fontSize = 18.sp)
+                        Text(text = "Editar", color = Black, fontSize = 18.sp)
                     }
                 }
             }
 
             LaunchedEffect(estoqueState) {
                 if (estoqueState is EstoqueCriacaoState.Success) {
-                    Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, "Edição efetuada com sucesso!", Toast.LENGTH_SHORT)
                         .show()
-                    onCadastroItemCadastrarClick((estoqueState as EstoqueCriacaoState.Success).estoqueConsulta)
+                    onEditarItem2SalvarClick()
                 }
             }
 
             LaunchedEffect(estoqueState) {
                 if (estoqueState is EstoqueCriacaoState.Error) {
                     Log.e(
-                        "CadastroItem2Screen",
+                        "Editar2Screen",
                         "ERRO: " + (estoqueState as EstoqueCriacaoState.Error).message
                     )
-                    Toast.makeText(context, "Erro ao cadastrar item", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Erro ao editar item", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -366,33 +371,9 @@ fun CadastroItem2Screen(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun Cadastro2ScreenPreview() {
-    CadastroItem2Screen(
-        onCadastroItem2AnteriorClick = {},
-        onCadastroItemCadastrarClick = {},
-        estoque = EstoqueCriacao(
-            lote = "123",
-            manipulado = true,
-            nome = "Nome",
-            categoria = CategoriaEstoque.CARNES_VERMELHAS.toString(),
-            tipoMedida = Medidas.UNIDADE,
-            unitario = 1,
-            valorMedida = 1.0,
-            localArmazenamento = "Local",
-            dtaCadastro = LocalDate.now(),
-            dtaAviso = LocalDate.now(),
-            marca = "Marca"
-        ),
-        sharedViewModel = SharedViewModel()
-    )
-}
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> Unit) {
+fun TipoMedidaSelectBoxEdicao(selectedOption: String, onTipoMedidaChange: (String) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -438,73 +419,19 @@ fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> 
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LocalArmazenamentoSelectBox(
-    selectedOption: String,
-    onLocalArmazenamentoChange: (String) -> Unit
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val options = listOf("Cozinha", "Armário", "Geladeira", "Freezer")
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
-    ) {
-        Row(
-            modifier = Modifier
-                .width(350.dp)
-                .height(100.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                        .height(30.dp),
-                    text = "Local Armazenamento:",
-                    color = Black,
-                    fontSize = 22.sp
-                )
-                OutlinedTextField(
-                    value = selectedOption,
-                    onValueChange = { },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = White, shape = RoundedCornerShape(5.dp))
-                        .menuAnchor(),
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                    },
-                    readOnly = true,
-                    colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    options.forEach { selectionOption ->
-                        DropdownMenuItem(
-                            text = { Text(selectionOption) },
-                            onClick = {
-                                onLocalArmazenamentoChange(selectionOption)
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
+@Preview(showBackground = true)
+@Composable
+fun Edicao2ScreenPreview() {
+    Editar2Screen(
+        sharedViewModel = SharedViewModel(),
+        onEditarItem2AnteriorClick = {},
+        onEditarItem2SalvarClick = {}
+    )
 }
 
 @Composable
-fun InputCadastro2(
+fun InputEdicao2(
     titulo: String,
     placeholder: String,
     valorCampo: String,
@@ -568,8 +495,8 @@ fun InputCadastro2(
 }
 
 @Composable
-fun Passo2Criacao(
-    onCadastroItemAnteriorClick: () -> Unit = {}
+fun Passo2Edicao(
+    onEditarItem2AnteriorClick: (EstoqueCriacao?) -> Unit
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
 
@@ -583,7 +510,7 @@ fun Passo2Criacao(
         RadioButton(
             selected = selectedOptionIndex == 0,
             onClick = {
-                onCadastroItemAnteriorClick()
+                onEditarItem2AnteriorClick(null)
             }
         )
         RadioButton(

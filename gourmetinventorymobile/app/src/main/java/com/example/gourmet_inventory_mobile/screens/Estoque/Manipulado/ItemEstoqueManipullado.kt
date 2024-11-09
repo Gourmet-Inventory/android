@@ -1,19 +1,14 @@
-package com.example.gourmet_inventory_mobile.screens
-
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -26,42 +21,29 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 
-import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
-import com.example.gourmet_inventory_mobile.ui.theme.White
-
-//class ItemEstoque : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                ItemEstoque()
-//            }
-//        }
-//    }
-//}
 
 @Composable
-fun ItemEstoqueScreen(
-    estoqueConsulta: EstoqueConsulta,
+fun ItemEstoqueManipuladoScreen(
     onItemEstoqueClick: (String) -> Unit,
     onItemEstoqueViewEditarClick: () -> Unit,
-    onItemEstoqueViewExcluirClick: (String) -> Unit
+    onItemEstoqueViewExcluirClick: () -> Unit,
 ) {
+    val receita = listOf(
+        Receita(50.0, "GRAMAS", "TOMATE"),
+        Receita(50.0, "GRAMAS", "TOMATE"),
+        Receita(50.0, "GRAMAS", "TOMATE"),
+        Receita(50.0, "GRAMAS", "TOMATE"),
+        Receita(50.0, "GRAMAS", "TOMATE"),
+        Receita(50.0, "GRAMAS", "TOMATE")
+    )
     Scaffold(
         topBar = {
             Row(
@@ -87,32 +69,6 @@ fun ItemEstoqueScreen(
             }
         }
     ) { padding ->
-
-        var lote by remember { mutableStateOf("") }
-        var categoria by remember { mutableStateOf("") }
-        var marca by remember { mutableStateOf("") }
-        var localArmazenamento by remember { mutableStateOf("") }
-        var quantidadeUnitaria by remember { mutableStateOf("") }
-        var tipoMedida by remember { mutableStateOf("") }
-        var valorMedida by remember { mutableStateOf("") }
-        var valorTotal by remember { mutableStateOf("") }
-        var dataCadastro by remember { mutableStateOf("") }
-        var dataAviso by remember { mutableStateOf("") }
-
-        if (estoqueConsulta != null) {
-            lote = estoqueConsulta.lote
-            categoria = estoqueConsulta.categoria ?: ""
-            marca = estoqueConsulta.marca
-            localArmazenamento = estoqueConsulta.localArmazenamento
-            quantidadeUnitaria = estoqueConsulta.unitario.toString()
-            tipoMedida = estoqueConsulta.tipoMedida.toString()
-            valorMedida = estoqueConsulta.valorMedida.toString()
-            valorTotal = estoqueConsulta.valorTotal.toString()
-            dataCadastro = estoqueConsulta.dtaCadastro.toString()
-            dataAviso = estoqueConsulta.dtaAviso.toString()
-        }
-
-
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -121,37 +77,79 @@ fun ItemEstoqueScreen(
             val context = LocalContext.current
 
             Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp),
-                    horizontalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = estoqueConsulta.nome,
-                        fontSize = 32.sp,
+                        text = "Molho de Tomate",
+                        fontSize = 30.sp,
                         fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(bottom = 5.dp)
+                    )
+                    Text(
+                        text = "MANIPULADO",
+                        fontSize = 20.sp,
                         modifier = Modifier.padding(
-                            bottom = 40.dp
+                            bottom = 50.dp
                         )
                     )
                 }
-                Column() {
-                    InfoItem("Lote:", lote, topPadding = 25.dp)
-                    InfoItem("Categoria:", categoria, topPadding = 22.dp)
-                    InfoItem("Marca:", marca, topPadding = 22.dp)
-                    InfoItem("Local Armazenamento:", localArmazenamento, topPadding = 22.dp)
-                    InfoItem("Quantidade Unitária:", quantidadeUnitaria.toString(), topPadding = 22.dp)
-                    InfoItem("Tipo Medida:", tipoMedida, topPadding = 22.dp)
-                    InfoItem("Valor medida:", valorMedida, topPadding = 22.dp)
-                    InfoItem("Valor total:", valorTotal, topPadding = 22.dp)
-                    InfoItem("Data Cadastro:", dataCadastro, topPadding = 22.dp)
-                    InfoItem("Data Aviso:", dataAviso, topPadding = 22.dp)
+                LazyColumn(
+                    modifier = Modifier
+                        .height(250.dp)
+                ) {
+                    item { InfoItemManipulado("Lote:", "Lote 1") }
+                    item { InfoItemManipulado("Categoria:", "Molhos", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Marca:", "Quero", topPadding = 22.dp) }
+                    item {
+                        InfoItemManipulado(
+                            "Local Armazenamento:",
+                            "Geladeira",
+                            topPadding = 22.dp
+                        )
+                    }
+                    item { InfoItemManipulado("Quantidade Unitária:", "3", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Tipo Medida:", "GRAMAS", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Valor Medida:", "500", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Valor Total:", "1500", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Data Cadastro:", "20/05/2024", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Data Aviso:", "20/05/2024", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Valor Medida:", "500", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Valor Total:", "1500", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Data Cadastro:", "20/05/2024", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Data Aviso:", "20/05/2024", topPadding = 22.dp) }
+
+
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 80.dp, start = 15.dp, end = 15.dp),
+                        .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Receita:", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp)
+                        .height(170.dp)
+                        .border(1.dp, color = Color.Black)
+                ) {
+                    ItensReceita(receitas = receita)
+                }
+
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 30.dp, start = 15.dp, end = 15.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Button(
@@ -169,7 +167,7 @@ fun ItemEstoqueScreen(
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Edit,
+                            imageVector = androidx.compose.material.icons.Icons.Default.Edit,
                             contentDescription = "Editar"
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -177,7 +175,13 @@ fun ItemEstoqueScreen(
                     }
                     Button(
                         onClick = {
-                            onItemEstoqueViewExcluirClick("deleteConfirmacao/${estoqueConsulta.idItem}")
+                            onItemEstoqueViewExcluirClick()
+                            Toast.makeText(
+                                context,
+                                "Item Excluído com sucesso",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(0xFFED5656),
@@ -186,7 +190,7 @@ fun ItemEstoqueScreen(
                         modifier = Modifier
                             .weight(1f)
                             .height(45.dp)
-                            .padding(start = 8.dp),
+                            .padding(start = 5.dp),
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Icon(
@@ -204,7 +208,7 @@ fun ItemEstoqueScreen(
 }
 
 @Composable
-fun InfoItem(label: String, value: String, topPadding: Dp = 0.dp) {
+fun InfoItemManipulado(label: String, value: String, topPadding: Dp = 0.dp) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -219,13 +223,47 @@ fun InfoItem(label: String, value: String, topPadding: Dp = 0.dp) {
 
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ItemPreview() {
-//    ItemEstoqueScreen(
-//        onItemEstoqueClick = {},
-//        onItemEstoqueViewEditarClick = {},
-//        onItemEstoqueViewExcluirClick = {},
-//        estoqueConsulta = {}
-//    )
-//}
+
+data class Receita(val valorMedida: Double, val tipoMedida: String, val nome: String)
+
+@Composable
+fun ItensReceita(receitas: List<Receita>) {
+    LazyColumn(
+        modifier = Modifier
+            .height(300.dp)
+            .fillMaxSize()
+            .padding(top = 16.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
+        verticalArrangement = Arrangement.Top
+    ) {
+        items(receitas) { receita ->
+            ItemReceita(receita = receita)
+        }
+    }
+}
+
+
+@Composable
+fun ItemReceita(receita: Receita) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "${receita.valorMedida} ${receita.tipoMedida} - ${receita.nome}",
+            fontSize = 19.sp
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItemManipuladoPreview() {
+    ItemEstoqueManipuladoScreen(
+        onItemEstoqueClick = {},
+        onItemEstoqueViewEditarClick = {},
+        onItemEstoqueViewExcluirClick = {}
+    )
+}
+

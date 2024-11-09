@@ -1,6 +1,5 @@
 package com.example.gourmet_inventory_mobile.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,8 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gourmet_inventory_mobile.model.Fornecedor
 import com.example.gourmet_inventory_mobile.repository.Fornecedor.FornecedorRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FornViewModel(private val fornecedorRepository: FornecedorRepository): ViewModel() {
@@ -20,11 +17,9 @@ class FornViewModel(private val fornecedorRepository: FornecedorRepository): Vie
     var data = mutableStateListOf<Fornecedor>()
         private set
 
-
     init {
         getFornecedores()
     }
-
 
     fun getFornecedores() {
         viewModelScope.launch {

@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Fornecedor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

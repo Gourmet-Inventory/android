@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Usuario
 
 import android.graphics.Color.WHITE
 import android.util.Log
@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoSujo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja

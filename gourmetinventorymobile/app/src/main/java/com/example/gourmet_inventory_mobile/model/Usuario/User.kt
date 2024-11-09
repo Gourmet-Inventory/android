@@ -1,5 +1,6 @@
-package com.example.gourmet_inventory_mobile.model
+package com.example.gourmet_inventory_mobile.model.Usuario
 
+import com.example.gourmet_inventory_mobile.model.Empresa
 import kotlinx.serialization.Serializable
 
 @Serializable

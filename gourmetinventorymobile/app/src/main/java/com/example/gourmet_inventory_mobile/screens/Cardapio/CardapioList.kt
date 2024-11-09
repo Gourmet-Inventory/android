@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Cardapio
 
 import android.util.Log
 import android.widget.Toast
@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Prato
-import com.example.gourmet_inventory_mobile.model.User
+import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.ui.theme.Black
