@@ -1,3 +1,6 @@
+package com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado
+
+import SharedViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,11 +41,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.graphics.forEach
-import androidx.core.graphics.values
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
-import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho

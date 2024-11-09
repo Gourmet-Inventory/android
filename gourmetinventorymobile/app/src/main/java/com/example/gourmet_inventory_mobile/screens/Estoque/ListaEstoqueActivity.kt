@@ -344,13 +344,9 @@ fun ItensListaEstoque(
                 .fillMaxHeight(),
             content = {
                 Column(
-        //        state = listScrollState,
                     modifier = Modifier
-//                .height(345.dp)
-//                .width(325.dp)
                         .fillMaxSize()
                         .padding(top = 3.dp, bottom = 3.dp, end = 10.dp),
-//            .verticalScroll(rememberScrollState(), true),
                     verticalArrangement = Arrangement.Top
                 ) {
                     estoque.forEach() { estoqueItem ->

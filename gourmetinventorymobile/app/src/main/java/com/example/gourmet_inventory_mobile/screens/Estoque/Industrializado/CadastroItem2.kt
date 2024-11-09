@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.screens
+package com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado
 
 import SharedViewModel
 import android.util.Log
@@ -193,7 +193,7 @@ fun CadastroItem2Screen(
                 modifier = Modifier.padding(top = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                LocalArmazenamentoSelectBox(
+                LocalArmazenamentoSelectBoxCadastrar(
                     localArmazenamento,
                     onLocalArmazenamentoChange = { localArmazenamento = it })
 
@@ -440,7 +440,7 @@ fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LocalArmazenamentoSelectBox(
+fun LocalArmazenamentoSelectBoxCadastrar(
     selectedOption: String,
     onLocalArmazenamentoChange: (String) -> Unit
 ) {

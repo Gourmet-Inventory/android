@@ -13,7 +13,7 @@ import java.time.LocalDate
 class ListaComprasRepositoryImplLocal(): ListaComprasRepository {
     override suspend fun obterListaCompras(idEmpresa: Long): Response<List<ItemListaCompras>> {
         return Response.success(
-            List(5){
+            List(10){
                 ItemListaCompras(
                     idItemLista = it.toLong(),
                     nome = "Nome $it",
@@ -35,10 +35,8 @@ class ListaComprasRepositoryImplLocal(): ListaComprasRepository {
                         dtaAviso = LocalDate.now(),
                         marca = "Marca $it"
                     )
-
                 )
             }
         )
     }
-
 }
