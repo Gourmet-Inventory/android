@@ -43,20 +43,8 @@ import com.example.gourmet_inventory_mobile.utils.BottomBarGarcom
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-
-//class ViewPerfilActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                VizuPerfilScreen()
-//
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun ViewPerfilScreen(
@@ -67,6 +55,7 @@ fun ViewPerfilScreen(
     val resources = context.resources
     var currentUser: User? by remember { mutableStateOf(null) }
     val coroutineScope = rememberCoroutineScope()
+    var cargoSelecionado by remember { mutableStateOf("") }
 
     var nome by remember {
         mutableStateOf("")
@@ -85,23 +74,26 @@ fun ViewPerfilScreen(
     }
 
     LaunchedEffect(Unit) {
+        cargoSelecionado = DataStoreUtils(context = context).obterCargo().firstOrNull() ?: ""
         currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
     }
+
     nome = currentUser?.name ?: ""
     cargo = currentUser?.cargo ?: ""
     telefone = currentUser?.telefone ?: ""
     email = currentUser?.email ?: ""
 
     Log.d("ViewPerfilScreen", "currentUser: $currentUser")
+    Log.d("ViewPerfilScreen", "cargoSelecionado: $cargoSelecionado")
 
     Scaffold(
         bottomBar = {
-            if (cargo == resources.getString(R.string.garcom)) {
+            if (cargoSelecionado == resources.getString(R.string.garcom)) {
                 BottomBarGarcom(
                     onClick = onViewPerfil,
                     navController = navController
                 )
-            } else if (cargo == resources.getString(R.string.gerente)) {
+            } else if (cargoSelecionado == resources.getString(R.string.gerente)) {
                 BottomBarGerente(
                     onClick = onViewPerfil,
                     navController = navController
