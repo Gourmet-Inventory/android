@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.Ingrediente
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
@@ -194,13 +196,19 @@ fun CardapioListScreen(
 
                 } else {
                     if (filteredCardapio.isEmpty()) {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
+                        Column (
+                            modifier = Modifier.fillMaxSize().padding(top = 20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
                             Text(
                                 text = "Nenhum prato encontrado",
                                 fontSize = 20.sp,
+                                modifier = Modifier.padding(top = 20.dp)
+                            )
+                            Spacer(modifier = Modifier.height(40.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.cardapiovaziosvg),
+                                contentDescription = "imagem de cardapio vazio",
                                 modifier = Modifier.padding(top = 20.dp)
                             )
                         }
@@ -307,6 +315,29 @@ fun ItemPrato(
         thickness = 1.dp,
         modifier = Modifier.padding(vertical = 8.dp)
     )
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun ItemPratoPreview(modifier: Modifier = Modifier) {
+    ItemPrato(
+        prato = Prato(
+            idPrato = 1,
+            nome = "Prato 1",
+            descricao = "Descrição do prato 1",
+            preco = 20.0,
+            foto = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fbr%2Fvetor%2Fprato-de-comida-gm1162925797-319366292&psig=AOvVaw3Q6Z",
+            alergicosRestricoes = listOf("Alergico 1", "Alergico 2"),
+            categoria = "Categoria do prato",
+            receitaPrato = listOf(
+                Ingrediente(nome = "Ingrediente 1", tipoMedida = "Unidade", valorMedida = 1.0, exibirConca = "1 Unidade"),
+                Ingrediente(nome = "Ingrediente 2", tipoMedida = "Gramas", valorMedida = 100.0, exibirConca = "100 Gramas")
+            ),
+            URLAssinada = null // Or provide a URL if available
+        ),
+        onCardapioClick = {}
+    )
+    
 }
 
 @Preview(showBackground = true)

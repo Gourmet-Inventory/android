@@ -4,6 +4,7 @@ package com.example.gourmet_inventory_mobile.screens.Comanda
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,6 +24,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +46,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Comanda
-import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
@@ -63,7 +66,6 @@ fun ComandaListScreen(
     navController: NavController,
     onComandaClick: (String) -> Unit,
 ) {
-
     val context = LocalContext.current
     var currentUser: User? by remember { mutableStateOf(null) }
     LaunchedEffect(Unit) {
@@ -119,18 +121,16 @@ fun ComandaListScreen(
             val listaComandas = viewModel.data
             val isLoading = viewModel.isLoading
 
-            val empresa = Empresa(1, "123456789")
-            val userGarcom1 =
-                User("garcomum@gmail.com", "123456", "garçom", "Garçom Um", "11999999999", empresa)
-            val userGarcom2 =
-                User("garcomdois@gmail.com", "123456", "garçom", "Garçom Dois", "11999999999", empresa)
-
-
+//            val empresa = Empresa(1, "123456789")
+//            val userGarcom1 =
+//                User(1,"garcomum@gmail.com","123456", "garçom", "Garçom Um", "11999999999", empresa)
+//            val userGarcom2 =
+//                User(2,"garcomdois@gmail.com", "123456", "garçom", "Garçom Dois", "11999999999", empresa)
 
             // Filtra a lista com base no texto da pesquisa e na opção selecionada
             val filteredComandas = listaComandas.filter { comanda ->
-                        comanda.mesa.contains(searchText, ignoreCase = true) ||
-                                comanda.titulo.contains(searchText, ignoreCase = true)
+                comanda.mesa.contains(searchText, ignoreCase = true) ||
+                        comanda.titulo.contains(searchText, ignoreCase = true)
             }
 
             Column(
@@ -166,33 +166,73 @@ fun ComandaListScreen(
                     )
                 }
 
-                // Botões de filtro
-//            var selectedOptionIndex by remember { mutableStateOf(1)}
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)
-                ) {
-                    RadioButton(
-                        selected = selectedOptionIndex == 0,
-                        onClick = { selectedOptionIndex = 0 }
-                    )
-                    Text(text = "Todas", fontSize = 16.sp, modifier = Modifier.padding(end = 4.dp))
+                if (filteredComandas.isEmpty()) {
+                    Column (
+                        modifier = Modifier.fillMaxSize().padding(top = 40.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+                        Text(
+                            text = "Nenhuma comanda encontrada",
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(top = 20.dp)
+                        )
+                        Spacer(modifier = Modifier.height(40.dp))
+                        Image(
+                            painter = painterResource(id = R.drawable.comandavazia),
+                            contentDescription = "imagem de comandas vazias",
+                            modifier = Modifier.padding(top = 20.dp)
+                        )
+                    }
 
-                    RadioButton(
-                        selected = selectedOptionIndex == 1,
-                        onClick = { selectedOptionIndex = 1 }
-                    )
-                    Text(text = "Minhas", fontSize = 16.sp)
+                } else{
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                    ) {
+                        RadioButton(
+                            colors = RadioButtonColors(
+                                selectedColor = GI_AzulMarinho,
+                                unselectedColor = GI_AzulMarinho,
+                                disabledSelectedColor = GI_AzulMarinho,
+                                disabledUnselectedColor = GI_AzulMarinho
+                            ),
+                            selected = selectedOptionIndex == 0,
+                            onClick = { selectedOptionIndex = 0 }
+                        )
+                        Text(text = "Todas", fontSize = 16.sp, modifier = Modifier.padding(end = 4.dp))
+
+                        RadioButton(
+                            selected = selectedOptionIndex == 1,
+                            onClick = { selectedOptionIndex = 1 }
+                        )
+                        Text(text = "Minhas", fontSize = 16.sp)
+                    }
+
+                    // Lista de comandas filtradas por responsável
+                    when (selectedOptionIndex) {
+                        0 -> {
+                            ItensComanda(
+                                comandas = filteredComandas,
+                                onComandaClick = onComandaClick,
+                                isSent = isSent
+                            )
+                        }
+
+                        1 -> {
+                            val comandasDoUsuario = filteredComandas.filter {
+                                it.idGarcom == currentUser?.id
+                            }
+                            ItensComanda(
+                                comandas = comandasDoUsuario,
+                                onComandaClick = onComandaClick,
+                                isSent = isSent
+                            )
+                        }
+                    }
                 }
-
-                ItensComanda(
-                    comandas = filteredComandas,
-                    onComandaClick = onComandaClick,
-                    isSent = isSent
-                )
             }
         }
     }
@@ -245,6 +285,8 @@ fun ItemComanda(
     onComandaClick: (String) -> Unit,
     isSent: String
 ) {
+    val resourses = LocalContext.current.resources
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -283,15 +325,16 @@ fun ItemComanda(
                         color = White
                     ),
                     modifier = Modifier
-//                                            .fillMaxWidth()
                         .padding(8.dp),
-//                                        textAlign = TextAlign.Center
                 )
                 Box(
                     modifier = Modifier
                         .size(24.dp)
                         .background(
-                            if (isSent == "enviado") Color.Red else if (isSent == "pendente") Color.Yellow else Color.Gray,
+                            if (isSent == resourses.getString(R.string.comandaStatus1)) Color.Yellow
+                            else if (isSent == resourses.getString(R.string.comandaStatus2)) Color.Blue
+                            else if (isSent == resourses.getString(R.string.comandaStatus3)) Color.Red
+                            else Color.Gray,
                             shape = RoundedCornerShape(12.dp)
                         )
                 )

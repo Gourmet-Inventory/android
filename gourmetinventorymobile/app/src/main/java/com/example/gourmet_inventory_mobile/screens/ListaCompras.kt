@@ -2,34 +2,55 @@ package com.example.gourmet_inventory_mobile.screens
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.ItemListaCompras
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.model.estoque.Estoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.ui.theme.*
+import com.example.gourmet_inventory_mobile.ui.theme.Black
+import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
+import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Vermelho
+import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
@@ -115,7 +136,7 @@ fun ListaComprasScreen(
                                     nomeFantasia = "Empresa"
                                 ),
                                 nome = "Nome $it",
-                                categoria = "Categoria $it",
+                                categoria = CategoriaEstoque.OUTROS,
                                 tipoMedida = Medidas.GRAMAS,
                                 unitario = it,
                                 valorMedida = it.toDouble(),
@@ -129,6 +150,9 @@ fun ListaComprasScreen(
                     }.toTypedArray()
                 )
             }
+//            val itens = remember {
+//                mutableStateListOf<ItemListaCompras>()
+//            }
 
             Box(
                 modifier = Modifier
@@ -138,7 +162,7 @@ fun ListaComprasScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(16.dp),
+                        .padding(10.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
                 ) {
@@ -159,34 +183,53 @@ fun ListaComprasScreen(
                         texto = novoTexto
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Item", fontSize = 18.sp)
-                        Divider(
-                            color = Color.Black,
-                            modifier = Modifier
-                                .width(1.dp)
-                                .height(20.dp)
-                        )
-                        Text(text = "Qt. Média", fontSize = 18.sp)
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    ItensListaCompras(
-                        listaCompras = itens.toList(),
-                        onListaComprasClick = { idItem ->
-                            onListaComprasClick("itemEstoque/$idItem")
-                        },
-                        onDeleteListItem = {
-                            itens.remove(it)
+                    if (itens.isEmpty()) {
+                        Column (
+                            modifier = Modifier.fillMaxSize().padding(top = 40.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            Text(
+                                text = "Nenhum item encontrado",
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(top = 20.dp)
+                            )
+                            Spacer(modifier = Modifier.height(40.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.listacomprasvazia),
+                                contentDescription = "imagem de lista de compras vazia",
+                                modifier = Modifier.padding(top = 20.dp)
+                            )
                         }
-                    )
+                    } else {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = "Item", fontSize = 18.sp)
+                            Divider(
+                                color = Color.Black,
+                                modifier = Modifier
+                                    .width(1.dp)
+                                    .height(20.dp)
+                            )
+                            Text(text = "Qt. Média", fontSize = 18.sp)
+                        }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        ItensListaCompras(
+                            listaCompras = itens.toList(),
+                            onListaComprasClick = { idItem ->
+                                onListaComprasClick("itemEstoque/$idItem")
+                            },
+                            onDeleteListItem = {
+                                itens.remove(it)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -232,7 +275,7 @@ fun ItensListaCompras(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 75.dp)
+            .padding(bottom = 75.dp, start = 8.dp, end = 8.dp)
     ) {
         DrawScrollableView(
             modifier = Modifier
@@ -297,6 +340,7 @@ fun ItensListaCompras(
                                                 }
                                             }
                                         }
+
                                         SwipeToDismissBoxValue.Settled -> {}
                                     }
                                 },
@@ -350,7 +394,7 @@ fun ItemListaCompras(
                 modifier = Modifier.padding(end = 16.dp)
             )
         }
-        if (itemLista != listaCompras.last()){
+        if (itemLista != listaCompras.last()) {
             Divider()
         }
     }
