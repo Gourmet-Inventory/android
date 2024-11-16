@@ -15,8 +15,14 @@ class ComandaRepositoryImplLocal(): ComandaRepository {
     override suspend fun getAllComandas(): Response<List<Comanda>> {
         return Response.success(
             List(10){
+//                for (i in 0..10) {
+//                    if (i >= 0 && i <= 5){
+//
+//                    }
+//                }
                 Comanda(
                     id = it.toLong(),
+                    idGarcom = it.toLong(),
                     titulo = "Comanda $it",
                     mesa = "Mesa $it",
                     itens = List(10){
@@ -50,6 +56,7 @@ class ComandaRepositoryImplLocal(): ComandaRepository {
         return Response.success(
             Comanda(
                 id = 1,
+                idGarcom = 1,
                 titulo = "Comanda 1",
                 mesa = "Mesa 1",
                 itens = List(10){
@@ -81,9 +88,10 @@ class ComandaRepositoryImplLocal(): ComandaRepository {
     override suspend fun createComanda(comanda: Comanda): Response<Comanda> {
         return Response.success(Comanda(
             id = 1,
+            idGarcom = 1,
             titulo = "Comanda 1",
             mesa = "Mesa 1",
-            itens = List(10){
+            itens = List(5){
                 Prato(
                     idPrato = it.toLong(),
                     nome = "Prato $it",
