@@ -42,12 +42,13 @@ class LoginViewModel (private val usuarioRepository: UsuarioRepository): ViewMod
                     val loginResponse = response.body()!!
 
                     val user = User(
+                        id = loginResponse.idUsuario,
                         email = loginResponse.email,
                         senha = senha,
                         cargo = loginResponse.cargo,
                         name = loginResponse.nome,
                         telefone = loginResponse.celular,
-                        empresa = loginResponse.empresa
+                        empresa = loginResponse.empresa,
                     )
                     Log.d("LoginViewModel", "User: $user")
 

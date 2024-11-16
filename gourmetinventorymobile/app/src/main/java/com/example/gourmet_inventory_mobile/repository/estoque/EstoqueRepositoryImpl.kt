@@ -17,10 +17,10 @@ class EstoqueRepositoryImpl(private val serviceEstoque: EstoqueService) : Estoqu
         return serviceEstoque.createEstoque(idEmpresa, estoque)
     }
     override suspend fun updateEstoque(
-        idEmpresa: Long,
+        idEstoque: Long,
         estoque: Estoque
     ): Response<EstoqueConsulta> {
-        return serviceEstoque.updateEstoque(idEmpresa, estoque)
+        return serviceEstoque.updateEstoque(idEstoque, estoque)
     }
     override suspend fun deleteEstoque(id: Long): Response<Unit> {
         return serviceEstoque.deleteEstoque(id)

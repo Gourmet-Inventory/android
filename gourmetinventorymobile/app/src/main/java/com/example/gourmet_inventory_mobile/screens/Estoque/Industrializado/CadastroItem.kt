@@ -49,6 +49,13 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
+data class CadastroItemErrors(
+    val nome: Boolean = false,
+    val lote: Boolean = false,
+    val categoria: Boolean = false,
+    val marca: Boolean = false
+)
+
 @Composable
 fun CadastroItemScreen(
     sharedViewModel: SharedViewModel,
@@ -58,27 +65,45 @@ fun CadastroItemScreen(
     val estoque by sharedViewModel.estoque.collectAsState()
 
     var nome by remember { mutableStateOf(estoque.nome) }
+//    var nome = estoque.nome
     var lote by remember { mutableStateOf(estoque.lote) }
+//    var lote = estoque.lote
     var selectedCategory by remember {
         mutableStateOf(
-            if (estoque != null) estoque!!.tipoMedida.name else ""
+            if (estoque.categoria == null) CategoriaEstoque.OUTROS.name else estoque.categoria
         )
     }
+//    var selectedCategory = estoque.categoria
     var marca by remember { mutableStateOf(estoque.marca) }
+//    var marca = estoque.marca
 
     // Erros
-    var nomeErro by remember { mutableStateOf(false) }
-    var loteErro by remember { mutableStateOf(false) }
-    var categoriaErro by remember { mutableStateOf(false) }
-    var marcaErro by remember { mutableStateOf(false) }
+    var errors by remember { mutableStateOf(CadastroItemErrors()) }
 
+    fun handleProximoClick() {
+        errors = CadastroItemErrors(
+            nome = nome.isBlank(),
+            lote = lote.isBlank(),
+            marca = marca.isBlank()
+        )
+
+//        if (!errors.nome && !errors.lote && !errors.marca) {
+//            val novoEstoque = estoque.copy(
+//                nome = nome,
+//                lote = lote,
+//                categoria = selectedCategory,
+//                marca = marca
+//            )
+//            sharedViewModel.atualizarEstoque(novoEstoque)
+//            onCadastroItemProximoClick()
+//        }
+    }
 
     Surface(
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.White)
     ) {
-
         LazyColumn {
             item {
                 Column(
@@ -92,7 +117,10 @@ fun CadastroItemScreen(
                             .padding(top = 40.dp, start = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = { onCadastroItemVoltarClick() }) {
+                        IconButton(onClick = {
+                            onCadastroItemVoltarClick()
+                            sharedViewModel.limparEstoque()
+                        }) {
                             Icon(
                                 imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
                                 contentDescription = "Voltar",
@@ -120,53 +148,49 @@ fun CadastroItemScreen(
                     // Campos de Entrada
                     InputCadastro("Nome", nome, { novoValor ->
                         nome = novoValor
-                        nomeErro = nome.isBlank()
-                    }, nomeErro, "Campo obrigatório")
+                        errors = errors.copy(nome = nome.isBlank())
+                    }, errors.nome, "Campo obrigatório")
 
                     InputCadastro("Lote", lote, { novoValor ->
                         lote = novoValor
-                        loteErro = lote.isBlank()
-                    }, loteErro, "Campo obrigatório")
-
-//                    InputCadastro("Categoria", categoria, { novoValor ->
-//                        categoria = novoValor
-//                        categoriaErro = categoria.isBlank()
-//                    }, categoriaErro, "Campo obrigatório")
+                        errors = errors.copy(lote = lote.isBlank())
+                    }, errors.lote, "Campo obrigatório")
 
                     CategoriaEstoqueSelectBox(
-                        selectedOption = selectedCategory,
+                        selectedOption = CategoriaEstoque.valueOf(selectedCategory.toString()),
                         onCategoriaEstoqueChange = { newCategory ->
-                            selectedCategory = newCategory
+                            selectedCategory = CategoriaEstoque.valueOf(newCategory)
                             // Update your UI or logic based on the selected category
                         }
                     )
 
                     InputCadastro("Marca", marca, { novoValor ->
                         marca = novoValor
-                        marcaErro = marca.isBlank()
-                    }, marcaErro, "Campo obrigatório")
+                        errors = errors.copy(marca = marca.isBlank())
+                    }, errors.marca, "Campo obrigatório")
 
                     // Componente de ImagemPasso1
                     ImagemPasso1(
                         nome = nome,
                         lote = lote,
-                        categoria = selectedCategory,
+                        categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
                         marca = marca,
                         onCadastroItemProximoClick = {
                             val novoEstoque = estoque.copy(
                                 nome = nome,
                                 lote = lote,
-                                categoria = selectedCategory,
+                                categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
                                 marca = marca
                             )
                             sharedViewModel.atualizarEstoque(novoEstoque)
                             onCadastroItemProximoClick()
                         },
                         atualizaErros = { erros ->
-                            nomeErro = erros.nome
-                            loteErro = erros.lote
-                            categoriaErro = erros.categoria
-                            marcaErro = erros.marca
+                            errors = CadastroItemErrors(
+                                nome = erros.nome,
+                                lote = erros.lote,
+                                marca = erros.marca
+                            )
                         },
                         estoque = estoque
                     )
@@ -175,22 +199,33 @@ fun CadastroItemScreen(
                     Button(
                         onClick = {
                             // Atualiza os erros ao clicar em "Próximo"
-                            nomeErro = nome.isBlank()
-                            loteErro = lote.isBlank()
-                            categoriaErro = selectedCategory.isBlank()
-                            marcaErro = marca.isBlank()
+//                            val nomeErro = nome.isBlank()
+//                            val loteErro = lote.isBlank()
+//                            val marcaErro = marca.isBlank()
+//                            errors = CadastroItemErrors(nomeErro, loteErro, marcaErro)
 
                             // Se não houver erros, navegue para a próxima tela
-                            if (!nomeErro && !loteErro && !categoriaErro && !marcaErro) {
-                                val novoEstoque = estoque.copy(
-                                    nome = nome,
-                                    lote = lote,
-                                    categoria = selectedCategory,
-                                    marca = marca
-                                )
-                                sharedViewModel.atualizarEstoque(novoEstoque)
-                                onCadastroItemProximoClick()
-                            }
+//                            if (!errors.nome && !errors.lote && !errors.marca) {
+//                                val novoEstoque = estoque.copy(
+//                                    nome = nome,
+//                                    lote = lote,
+//                                    categoria = selectedCategory,
+//                                    marca = marca
+//                                )
+//                                sharedViewModel.atualizarEstoque(novoEstoque)
+//                                onCadastroItemProximoClick()
+//                            }
+
+                            handleProximoClick()
+
+                            val novoEstoque = estoque.copy(
+                                nome = nome,
+                                lote = lote,
+                                categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                                marca = marca
+                            )
+                            sharedViewModel.atualizarEstoque(novoEstoque)
+                            onCadastroItemProximoClick()
                         },
                         modifier = Modifier
                             .height(55.dp)
@@ -258,7 +293,7 @@ fun InputCadastro(
 data class ErrosCadastro(
     val nome: Boolean,
     val lote: Boolean,
-    val categoria: Boolean,
+//    val categoria: Boolean,
     val marca: Boolean
 )
 
@@ -266,7 +301,7 @@ data class ErrosCadastro(
 fun ImagemPasso1(
     nome: String,
     lote: String,
-    categoria: String,
+    categoria: CategoriaEstoque,
     marca: String,
     onCadastroItemProximoClick: (estoque: EstoqueCriacao?) -> Unit = {},
     atualizaErros: (ErrosCadastro) -> Unit,
@@ -291,13 +326,13 @@ fun ImagemPasso1(
                 val erros = ErrosCadastro(
                     nome.isBlank(),
                     lote.isBlank(),
-                    categoria.isBlank(),
+//                    categoria.isBlank(),
                     marca.isBlank()
                 )
 
                 atualizaErros(erros)
 
-                if (!erros.nome && !erros.lote && !erros.categoria && !erros.marca) {
+                if (!erros.nome && !erros.lote && !erros.marca) {
 
                     onCadastroItemProximoClick(estoque)
                 }
@@ -308,7 +343,10 @@ fun ImagemPasso1(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoriaEstoqueSelectBox(selectedOption: String, onCategoriaEstoqueChange: (String) -> Unit) {
+fun CategoriaEstoqueSelectBox(
+    selectedOption: CategoriaEstoque,
+    onCategoriaEstoqueChange: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -318,15 +356,11 @@ fun CategoriaEstoqueSelectBox(selectedOption: String, onCategoriaEstoqueChange: 
         Row(
             modifier = Modifier
                 .width(350.dp)
-                .height(100.dp),
+                .height(120.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.Start
-            ) {
+            Column(modifier = Modifier.size(width = 350.dp, height = 140.dp)) {
                 Text(
                     modifier = Modifier
                         .padding(top = 10.dp)
@@ -336,7 +370,7 @@ fun CategoriaEstoqueSelectBox(selectedOption: String, onCategoriaEstoqueChange: 
                     fontSize = 22.sp
                 )
                 OutlinedTextField(
-                    value = selectedOption,
+                    value = selectedOption.toString(),
                     onValueChange = { },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -364,20 +398,6 @@ fun CategoriaEstoqueSelectBox(selectedOption: String, onCategoriaEstoqueChange: 
                         )
                     }
                 }
-//            ExposedDropdownMenu(
-//                expanded = expanded,
-//                onDismissRequest = { expanded = false }
-//            ) {
-//                Medidas.values().forEach { selectionOption ->
-//                    DropdownMenuItem(
-//                        text = { Text(selectionOption.name) },
-//                        onClick = {
-//                            onTipoMedidaChange(selectionOption.name)
-//                            expanded = false
-//                        }
-//                    )
-//                }
-//            }
             }
         }
     }

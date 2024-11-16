@@ -14,20 +14,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+// Sealed class para representar os estados de requisição de um estoque
 sealed class EstoqueCriacaoState {
     object Idle : EstoqueCriacaoState()
     object Loading : EstoqueCriacaoState()
     data class Success(val estoqueConsulta: EstoqueConsulta) : EstoqueCriacaoState()
     data class Error(val message: String) : EstoqueCriacaoState()
 }
-
 sealed class EstoqueConsultaState {
     object Idle : EstoqueConsultaState()
     object Loading : EstoqueConsultaState()
     data class Success(var estoqueConsulta: List<EstoqueConsulta>) : EstoqueConsultaState()
     data class Error(val message: String) : EstoqueConsultaState()
 }
-
 sealed class EstoqueDelecaoState {
     object Idle : EstoqueDelecaoState()
     object Loading : EstoqueDelecaoState()
@@ -75,7 +74,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
                 } else {
                     Log.d(
                         "EstoqueViewModel",
-                        "Response não é bem sucedido ou corpo da resposta é nulo"
+                        "Response não é bem sucedido ou corpo da resposta é nulo: ${response}"
                     )
                     _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao cadastrar estoque")
                 }
@@ -105,8 +104,10 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
                     return@launch
                 }
                 if (response.isSuccessful && response.body() != null) {
+                    _estoqueConsultaState.value = EstoqueConsultaState.Success(emptyList())
                     _estoqueConsultaState.value = EstoqueConsultaState.Success(response.body()!!)
                     Log.d("EstoqueViewModel", "_estoqueConsultaState.value: ${_estoqueConsultaState.value}")
+                    data.clear()
                     data.addAll(response.body()!!)
                     Log.d("EstoqueViewModel", "data: $data")
                 } else {
@@ -118,7 +119,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         }
     }
 
-    fun atualizarEstoque(context: Context, estoqueCriacao: EstoqueCriacao) {
+    fun atualizarEstoque(context: Context, idEstoque: Long,estoqueCriacao: EstoqueCriacao) {
         _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
         Log.d("EstoqueViewModel", "AtualizarEstoque: $estoqueCriacao")
 
@@ -131,7 +132,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
             try {
                 val response = idEmpresa?.let {
                     estoqueCriacao.toEstoque(user.empresa).let { estoque ->
-                        estoqueRepository.updateEstoque(it, estoque)
+                        estoqueRepository.updateEstoque(idEstoque, estoque)
                     }
                 }
 

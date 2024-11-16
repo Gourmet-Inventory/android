@@ -117,8 +117,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable("cardapioItem/{idPrato}") {backStackEntry ->
-                            val idPrato = backStackEntry.arguments?.getString("idPrato")?.toIntOrNull()
+                        composable("cardapioItem/{idPrato}") { backStackEntry ->
+                            val idPrato =
+                                backStackEntry.arguments?.getString("idPrato")?.toIntOrNull()
 
                             idPrato?.let { id ->
                                 val prato = viewModelPrato.data.find { it.idPrato == id.toLong() }
@@ -171,11 +172,13 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("fornecedorView/{idFornecedor}") { backStackEntry ->
-                            val idFornecedor = backStackEntry.arguments?.getString("idFornecedor")?.toIntOrNull()
+                            val idFornecedor =
+                                backStackEntry.arguments?.getString("idFornecedor")?.toIntOrNull()
                             val viewModel = koinViewModel<FornViewModel>()
 
                             idFornecedor?.let { id ->
-                                val fornecedor = viewModel.data.find { it.idFornecedor == id.toLong() }
+                                val fornecedor =
+                                    viewModel.data.find { it.idFornecedor == id.toLong() }
 
                                 fornecedor?.let { forn ->
                                     VizuFornScreen(
@@ -265,10 +268,12 @@ class MainActivity : ComponentActivity() {
 //                                }
 
                         composable("itemEstoque/{idItem}") { backStackEntry ->
-                            val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
+                            val idItem =
+                                backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
 
                             idItem?.let { id ->
-                                val itemEstoque = viewModelEstoque.data.find { it.idItem == id.toLong() }
+                                val itemEstoque =
+                                    viewModelEstoque.data.find { it.idItem == id.toLong() }
                                 Log.d("MainActivity", "estoque: $itemEstoque")
                                 Log.d("MainActivity", "idItem: $idItem")
 
@@ -297,7 +302,8 @@ class MainActivity : ComponentActivity() {
 
                         composable("deleteConfirmacao/{idItem}") { backStackEntry ->
                             // Obtém o idItem como String e converte para Long (ou Int, dependendo do seu modelo)
-                            val idItem = backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
+                            val idItem =
+                                backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
 
                             if (idItem != null) {
                                 DeleteCnfirmacaoScreen(
@@ -353,7 +359,6 @@ class MainActivity : ComponentActivity() {
 
                         composable("editarItemEstoque/{idItem}") { backStackEntry ->
                             val idItem = backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
-//                            val viewModel = koinViewModel<EstoqueViewModel>()
 
                             idItem?.let { id ->
                                 val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
@@ -367,28 +372,32 @@ class MainActivity : ComponentActivity() {
                                             navController.popBackStack()
                                         },
                                         onEditarItemProximoClick = {
-                                            navController.navigate("editarItemEstoque2")
+                                            navController.navigate("editarItemEstoque2/$idItem")
                                         }
                                     )
                                 }
                             }
                         }
 
-                        composable("editarItemEstoque2") {
-                            Editar2Screen(
-                                onEditarItem2SalvarClick = {
-                                    clickedAction = "Salvar"
-                                    navController.navigate("listaEstoque")
-                                },
-                                onEditarItem2AnteriorClick = {
-                                    clickedAction = "Anterior"
-                                    navController.popBackStack()
-                                },
-                                sharedViewModel = sharedViewModel
-                            )
+
+                        composable("editarItemEstoque2/{idItem}") { backStackEntry ->
+                            val idItem = backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
+                            if (idItem != null) {
+                                Editar2Screen(
+                                    estoqueViewModel = viewModelEstoque,
+                                    onEditarItem2SalvarClick = {
+                                        clickedAction = "Salvar"
+                                        navController.navigate("listaEstoque")
+                                    },
+                                    onEditarItem2AnteriorClick = {
+                                        clickedAction = "Anterior"
+                                        navController.popBackStack()
+                                    },
+                                    sharedViewModel = sharedViewModel,
+                                    idItem = idItem
+                                )
+                            }
                         }
-
-
                     }
                 }
             }

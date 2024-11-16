@@ -15,7 +15,7 @@ data class Estoque(
     val manipulado: Boolean? = null,
     val nome: String,
     val empresa: Empresa,
-    val categoria: String,
+    val categoria: CategoriaEstoque,
     val tipoMedida: Medidas,
     val unitario: Int? = null,
     val valorMedida: Double,
