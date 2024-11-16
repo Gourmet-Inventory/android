@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -50,9 +51,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.model.Prato
+import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
@@ -145,7 +146,9 @@ fun ComandaViewScreen(
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = GI_AzulMarinho, contentColor = Color.White
                                 ),
-                                onClick = {}
+                                onClick = {
+                                    onComandaViewClick("cardapio")
+                                }
                             ) {
                                 Text(text = "Adicionar pedido")
                             }
@@ -176,7 +179,7 @@ fun ComandaViewScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "R$$total,00",
+                                text = "R$$total",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold
                             )
@@ -269,7 +272,7 @@ fun ComandaViewScreen(
                     "Comanda criada com sucesso",
                     Toast.LENGTH_SHORT
                 ).show()
-            } else {
+            } else if(comandaCriacaoSate is ComandaCriacaoSate.Error){
                 Toast.makeText(
                     context,
                     "Erro ao criar comanda",
@@ -346,7 +349,7 @@ fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit, viewModel: 
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(end = 8.dp)
         ) {
-            Text(text = "R$${pedido.preco * 1},00")
+            Text(text = "R$${pedido.preco * 1}")
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Deletar",
@@ -363,6 +366,7 @@ fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit, viewModel: 
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DadosPostComanda(
     context: Context,
@@ -377,8 +381,8 @@ fun DadosPostComanda(
         var mesa by remember { mutableStateOf("") }
 
         AlertDialog(
-            modifier = Modifier
-                .background(Color.Transparent, shape = RoundedCornerShape(10.dp)),
+            shape = RoundedCornerShape(10.dp),
+            containerColor = Color.White,
             onDismissRequest = { onDismiss() },
 
             title = {
@@ -404,7 +408,7 @@ fun DadosPostComanda(
                             viewModel.updateComandaAtualTitulo(it)
                         },
                         label = { Text("Título") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -429,7 +433,7 @@ fun DadosPostComanda(
                 ) {
                     OutlinedButton(
                         onClick = {
-                            viewModel.createComanda()
+                            viewModel.createComanda(context)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = GI_Laranja,
@@ -459,20 +463,17 @@ fun DadosPostComanda(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun DadosPostComandaPreview() {
     DadosPostComanda(
-        showDialog = true,
-        onDismiss = { },
-        viewModel = viewModel(),
-        comandaCriacaoState = ComandaCriacaoSate.Idle,
         context = LocalContext.current,
-        onComandaViewClick = { }
+        viewModel = ComandaViewModel(
+            ComandaRepositoryImplLocal()
+        ),
+        showDialog = true,
+        onDismiss = {},
+        comandaCriacaoState = ComandaCriacaoSate.Loading,
+        onComandaViewClick = {}
     )
 }
-//fun removerItemComanda(pedido: Prato, pedidos: List<Prato>): List<Prato> {
-//    val pedidosAtualizados = pedidos.toMutableList()
-//    pedidosAtualizados.remove(pedido)
-//    return pedidosAtualizados
-//}

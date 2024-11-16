@@ -1,5 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens.Usuario
 
+import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -15,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +30,9 @@ import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 @Composable
 fun EscolhaPerfilScreen(onPerfilClick: (String) -> Unit) {
@@ -66,6 +73,9 @@ fun EscolhaPerfilScreenPreview() {
 fun ProfileImages(onPerfilClick: (String) -> Unit) {
     val context = LocalContext.current
     val resours = context.resources
+    var cargoSelecionado = ""
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -80,6 +90,21 @@ fun ProfileImages(onPerfilClick: (String) -> Unit) {
             modifier = Modifier
                 .height(160.dp)
                 .clickable {
+                    cargoSelecionado = resours.getString(R.string.garcom)
+                    Log.d("ProfileImages", "Cargo selecionado: $cargoSelecionado")
+
+                    coroutineScope.launch {
+                        try {
+                            DataStoreUtils(context).salvarCargo(role = cargoSelecionado)
+                            val cargo = DataStoreUtils(context).obterCargo().firstOrNull()
+                            Log.d(
+                                "ProfileImages",
+                                "Cargo Guardado: $cargo"
+                            )
+                        } catch (e: Exception) {
+                            Log.e("ProfileImages", "Error saving cargo: ${e.message}")
+                        }
+                    }
                     onPerfilClick(resours.getString(R.string.garcom))
                     Toast
                         .makeText(context, "Logado como Garçom", Toast.LENGTH_SHORT)
@@ -101,6 +126,21 @@ fun ProfileImages(onPerfilClick: (String) -> Unit) {
             modifier = Modifier
                 .height(160.dp)
                 .clickable {
+                    cargoSelecionado = resours.getString(R.string.gerente)
+                    Log.d("ProfileImages", "Cargo selecionado: $cargoSelecionado")
+
+                    coroutineScope.launch {
+                        try {
+                            DataStoreUtils(context).salvarCargo(role = cargoSelecionado)
+                            val cargo = DataStoreUtils(context).obterCargo().firstOrNull()
+                            Log.d(
+                                "ProfileImages",
+                                "Cargo Guardado: $cargo"
+                            )
+                        } catch (e: Exception) {
+                            Log.e("ProfileImages", "Error saving cargo: ${e.message}")
+                        }
+                    }
                     onPerfilClick(resours.getString(R.string.gerente))
                     Toast
                         .makeText(context, "Logado como Gerente", Toast.LENGTH_SHORT)

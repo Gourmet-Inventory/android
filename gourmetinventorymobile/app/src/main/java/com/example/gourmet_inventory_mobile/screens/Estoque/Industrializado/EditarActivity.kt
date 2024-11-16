@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
@@ -61,16 +62,20 @@ fun EditarScreen(
 ) {
     Log.d("EditarScreen", "Estoque: $estoque")
 //    sharedViewModel.atualizarEstoque(estoque.toEstoqueCriacao())
-    val estoque by sharedViewModel.estoque.collectAsState()
+    val estoqueEdicao by sharedViewModel.estoque.collectAsState()
+    Log.d("EditarScreen", "Estoque Edição: $estoqueEdicao")
 
-
-    var nome by remember { mutableStateOf(estoque.nome) }
-    var lote by remember { mutableStateOf(estoque.lote) }
-    var categoria by remember { mutableStateOf(estoque.categoria) }
+    val nomeEntada = if (estoqueEdicao.nome == "") estoque.nome else estoqueEdicao.nome
+    var nome by remember { mutableStateOf(nomeEntada) }
+    val loteEntrada = if (estoqueEdicao.lote.isBlank()) estoque.lote else estoqueEdicao.lote
+    var lote by remember { mutableStateOf(loteEntrada) }
+    val categoriaEntrada =
+        if (estoqueEdicao.categoria == CategoriaEstoque.OUTROS) estoque.categoria else estoqueEdicao.categoria
+    var categoria by remember { mutableStateOf(categoriaEntrada) }
+    val localArmazenamentoEntrada =
+        if (estoqueEdicao.localArmazenamento.isBlank()) estoque.localArmazenamento else estoqueEdicao.localArmazenamento
     var localArmazenamento by remember {
-        mutableStateOf(
-            if (estoque != null) estoque!!.localArmazenamento else ""
-        )
+        mutableStateOf(localArmazenamentoEntrada)
     }
 
     // Erros
@@ -99,7 +104,10 @@ fun EditarScreen(
                             .padding(top = 40.dp, start = 10.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = { onEditarItemVoltarClick() }) {
+                        IconButton(onClick = {
+                            onEditarItemVoltarClick()
+                            sharedViewModel.limparEstoque()
+                        }) {
                             Icon(
                                 imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
                                 contentDescription = "Voltar",
@@ -135,15 +143,17 @@ fun EditarScreen(
                         loteErro = lote.isBlank()
                     }, loteErro, "Campo obrigatório")
 
-                    InputEdicao("Categoria", categoria, { novoValor ->
-                        categoria = novoValor
-                        categoriaErro = categoria.isBlank()
+                    InputEdicao("Categoria", categoria.toString(), { novoValor ->
+                        categoria = CategoriaEstoque.valueOf(novoValor)
                     }, categoriaErro, "Campo obrigatório")
 
+//                    var localArmazenamento by remember { mutableStateOf(estoque.localArmazenamento) }
+
                     LocalArmazenamentoSelectBoxEditar(
+                        initialValue = estoque.localArmazenamento,
                         selectedOption = localArmazenamento,
                         onLocalArmazenamentoChange = { novoValor ->
-                            localArmazenamento = novoValor
+                            localArmazenamento = novoValor // Update the state in EditarScreen
                             localArmazenamentoErro = localArmazenamento.isBlank()
                         }
                     )
@@ -152,10 +162,10 @@ fun EditarScreen(
                     EdicaoImagemPasso1(
                         nome = nome,
                         lote = lote,
-                        categoria = categoria,
+                        categoria = categoria.toString(),
                         localArmazenamento = localArmazenamento,
                         onEditarItemProximoClick = {
-                            val novoEstoque = estoque.copy(
+                            val novoEstoque = estoqueEdicao.copy(
                                 nome = nome,
                                 lote = lote,
                                 categoria = categoria,
@@ -170,7 +180,7 @@ fun EditarScreen(
                             categoriaErro = erros.categoria
                             localArmazenamentoErro = erros.localArmazenamento
                         },
-                        estoque = estoque
+                        estoque = estoqueEdicao
                     )
 
                     // Botão Próximo
@@ -179,20 +189,28 @@ fun EditarScreen(
                             // Atualiza os erros ao clicar em "Próximo"
                             nomeErro = nome.isBlank()
                             loteErro = lote.isBlank()
-                            categoriaErro = categoria.isBlank()
                             localArmazenamentoErro = localArmazenamento.isBlank()
 
                             // Se não houver erros, navegue para a próxima tela
-                            if (!nomeErro && !loteErro && !categoriaErro && !localArmazenamentoErro) {
-                                val novoEstoque = estoque.copy(
-                                    nome = nome,
-                                    lote = lote,
-                                    categoria = categoria,
-                                    marca = localArmazenamento
-                                )
-                                sharedViewModel.atualizarEstoque(novoEstoque)
-                                onEditarItemProximoClick()
-                            }
+//                            if (!nomeErro && !loteErro && !categoriaErro && !localArmazenamentoErro) {
+//                                val novoEstoque = estoqueEdicao.copy(
+//                                    nome = nome,
+//                                    lote = lote,
+//                                    categoria = categoria,
+//                                    marca = localArmazenamento
+//                                )
+//                                sharedViewModel.atualizarEstoque(novoEstoque)
+//                                onEditarItemProximoClick()
+//                            }
+                            val novoEstoque = estoqueEdicao.copy(
+                                nome = nome,
+                                lote = lote,
+                                categoria = categoria,
+                                marca = localArmazenamento,
+                                localArmazenamento = localArmazenamento
+                            )
+                            sharedViewModel.atualizarEstoque(novoEstoque)
+                            onEditarItemProximoClick()
                         },
                         modifier = Modifier
                             .height(55.dp)
@@ -267,9 +285,11 @@ data class ErrosEdicao(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LocalArmazenamentoSelectBoxEditar(
+    initialValue: String,
     selectedOption: String,
     onLocalArmazenamentoChange: (String) -> Unit
 ) {
+    var selectedOptionState by remember { mutableStateOf(if (selectedOption.isBlank()) initialValue else selectedOption) }
     var expanded by remember { mutableStateOf(false) }
     val options = listOf("Cozinha", "Armário", "Geladeira", "Freezer")
 
@@ -335,7 +355,7 @@ fun EdicaoImagemPasso1(
     lote: String,
     categoria: String,
     localArmazenamento: String,
-    onEditarItemProximoClick: (estoque: EstoqueCriacao?) -> Unit = {},
+    onEditarItemProximoClick: (estoque: EstoqueCriacao?) -> Unit,
     atualizaErros: (ErrosEdicao) -> Unit,
     estoque: EstoqueCriacao? = null
 ) {
@@ -361,7 +381,6 @@ fun EdicaoImagemPasso1(
                     categoria.isBlank(),
                     localArmazenamento.isBlank()
                 )
-
                 atualizaErros(erros)
 
                 if (!erros.nome && !erros.lote && !erros.categoria && !erros.localArmazenamento) {
@@ -381,18 +400,18 @@ fun EdicaoScreenPreview(): Unit {
         onEditarItemProximoClick = {},
         estoque = EstoqueConsulta(
             idItem = 1,
-            manipulado = false,
-            lote = "Lote Teste",
-            nome = "Nome Teste",
-            categoria = "Categoria Teste",
+            manipulado = true,
+            lote = "123",
+            nome = "Teste",
+            categoria = CategoriaEstoque.OUTROS,
             tipoMedida = Medidas.UNIDADE,
             unitario = 1,
             valorMedida = 1.0,
             valorTotal = 1.0,
-            localArmazenamento = "Local Teste",
+            localArmazenamento = "Cozinha",
             dtaCadastro = LocalDate.now(),
             dtaAviso = LocalDate.now(),
-            marca = "Marca Teste"
+            marca = "Teste"
         )
     )
 }

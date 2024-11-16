@@ -121,7 +121,7 @@ fun CadastroItem2Screen(
                 lote = estoque?.lote ?: "",
                 manipulado = estoque?.manipulado ?: false,
                 nome = estoque?.nome ?: "",
-                categoria = estoque?.categoria ?: CategoriaEstoque.values().first().toString(),
+                categoria = estoque?.categoria ?: CategoriaEstoque.OUTROS,
                 tipoMedida = Medidas.valueOf(tipoMedida),
                 unitario = qtdUnitaria.toIntOrNull() ?: 0,
                 valorMedida = valorMedida.toDoubleOrNull() ?: 0.0,
@@ -347,6 +347,7 @@ fun CadastroItem2Screen(
                 if (estoqueState is EstoqueCriacaoState.Success) {
                     Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
                         .show()
+                    sharedViewModel.limparEstoque()
                     onCadastroItemCadastrarClick((estoqueState as EstoqueCriacaoState.Success).estoqueConsulta)
                 }
             }
@@ -360,7 +361,6 @@ fun CadastroItem2Screen(
                     Toast.makeText(context, "Erro ao cadastrar item", Toast.LENGTH_SHORT).show()
                 }
             }
-
         }
     }
 }
@@ -376,7 +376,7 @@ fun Cadastro2ScreenPreview() {
             lote = "123",
             manipulado = true,
             nome = "Nome",
-            categoria = CategoriaEstoque.CARNES_VERMELHAS.toString(),
+            categoria = CategoriaEstoque.OUTROS,
             tipoMedida = Medidas.UNIDADE,
             unitario = 1,
             valorMedida = 1.0,

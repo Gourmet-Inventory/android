@@ -1,6 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens.Estoque
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,6 +62,8 @@ import com.example.gourmet_inventory_mobile.utils.SearchBox
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import kotlinx.coroutines.flow.first
+import org.koin.core.component.getScopeName
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ListaEstoqueScreen(
@@ -140,8 +144,8 @@ fun ListaEstoqueScreen(
             // Filtra a lista com base no texto da pesquisa
             val filteredEstoque = listaEstoque.filter { estoqueItem ->
                 estoqueItem.nome.contains(texto, ignoreCase = true) ||
-                        estoqueItem.categoria.contains(texto, ignoreCase = true) ||
-                        estoqueItem.localArmazenamento.contains(texto, ignoreCase = true)
+                        estoqueItem.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")).contains(texto, ignoreCase = true) ||
+                        estoqueItem.unitario.toString().contains(texto, ignoreCase = true)
             }
 
             Box(modifier = Modifier.fillMaxSize()) {
@@ -178,14 +182,20 @@ fun ListaEstoqueScreen(
                         LoadingList()
                     } else {
                         if (filteredEstoque.isEmpty()) {
-                            Row (
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalArrangement = Arrangement.Center
+                            Column (
+                                modifier = Modifier.fillMaxSize().padding(top = 20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ){
                                 Text(
                                     text = "Nenhum estoque encontrado",
                                     fontSize = 20.sp,
                                     modifier = Modifier.padding(top = 20.dp)
+                                )
+                                Spacer(modifier = Modifier.height(40.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.estoquevazio),
+                                    contentDescription = "imagem de estoque vazio",
+                                    modifier = Modifier.padding(top = 20.dp).height(200.dp).width(200.dp)
                                 )
                             }
                         } else {
@@ -415,7 +425,7 @@ fun ItemListaEstoque(
                 verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = "Data de Aviso: ${estoqueItem.dtaAviso}",
+                    text = "Data de Aviso: ${estoqueItem.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}",
                     fontSize = 16.sp
                 )
                 Text(

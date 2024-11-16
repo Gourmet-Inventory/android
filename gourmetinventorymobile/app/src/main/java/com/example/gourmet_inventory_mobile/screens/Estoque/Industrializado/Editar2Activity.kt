@@ -43,16 +43,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueCriacaoState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -61,38 +62,41 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun Editar2Screen(
+    estoqueViewModel: EstoqueViewModel,
     sharedViewModel: SharedViewModel,
     onEditarItem2AnteriorClick: (EstoqueCriacao?) -> Unit,
-    onEditarItem2SalvarClick: () -> Unit
-//    estoque: EstoqueCriacao?
+    onEditarItem2SalvarClick: () -> Unit,
+    idItem: Long
 ) {
-    val estoque by sharedViewModel.estoque.collectAsState()
+    val estoqueEditar by sharedViewModel.estoque.collectAsState()
+    Log.d("Editar2Screen", "estoqueEditar: $estoqueEditar")
+
+    var estoque: EstoqueConsulta? = null
+    idItem?.let { id ->
+        estoque = (estoqueViewModel.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
+    }
     Log.d("Editar2Screen", "estoque: $estoque")
 
+    val qtdUnitariaEntrada = if (estoqueEditar.unitario != 0) estoqueEditar!!.unitario.toString() else estoque?.unitario.toString()
     var qtdUnitaria by remember {
-        mutableStateOf(
-            if (estoque != null) estoque!!.unitario.toString() else ""
-        )
+        mutableStateOf(qtdUnitariaEntrada)
     }
+    val valorMedidaEntrada = if (estoqueEditar.valorMedida != 0.0) estoqueEditar!!.valorMedida.toString() else estoque?.valorMedida.toString()
     var valorMedida by remember {
-        mutableStateOf(
-            if (estoque != null) estoque!!.valorMedida.toString() else ""
-        )
+        mutableStateOf(valorMedidaEntrada)
     }
+    val dataCadastroEntrada = if (estoqueEditar.dtaCadastro != LocalDate.now()) estoqueEditar!!.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else estoque?.dtaCadastro?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        .toString()
     var dataCadastro by remember {
-        mutableStateOf(
-            if (estoque != null) estoque!!.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else ""
-        )
+        mutableStateOf(dataCadastroEntrada)
     }
+    val dataAvisoEntrada = if (estoqueEditar.dtaAviso != LocalDate.now().plusDays(1)) estoqueEditar!!.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else estoque?.dtaAviso?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     var dataAviso by remember {
-        mutableStateOf(
-            if (estoque != null) estoque!!.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) else ""
-        )
+        mutableStateOf(dataAvisoEntrada)
     }
+    val tipoMedidaEntrada = if (estoqueEditar.tipoMedida != null) estoqueEditar!!.tipoMedida.toString() else estoque?.tipoMedida.toString()
     var tipoMedida by remember {
-        mutableStateOf(
-            if (estoque != null) estoque!!.tipoMedida.name else ""
-        )
+        mutableStateOf(tipoMedidaEntrada)
     }
 
     // Erros
@@ -146,12 +150,12 @@ fun Editar2Screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = {
-                    val novoEstoque = estoque.copy(
+                    val novoEstoque = estoqueEditar.copy(
                         unitario = qtdUnitaria.toInt(),
                         valorMedida = valorMedida.toDouble(),
                         dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
                         dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
-                        localArmazenamento = estoque.localArmazenamento,
+                        localArmazenamento = estoqueEditar.localArmazenamento,
                         tipoMedida = Medidas.valueOf(tipoMedida)
                     )
                     sharedViewModel.atualizarEstoque(novoEstoque)
@@ -250,24 +254,26 @@ fun Editar2Screen(
                         mensagemErro = "Data inválida (dd/mm/aaaa)"
                     )
 
-                    InputEdicao2(
-                        titulo = "Data Aviso",
-                        placeholder = "dd/mm/aaaa",
-                        valorCampo = dataAviso,
-                        mudaValor = { novoValor ->
-                            dataAviso = novoValor
-                            dataAvisoErro = try {
-                                val avisoDate = LocalDate.parse(novoValor, dateFormatter)
-                                val cadastroDate = LocalDate.parse(dataCadastro, dateFormatter)
-                                dataAvisoAnteriorErro = avisoDate.isBefore(cadastroDate)
-                                false
-                            } catch (e: Exception) {
-                                true
-                            }
-                        },
-                        isErro = dataAvisoErro || dataAvisoAnteriorErro,
-                        mensagemErro = if (dataAvisoErro) "Data inválida (dd/mm/aaaa)" else "Data Aviso não pode ser anterior à Data Cadastro"
-                    )
+                    dataAviso?.let {
+                        InputEdicao2(
+                            titulo = "Data Aviso",
+                            placeholder = "dd/mm/aaaa",
+                            valorCampo = it,
+                            mudaValor = { novoValor ->
+                                dataAviso = novoValor
+                                dataAvisoErro = try {
+                                    val avisoDate = LocalDate.parse(novoValor, dateFormatter)
+                                    val cadastroDate = LocalDate.parse(dataCadastro, dateFormatter)
+                                    dataAvisoAnteriorErro = avisoDate.isBefore(cadastroDate)
+                                    false
+                                } catch (e: Exception) {
+                                    true
+                                }
+                            },
+                            isErro = dataAvisoErro || dataAvisoAnteriorErro,
+                            mensagemErro = if (dataAvisoErro) "Data inválida (dd/mm/aaaa)" else "Data Aviso não pode ser anterior à Data Cadastro"
+                        )
+                    }
                 }
             }
 
@@ -278,12 +284,12 @@ fun Editar2Screen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Passo2Edicao(onEditarItem2AnteriorClick = {
-                    val novoEstoque = estoque.copy(
+                    val novoEstoque = estoqueEditar.copy(
                         unitario = qtdUnitaria.toInt(),
                         valorMedida = valorMedida.toDouble(),
                         dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
                         dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
-                        localArmazenamento = estoque.localArmazenamento,
+                        localArmazenamento = estoqueEditar.localArmazenamento,
                         tipoMedida = Medidas.valueOf(tipoMedida)
                     )
                     sharedViewModel.atualizarEstoque(novoEstoque)
@@ -293,7 +299,7 @@ fun Editar2Screen(
                 Button(
                     onClick = {
                         // Verifica se há erros
-                        valorMedidaErro = valorMedida.toDoubleOrNull()?.let { it <= 0 } ?: true
+                        valorMedidaErro = valorMedida.toDoubleOrNull()?.let { it < 0 } ?: true
                         dataCadastroErro = try {
                             LocalDate.parse(dataCadastro, dateFormatter); false
                         } catch (e: Exception) {
@@ -313,25 +319,30 @@ fun Editar2Screen(
                         }
 
                         if (!valorMedidaErro && !dataCadastroErro && !dataAvisoErro && !dataAvisoAnteriorErro) {
-                            sharedViewModel.criarEstoqueAtualizado(
-                                estoque.copy(
-                                    unitario = qtdUnitaria.toInt(),
-                                    valorMedida = valorMedida.toDouble(),
-                                    dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
-                                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
-                                    localArmazenamento = estoque.localArmazenamento,
-                                    tipoMedida = Medidas.valueOf(tipoMedida)
-                                )
+//                            sharedViewModel.criarEstoqueAtualizado(
+//                                estoqueEditar.copy(
+//                                    unitario = qtdUnitaria.toInt(),
+//                                    valorMedida = valorMedida.toDouble(),
+//                                    dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+//                                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+//                                    localArmazenamento = estoqueEditar.localArmazenamento,
+//                                    tipoMedida = Medidas.valueOf(tipoMedida)
+//                                )
+//                            )
+                            val novoEstoque = estoqueEditar.copy(
+                                unitario = qtdUnitaria.toInt(),
+                                valorMedida = valorMedida.toDouble(),
+                                dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+                                dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                                localArmazenamento = estoqueEditar.localArmazenamento,
+                                tipoMedida = Medidas.valueOf(tipoMedida)
                             )
+                            sharedViewModel.atualizarEstoque(novoEstoque)
+                            Log.d("Editar2Screen", "ESTOQUE: $novoEstoque")
                             sharedViewModel.estoque.value?.let {
                                 Log.d("Editar2Screen", "ESTOQUE PARA REQUISICAO: $it")
-                                viewModel.atualizarEstoque(context, it)
+                                viewModel.atualizarEstoque(context, idItem ,it)
                             }
-//                            criarEstoqueAtualizado()?.let { novoEstoque ->
-//                                Log.d("CadastroItem2Screen", "Novo Estoque: $novoEstoque")
-//                                sharedViewModel.atualizarEstoque(novoEstoque)
-//                                viewModel.atualizarEstoque(context, novoEstoque)
-//                            }
                         }
                     },
                     modifier = Modifier
@@ -420,15 +431,16 @@ fun TipoMedidaSelectBoxEdicao(selectedOption: String, onTipoMedidaChange: (Strin
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun Edicao2ScreenPreview() {
-    Editar2Screen(
-        sharedViewModel = SharedViewModel(),
-        onEditarItem2AnteriorClick = {},
-        onEditarItem2SalvarClick = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun Edicao2ScreenPreview() {
+//    Editar2Screen(
+//        sharedViewModel = SharedViewModel(),
+//        onEditarItem2AnteriorClick = {},
+//        onEditarItem2SalvarClick = {},
+//        idItem = 1
+//    )
+//}
 
 @Composable
 fun InputEdicao2(

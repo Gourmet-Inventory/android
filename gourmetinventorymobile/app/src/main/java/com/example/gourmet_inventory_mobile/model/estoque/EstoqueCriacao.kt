@@ -14,7 +14,7 @@ data class EstoqueCriacao(
     var lote: String,
     var manipulado: Boolean,
     var nome: String,
-    var categoria: String,
+    var categoria: CategoriaEstoque,
     var tipoMedida: Medidas,
     var unitario: Int,
     var valorMedida: Double,

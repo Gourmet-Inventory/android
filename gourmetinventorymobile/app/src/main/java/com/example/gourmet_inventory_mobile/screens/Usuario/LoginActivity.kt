@@ -95,10 +95,10 @@ fun LoginScreen(
             }
 
             OutlinedTextField(
-                value = email,
+                value = email.trim(),
                 onValueChange = {
-                    email = it
-                    emailError = validateEmail(it)
+                    email = it.trim()
+                    emailError = validateEmail(it.trim())
                 },
                 placeholder = {
                     Text(
@@ -135,10 +135,10 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(40.dp))
 
             OutlinedTextField(
-                value = senha,
+                value = senha.trim(),
                 onValueChange = {
-                    senha = it
-                    passwordError = validatePassword(it)
+                    senha = it.trim()
+                    passwordError = validatePassword(it.trim())
                 },
                 placeholder = {
                     Text(

@@ -14,7 +14,7 @@ data class EstoqueConsulta (
     val manipulado: Boolean,
     val lote : String,
     val nome: String,
-    val categoria: String,
+    val categoria: CategoriaEstoque,
     val tipoMedida: Medidas,
     val unitario: Int,
     val valorMedida: Double,
@@ -30,7 +30,7 @@ data class EstoqueConsulta (
         return EstoqueCriacao(
             lote = this.lote,
             nome = this.nome,
-            categoria = this.categoria.toString(),
+            categoria = this.categoria,
             tipoMedida = this.tipoMedida,
             unitario = this.unitario,
             valorMedida = this.valorMedida,

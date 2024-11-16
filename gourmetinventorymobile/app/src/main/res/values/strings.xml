@@ -6,4 +6,9 @@
     <string name="title_notifications">Notifications</string>
     <string name="gerente">administrador</string>
     <string name="garcom">normal</string>
+
+<!--    <string name="comandaStatus0">enviada</string>-->
+    <string name="comandaStatus1">em andamento</string>
+    <string name="comandaStatus2">pronta</string>
+    <string name="comandaStatus3">finalizada</string>
 </resources>

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.Dp
 
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
+import java.time.format.DateTimeFormatter
 
 //class ItemEstoque : ComponentActivity() {
 //    override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,15 +90,15 @@ fun ItemEstoqueScreen(
 
         if (estoqueConsulta != null) {
             lote = estoqueConsulta.lote
-            categoria = estoqueConsulta.categoria ?: ""
+            categoria = estoqueConsulta.categoria.toString()
             marca = estoqueConsulta.marca
             localArmazenamento = estoqueConsulta.localArmazenamento
             quantidadeUnitaria = estoqueConsulta.unitario.toString()
             tipoMedida = estoqueConsulta.tipoMedida.toString()
             valorMedida = estoqueConsulta.valorMedida.toString()
             valorTotal = estoqueConsulta.valorTotal.toString()
-            dataCadastro = estoqueConsulta.dtaCadastro.toString()
-            dataAviso = estoqueConsulta.dtaAviso.toString()
+            dataCadastro = estoqueConsulta.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            dataAviso = estoqueConsulta.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         }
 
 

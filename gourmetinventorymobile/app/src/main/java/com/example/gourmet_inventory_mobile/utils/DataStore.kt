@@ -1,9 +1,11 @@
 package com.example.gourmet_inventory_mobile.utils
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModel
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -15,10 +17,11 @@ import kotlinx.serialization.json.Json
 
 val Context.dataStore by preferencesDataStore(name = "api_preferences")
 
-class DataStoreUtils(private val context: Context) {
+class DataStoreUtils(private val context: Context) : ViewModel() {
     companion object {
         private val TOKEN_KEY = stringPreferencesKey("api_token")
         private val USER_DATA_KEY = stringPreferencesKey("user_data")
+        private val ROLE_KEY = stringPreferencesKey("role")
     }
 
     suspend fun salvarToken(token: String) {
@@ -32,7 +35,6 @@ class DataStoreUtils(private val context: Context) {
             preferences[TOKEN_KEY] ?: ""
         }
     }
-
 
     suspend fun obterUsuario(): Flow<User>? {
         val preferences = context.dataStore.data.firstOrNull() ?: return null
@@ -58,6 +60,19 @@ class DataStoreUtils(private val context: Context) {
         context.dataStore.edit { preferences ->
             preferences.remove(TOKEN_KEY)
             preferences.remove(USER_DATA_KEY)
+        }
+    }
+
+    suspend fun salvarCargo(role: String) {
+        Log.d("DataStoreUtils", "Salvando cargo: $role")
+        context.dataStore.edit { preferences ->
+            preferences[ROLE_KEY] = role
+        }
+    }
+
+    fun obterCargo(): Flow<String?> {
+        return context.dataStore.data.map { preferences ->
+            preferences[ROLE_KEY]
         }
     }
 }

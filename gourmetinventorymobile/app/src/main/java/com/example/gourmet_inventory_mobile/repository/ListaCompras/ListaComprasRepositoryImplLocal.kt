@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.repository.estoque
 
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.ItemListaCompras
 import com.example.gourmet_inventory_mobile.model.Medidas
@@ -25,7 +26,7 @@ class ListaComprasRepositoryImplLocal(): ListaComprasRepository {
                             idEmpresa = it.toLong(),
                             nomeFantasia = "Empresa"),
                         nome = "Nome $it",
-                        categoria = "Categoria $it",
+                        categoria = CategoriaEstoque.OUTROS,
                         tipoMedida = Medidas.GRAMAS,
                         unitario = it,
                         valorMedida = it.toDouble(),

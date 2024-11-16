@@ -11,11 +11,13 @@ import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepository
 import com.example.gourmet_inventory_mobile.repository.Usuario.UsuarioRepositoryLocalImpl
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImpl
 import com.example.gourmet_inventory_mobile.repository.estoque.ListaComprasRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepository
 import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImpl
+import com.example.gourmet_inventory_mobile.repository.estoque.PratoRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.service.ComandaService
 import com.example.gourmet_inventory_mobile.service.EstoqueService
 import com.example.gourmet_inventory_mobile.service.FornecedorService
@@ -40,8 +42,8 @@ val appModule = module {
     }
 
     single<UsuarioRepository> {
-//        UsuarioRepositoryImpl(get())
-        UsuarioRepositoryLocalImpl()
+        UsuarioRepositoryImpl(get())
+//        UsuarioRepositoryLocalImpl()
     }
 
     viewModel<LoginViewModel> {
@@ -110,8 +112,8 @@ val appModule = module {
     }
 
     single<ComandaRepository> {
-        ComandaRepositoryImpl(get())
-//        ComandaRepositoryImplLocal()
+//        ComandaRepositoryImpl(get())
+        ComandaRepositoryImplLocal()
     }
 
     viewModel<ComandaViewModel> {

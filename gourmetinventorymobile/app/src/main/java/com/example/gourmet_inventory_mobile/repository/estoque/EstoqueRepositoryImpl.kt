@@ -7,25 +7,21 @@ import com.example.gourmet_inventory_mobile.service.EstoqueService
 import retrofit2.Response
 
 class EstoqueRepositoryImpl(private val serviceEstoque: EstoqueService) : EstoqueRepository {
-
     override suspend fun getEstoque(idEmpresa: Long): Response<List<EstoqueConsulta>> {
         return serviceEstoque.getEstoque(idEmpresa)
     }
-
     override suspend fun createEstoque(
         idEmpresa: Long,
         estoque: EstoqueCriacao
     ): Response<EstoqueConsulta> {
         return serviceEstoque.createEstoque(idEmpresa, estoque)
     }
-
     override suspend fun updateEstoque(
-        idEmpresa: Long,
+        idEstoque: Long,
         estoque: Estoque
     ): Response<EstoqueConsulta> {
-        return serviceEstoque.updateEstoque(idEmpresa, estoque)
+        return serviceEstoque.updateEstoque(idEstoque, estoque)
     }
-
     override suspend fun deleteEstoque(id: Long): Response<Unit> {
         return serviceEstoque.deleteEstoque(id)
     }

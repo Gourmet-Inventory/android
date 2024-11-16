@@ -19,11 +19,11 @@ class SharedViewModel constructor() : ViewModel() {
             lote = "",
             manipulado = false,
             nome = "",
-            categoria = CategoriaEstoque.CARNES_VERMELHAS.toString(),
+            categoria = CategoriaEstoque.OUTROS,
             tipoMedida = Medidas.UNIDADE,
-            unitario = 1,
-            valorMedida = 1.0,
-            localArmazenamento = "Local",
+            unitario = 0,
+            valorMedida = 0.0,
+            localArmazenamento = "",
             dtaCadastro = LocalDate.now(),
             dtaAviso = LocalDate.now().plusDays(1),
             marca = ""
@@ -48,7 +48,7 @@ class SharedViewModel constructor() : ViewModel() {
                 lote = estoque?.lote ?: "",
                 manipulado = estoque?.manipulado ?: false,
                 nome = estoque?.nome ?: "",
-                categoria = estoque?.categoria ?: CategoriaEstoque.CARNES_VERMELHAS.toString(),
+                categoria = estoque?.categoria ?: CategoriaEstoque.OUTROS,
                 tipoMedida = estoque?.tipoMedida ?: Medidas.UNIDADE,
                 unitario = estoque?.unitario ?: 0,
                 valorMedida = estoque?.valorMedida ?: 0.0,
@@ -60,6 +60,26 @@ class SharedViewModel constructor() : ViewModel() {
         } catch (e: Exception) {
             Log.e("SharedViewModel", "Erro ao criar EstoqueCriacao: ${e.message}")
             null
+        }
+    }
+
+    fun limparEstoque() {
+        viewModelScope.launch {
+            _estoque.emit(
+                EstoqueCriacao(
+                    lote = "",
+                    manipulado = false,
+                    nome = "",
+                    categoria = CategoriaEstoque.OUTROS,
+                    tipoMedida = Medidas.UNIDADE,
+                    unitario = 0,
+                    valorMedida = 0.0,
+                    localArmazenamento = "",
+                    dtaCadastro = LocalDate.now(),
+                    dtaAviso = LocalDate.now().plusDays(1),
+                    marca = ""
+                )
+            )
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.example.gourmet_inventory_mobile.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -10,9 +12,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.gourmet_inventory_mobile.model.Comanda
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepository
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 sealed class ComandaCriacaoSate {
@@ -29,9 +33,7 @@ class ComandaViewModel(private val comandaRepository: ComandaRepository) : ViewM
     private val _comandaCriacaoState = MutableStateFlow<ComandaCriacaoSate>(ComandaCriacaoSate.Idle)
     val comandaCriacaoState: StateFlow<ComandaCriacaoSate> = _comandaCriacaoState
 
-//    private val _comandaAtual = MutableStateFlow<Comanda?>(null)
-//    var comandaAtual: StateFlow<Comanda?> = _comandaAtual.asStateFlow()
-    private val _comandaAtual = MutableStateFlow(Comanda(mesa = "", itens = emptyList(), status = "Aberta", total = 0.0, titulo = ""))
+    private val _comandaAtual = MutableStateFlow(Comanda(mesa = "", itens = emptyList(), status = "Aberta", total = 0.0, titulo = "", idGarcom = 1))
     var comandaAtual: StateFlow<Comanda> = _comandaAtual.asStateFlow()
 
     val listaPratosComanda: StateFlow<List<Prato>> = _listaPratosComanda
@@ -106,7 +108,7 @@ class ComandaViewModel(private val comandaRepository: ComandaRepository) : ViewM
 //    }
 
     //    fun createComanda(comanda: Comanda) {
-    fun createComanda() {
+    fun createComanda(context: Context) {
 
         Log.d("ComandaViewModel", "Comanda atual: ${_comandaAtual.value}")
 
@@ -116,10 +118,12 @@ class ComandaViewModel(private val comandaRepository: ComandaRepository) : ViewM
             status = "Aberta",
             total = 0.0,
             titulo = _comandaAtual.value?.titulo ?: "",
+            idGarcom = 1
         )
 
         viewModelScope.launch {
-            _comandaCriacaoState.value = ComandaCriacaoSate.Loading
+            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val idEmpresa = user?.id
 
             try {
 //                val response = comandaRepository.createComanda(comanda)

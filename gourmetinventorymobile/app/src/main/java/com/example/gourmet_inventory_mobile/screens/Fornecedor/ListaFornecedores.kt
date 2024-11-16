@@ -2,6 +2,7 @@ package com.example.gourmet_inventory_mobile.screens.Fornecedor
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -49,18 +52,6 @@ import com.example.gourmet_inventory_mobile.utils.SearchBox
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import kotlinx.coroutines.flow.first
 import org.koin.compose.viewmodel.koinViewModel
-
-//class ListaFornecedoresActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            GourmetinventorymobileTheme {
-//                ListaFornecedoresScreen()
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun ListaFornecedoresScreen(
@@ -161,13 +152,19 @@ fun ListaFornecedoresScreen(
                         LoadingList()
                     } else {
                         if (fornecedoresFiltrados.isEmpty()) {
-                            Row (
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalArrangement = Arrangement.Center
+                            Column (
+                                modifier = Modifier.fillMaxSize().padding(top = 20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ){
                                 Text(
                                     text = "Nenhum fornecedor encontrado",
                                     fontSize = 20.sp,
+                                    modifier = Modifier.padding(top = 20.dp)
+                                )
+                                Spacer(modifier = Modifier.height(40.dp))
+                                Image(
+                                    painter = painterResource(id = R.drawable.fornecedorvazio),
+                                    contentDescription = "imagem de estoque vazio",
                                     modifier = Modifier.padding(top = 20.dp)
                                 )
                             }
