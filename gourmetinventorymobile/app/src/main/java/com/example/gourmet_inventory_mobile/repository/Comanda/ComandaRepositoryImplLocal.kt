@@ -1,15 +1,10 @@
 package com.example.gourmet_inventory_mobile.repository.estoque
 
 import com.example.gourmet_inventory_mobile.model.Comanda
-import com.example.gourmet_inventory_mobile.model.Empresa
-import com.example.gourmet_inventory_mobile.model.Ingrediente
+import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Prato
-import com.example.gourmet_inventory_mobile.model.estoque.Estoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import retrofit2.Response
-import java.time.LocalDate
 
 class ComandaRepositoryImplLocal(): ComandaRepository {
     override suspend fun getAllComandas(): Response<List<Comanda>> {

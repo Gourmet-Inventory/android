@@ -21,29 +21,70 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteConsultaDto
+import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueManipuladoConsulta
+import com.example.gourmet_inventory_mobile.screens.Estoque.ItemListaEstoque
 
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
+import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ItemEstoqueManipuladoScreen(
+    estoqueConsulta: EstoqueManipuladoConsulta,
     onItemEstoqueClick: (String) -> Unit,
     onItemEstoqueViewEditarClick: () -> Unit,
     onItemEstoqueViewExcluirClick: () -> Unit,
 ) {
-    val receita = listOf(
-        Receita(50.0, "GRAMAS", "TOMATE"),
-        Receita(50.0, "GRAMAS", "TOMATE"),
-        Receita(50.0, "GRAMAS", "TOMATE"),
-        Receita(50.0, "GRAMAS", "TOMATE"),
-        Receita(50.0, "GRAMAS", "TOMATE"),
-        Receita(50.0, "GRAMAS", "TOMATE")
-    )
+//    val receita = listOf(
+//        Receita(50.0, "GRAMAS", "TOMATEEEEEEEEEEEE"),
+//        Receita(50.0, "GRAMAS", "TOMATE"),
+//        Receita(50.0, "GRAMAS", "TOMATE"),
+//        Receita(50.0, "GRAMAS", "TOMATE"),
+//        Receita(50.0, "GRAMAS", "TOMATE"),
+//        Receita(50.0, "GRAMAS", "TOMATE")
+//    )
+
+    var lote by remember { mutableStateOf("") }
+    var categoria by remember { mutableStateOf("") }
+    var marca by remember { mutableStateOf("") }
+    var localArmazenamento by remember { mutableStateOf("") }
+    var quantidadeUnitaria by remember { mutableStateOf("") }
+    var tipoMedida by remember { mutableStateOf("") }
+    var valorMedida by remember { mutableStateOf("") }
+    var valorTotal by remember { mutableStateOf("") }
+    var dataCadastro by remember { mutableStateOf("") }
+    var dataAviso by remember { mutableStateOf("") }
+    var receita by remember { mutableStateOf(listOf<IngredienteConsultaDto>()) }
+
+    if (estoqueConsulta != null) {
+        lote = estoqueConsulta.lote
+        categoria = estoqueConsulta.categoria
+        localArmazenamento = estoqueConsulta.localArmazenamento
+        quantidadeUnitaria = estoqueConsulta.unitario.toString()
+        tipoMedida = estoqueConsulta.tipoMedida
+        valorMedida = estoqueConsulta.valorMedida.toString()
+        valorTotal = estoqueConsulta.valorTotal.toString()
+        dataCadastro = estoqueConsulta.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        dataAviso = estoqueConsulta.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        receita = estoqueConsulta.receita.receita
+    }
+
+
     Scaffold(
         topBar = {
             Row(
@@ -99,33 +140,28 @@ fun ItemEstoqueManipuladoScreen(
                         )
                     )
                 }
+
                 LazyColumn(
                     modifier = Modifier
                         .height(250.dp)
                 ) {
-                    item { InfoItemManipulado("Lote:", "Lote 1") }
-                    item { InfoItemManipulado("Categoria:", "Molhos", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Marca:", "Quero", topPadding = 22.dp) }
+                    item { InfoItemManipulado("Lote:", lote) }
+                    item { InfoItemManipulado("Categoria:", categoria, topPadding = 22.dp) }
                     item {
                         InfoItemManipulado(
                             "Local Armazenamento:",
-                            "Geladeira",
+                            localArmazenamento,
                             topPadding = 22.dp
                         )
                     }
-                    item { InfoItemManipulado("Quantidade Unitária:", "3", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Tipo Medida:", "GRAMAS", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Valor Medida:", "500", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Valor Total:", "1500", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Data Cadastro:", "20/05/2024", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Data Aviso:", "20/05/2024", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Valor Medida:", "500", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Valor Total:", "1500", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Data Cadastro:", "20/05/2024", topPadding = 22.dp) }
-                    item { InfoItemManipulado("Data Aviso:", "20/05/2024", topPadding = 22.dp) }
-
-
+                    item { InfoItemManipulado("Quantidade Unitária:", quantidadeUnitaria, topPadding = 22.dp) }
+                    item { InfoItemManipulado("Tipo Medida:", tipoMedida, topPadding = 22.dp) }
+                    item { InfoItemManipulado("Valor Medida:", valorMedida, topPadding = 22.dp) }
+                    item { InfoItemManipulado("Valor Total:", valorTotal, topPadding = 22.dp) }
+                    item { InfoItemManipulado("Data Cadastro:", dataCadastro, topPadding = 22.dp) }
+                    item { InfoItemManipulado("Data Aviso:", dataAviso, topPadding = 22.dp) }
                 }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -216,34 +252,36 @@ fun InfoItemManipulado(label: String, value: String, topPadding: Dp = 0.dp) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = label, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-        Text(text = value, fontSize = 20.sp)
+        Text(text = value, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
 
     }
 
 
 }
 
-
-data class Receita(val valorMedida: Double, val tipoMedida: String, val nome: String)
-
 @Composable
-fun ItensReceita(receitas: List<Receita>) {
-    LazyColumn(
+fun ItensReceita(receitas: List<IngredienteConsultaDto>) {
+    DrawScrollableView(
         modifier = Modifier
-            .height(300.dp)
-            .fillMaxSize()
-            .padding(top = 16.dp, start = 8.dp, end = 8.dp, bottom = 16.dp),
-        verticalArrangement = Arrangement.Top
-    ) {
-        items(receitas) { receita ->
-            ItemReceita(receita = receita)
+            .fillMaxHeight(),
+        content = {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 3.dp, bottom = 3.dp, end = 10.dp, start = 10.dp),
+                verticalArrangement = Arrangement.Top
+            ) {
+                receitas.forEach() { receitaItem ->
+                    ItemReceita(receita = receitaItem)
+                }
+            }
         }
-    }
+    )
 }
 
 
 @Composable
-fun ItemReceita(receita: Receita) {
+fun ItemReceita(receita: IngredienteConsultaDto) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -252,7 +290,9 @@ fun ItemReceita(receita: Receita) {
     ) {
         Text(
             text = "${receita.valorMedida} ${receita.tipoMedida} - ${receita.nome}",
-            fontSize = 19.sp
+            fontSize = 19.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -260,10 +300,31 @@ fun ItemReceita(receita: Receita) {
 @Preview(showBackground = true)
 @Composable
 fun ItemManipuladoPreview() {
+    val ingredienteConsultaDto = IngredienteConsultaDto("Ingrediente 1", Medidas.UNIDADE, 50.0)
+
     ItemEstoqueManipuladoScreen(
         onItemEstoqueClick = {},
         onItemEstoqueViewEditarClick = {},
-        onItemEstoqueViewExcluirClick = {}
+        onItemEstoqueViewExcluirClick = {},
+        estoqueConsulta = EstoqueManipuladoConsulta(
+            1,
+            true,
+            "Molho de Tomate",
+            "Lote 1",
+            "Molhos",
+            "GRAMAS",
+            3,
+            500.0,
+            1500.0,
+            "Geladeira",
+            LocalDate.now(),
+            LocalDate.now().plusDays(1),
+            "Molho de tomate caseiro",
+            ReceitaConsultaDto(
+                1,
+                listOf(ingredienteConsultaDto)
+            )
+        )
     )
 }
 

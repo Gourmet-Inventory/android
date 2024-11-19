@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +47,7 @@ import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
@@ -65,17 +67,9 @@ fun CadastroItemScreen(
     val estoque by sharedViewModel.estoque.collectAsState()
 
     var nome by remember { mutableStateOf(estoque.nome) }
-//    var nome = estoque.nome
     var lote by remember { mutableStateOf(estoque.lote) }
-//    var lote = estoque.lote
-    var selectedCategory by remember {
-        mutableStateOf(
-            if (estoque.categoria == null) CategoriaEstoque.OUTROS.name else estoque.categoria
-        )
-    }
-//    var selectedCategory = estoque.categoria
     var marca by remember { mutableStateOf(estoque.marca) }
-//    var marca = estoque.marca
+    var selectedCategory by remember { mutableStateOf(if (estoque.categoria == null) CategoriaEstoque.OUTROS.name else estoque.categoria) }
 
     // Erros
     var errors by remember { mutableStateOf(CadastroItemErrors()) }
@@ -317,6 +311,10 @@ fun ImagemPasso1(
             .padding(4.dp)
     ) {
         RadioButton(
+            colors = RadioButtonDefaults.colors(
+                selectedColor = GI_Laranja,
+                unselectedColor = Black,
+            ),
             selected = selectedOptionIndex == 1,
             onClick = { selectedOptionIndex = 1 }
         )
@@ -329,13 +327,14 @@ fun ImagemPasso1(
 //                    categoria.isBlank(),
                     marca.isBlank()
                 )
-
                 atualizaErros(erros)
 
-                if (!erros.nome && !erros.lote && !erros.marca) {
+                onCadastroItemProximoClick(estoque)
 
-                    onCadastroItemProximoClick(estoque)
-                }
+//                if (!erros.nome && !erros.lote && !erros.marca) {
+//
+//                    onCadastroItemProximoClick(estoque)
+//                }
             }
         )
     }
@@ -384,7 +383,8 @@ fun CategoriaEstoqueSelectBox(
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(color = White)
                 ) {
                     CategoriaEstoque.values().forEach { selectionOption ->
                         DropdownMenuItem(

@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.model
+package com.example.gourmet_inventory_mobile.model.Ingrediente
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

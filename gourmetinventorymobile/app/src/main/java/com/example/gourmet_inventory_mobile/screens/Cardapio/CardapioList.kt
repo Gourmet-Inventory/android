@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.Ingrediente
+import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal

@@ -1,6 +1,7 @@
 package com.example.gourmet_inventory_mobile.model
 
 import android.os.Parcelable
+import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 

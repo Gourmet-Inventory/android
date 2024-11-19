@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
@@ -71,9 +72,13 @@ fun Editar2Screen(
     val estoqueEditar by sharedViewModel.estoque.collectAsState()
     Log.d("Editar2Screen", "estoqueEditar: $estoqueEditar")
 
-    var estoque: EstoqueConsulta? = null
+    var estoque: EstoqueItemDiscriminator.Industrializado? = null
     idItem?.let { id ->
-        estoque = (estoqueViewModel.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
+        estoque =
+            (estoqueViewModel.estoqueConsultaState.value as? EstoqueConsultaState.Success)
+                ?.estoqueConsulta
+                ?.mapNotNull { it as? EstoqueItemDiscriminator.Industrializado }
+                ?.find { it.idItem == id}
     }
     Log.d("Editar2Screen", "estoque: $estoque")
 
