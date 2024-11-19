@@ -106,8 +106,10 @@ fun ListaComprasScreen(
         }
     ) { padding ->
 
-        Surface(modifier = Modifier.fillMaxSize()) {
-            var texto by remember { mutableStateOf("") }
+        Surface(
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
+        ) {            var texto by remember { mutableStateOf("") }
 
             val listaCompras = viewModel.data
             val isLoading = viewModel.isLoading

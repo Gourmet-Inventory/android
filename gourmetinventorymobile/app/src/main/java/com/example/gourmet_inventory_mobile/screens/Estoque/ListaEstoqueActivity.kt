@@ -112,8 +112,10 @@ fun ListaEstoqueScreen(
             BottomBarGerente(navController = navController, onClick = onListaEstoqueClick)
         }
     ) { padding ->
-        Surface(modifier = Modifier.fillMaxSize()) {
-
+        Surface(
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
+        ) {
             var texto by remember { mutableStateOf("") }
 
             // Obtém o ViewModel do Koin

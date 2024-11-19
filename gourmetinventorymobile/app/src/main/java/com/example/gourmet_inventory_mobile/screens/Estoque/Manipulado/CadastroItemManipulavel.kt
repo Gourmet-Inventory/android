@@ -82,11 +82,10 @@ fun CadastroItemManipulavelScreen(
         mutableStateOf(estoque.marca)
     }
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .background(color = White)) {
-
-
+    Surface(
+        color = Color.White,
+        modifier = Modifier.fillMaxSize()
+    ) {
         LazyColumn {
             item {
                 Column(

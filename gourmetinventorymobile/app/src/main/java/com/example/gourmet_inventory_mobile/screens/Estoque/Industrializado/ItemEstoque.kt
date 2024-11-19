@@ -1,11 +1,13 @@
 package com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -13,6 +15,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -22,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
@@ -30,7 +34,10 @@ import androidx.compose.ui.unit.Dp
 
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
+import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
+import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 import java.time.format.DateTimeFormatter
 
 //class ItemEstoque : ComponentActivity() {
@@ -57,7 +64,7 @@ fun ItemEstoqueScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(top = 16.dp, start = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
@@ -98,14 +105,15 @@ fun ItemEstoqueScreen(
             tipoMedida = estoqueConsulta.tipoMedida.toString()
             valorMedida = estoqueConsulta.valorMedida.toString()
             valorTotal = estoqueConsulta.valorTotal.toString()
-            dataCadastro = estoqueConsulta.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            dataCadastro =
+                estoqueConsulta.dtaCadastro.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
             dataAviso = estoqueConsulta.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         }
 
 
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
                 .padding(16.dp)
         ) {
             val context = LocalContext.current
@@ -122,26 +130,47 @@ fun ItemEstoqueScreen(
                         fontSize = 32.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(
-                            bottom = 40.dp
+                            bottom = 20.dp
                         )
                     )
                 }
-                Column() {
-                    InfoItem("Lote:", lote, topPadding = 25.dp)
-                    InfoItem("Categoria:", categoria, topPadding = 22.dp)
-                    InfoItem("Marca:", marca, topPadding = 22.dp)
-                    InfoItem("Local Armazenamento:", localArmazenamento, topPadding = 22.dp)
-                    InfoItem("Quantidade Unitária:", quantidadeUnitaria.toString(), topPadding = 22.dp)
-                    InfoItem("Tipo Medida:", tipoMedida, topPadding = 22.dp)
-                    InfoItem("Valor medida:", valorMedida, topPadding = 22.dp)
-                    InfoItem("Valor total:", valorTotal, topPadding = 22.dp)
-                    InfoItem("Data Cadastro:", dataCadastro, topPadding = 22.dp)
-                    InfoItem("Data Aviso:", dataAviso, topPadding = 22.dp)
+                Box(
+                    modifier = Modifier
+                        .height(600.dp)
+                        .padding(end = 0.dp, top = 20.dp)
+                ) {
+                    DrawScrollableView(
+                        modifier = Modifier
+                            .fillMaxHeight(),
+                        content = {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(start = 20.dp, end = 0.dp),
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                estoqueConsulta?.let {
+                                    InfoItemEstoque("Lote", lote)
+                                    InfoItemEstoque("Categoria", categoria)
+                                    InfoItemEstoque("Marca", marca)
+                                    InfoItemEstoque("Local Armazenamento", localArmazenamento)
+                                    InfoItemEstoque("Quantidade Unitária", quantidadeUnitaria)
+                                    InfoItemEstoque("Tipo Medida", tipoMedida)
+                                    InfoItemEstoque("Valor Medida", valorMedida)
+                                    InfoItemEstoque("Valor Total", valorTotal)
+                                    InfoItemEstoque("Data Cadastro", dataCadastro)
+                                    InfoItemEstoque("Data Aviso", dataAviso)
+                                }
+                            }
+                        }
+                    )
+
                 }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 80.dp, start = 15.dp, end = 15.dp),
+                        .padding(top = 40.dp, start = 15.dp, end = 15.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Button(
@@ -193,20 +222,65 @@ fun ItemEstoqueScreen(
     }
 }
 
+//@Composable
+//fun InfoItem(label: String, value: String, topPadding: Dp = 0.dp) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(top = topPadding, start = 20.dp, end = 20.dp),
+//        horizontalArrangement = Arrangement.SpaceBetween
+//    ) {
+//        Text(text = label, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+//        Text(text = value, fontSize = 20.sp)
+//
+//    }
+//}
+
 @Composable
-fun InfoItem(label: String, value: String, topPadding: Dp = 0.dp) {
-    Row(
+fun InfoItemEstoque(
+    titulo: String,
+    valorCampo: String
+) {
+    Column(
+//        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.Start,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = topPadding, start = 20.dp, end = 20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .width(330.dp)
+            .height(90.dp)
     ) {
-        Text(text = label, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-        Text(text = value, fontSize = 20.sp)
+        Text(
+            modifier = Modifier
+                .padding(top = 0.dp)
+                .height(30.dp),
+            text = "$titulo:",
+            color = Black,
+            fontSize = 20.sp
+        )
 
+        Text(
+            modifier = Modifier
+                .height(35.dp)
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState()),
+            text = valorCampo,
+            color = Black,
+            fontSize = 20.sp,
+            fontFamily = JostBold
+        )
+
+//        Coloque um espaço aqui
+        Spacer(modifier = Modifier.height(5.dp))
+
+        if (titulo != "Data Aviso") {
+            Divider(
+                color = Color.Gray,
+                thickness = 1.dp, // Espessura da linha
+                modifier = Modifier
+                    .padding(horizontal = 0.dp)
+            )
+
+        }
     }
-
-
 }
 
 //@Preview(showBackground = true)

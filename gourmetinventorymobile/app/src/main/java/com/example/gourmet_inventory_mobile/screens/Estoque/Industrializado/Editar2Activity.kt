@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -139,10 +140,10 @@ fun Editar2Screen(
 //    }
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
+        color = Color.White,
+        modifier = Modifier.fillMaxSize()
     ) {
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -190,6 +191,8 @@ fun Editar2Screen(
                     style = TextStyle(fontSize = 35.sp, fontFamily = JostBold)
                 )
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
 
             Column(
                 modifier = Modifier.padding(top = 20.dp),
@@ -281,13 +284,14 @@ fun Editar2Screen(
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(100.dp))
 
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 20.dp),
+                    .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 Passo2Edicao(onEditarItem2AnteriorClick = {
                     val novoEstoque = estoqueEditar.copy(
                         unitario = qtdUnitaria.toInt(),
@@ -418,6 +422,7 @@ fun TipoMedidaSelectBoxEdicao(selectedOption: String, onTipoMedidaChange: (Strin
                 colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
             )
             ExposedDropdownMenu(
+                modifier = Modifier.background(color = White),
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {

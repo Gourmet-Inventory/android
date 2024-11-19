@@ -111,8 +111,8 @@ fun ItemEstoqueManipuladoScreen(
         }
     ) { padding ->
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
                 .padding(16.dp)
         ) {
             val context = LocalContext.current

@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -46,11 +47,12 @@ fun DeleteCnfirmacaoScreen(
     onDeleteConfirmacaoCancelarClick: () -> Unit
 ) {
     val context = LocalContext.current
+    Log.d("DeleteCnfirmacaoScreen", "ID do item: $idItem")
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .background(color = Color.White)) {
-
+    Surface(
+        color = Color.White,
+        modifier = Modifier.fillMaxSize()
+    ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,

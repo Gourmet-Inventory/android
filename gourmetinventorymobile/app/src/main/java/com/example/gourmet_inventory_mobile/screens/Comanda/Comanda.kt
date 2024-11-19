@@ -104,6 +104,7 @@ fun ComandaViewScreen(
             }
         }) { padding ->
         Surface(
+            color = Color.White,
             modifier = Modifier.fillMaxSize()
         ) {
             Column(

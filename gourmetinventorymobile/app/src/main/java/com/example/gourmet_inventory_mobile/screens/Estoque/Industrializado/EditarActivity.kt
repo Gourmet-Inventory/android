@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -87,9 +88,8 @@ fun EditarScreen(
 
 
     Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.White)
+        color = Color.White,
+        modifier = Modifier.fillMaxSize()
     ) {
 
         LazyColumn {
@@ -144,10 +144,15 @@ fun EditarScreen(
                         loteErro = lote.isBlank()
                     }, loteErro, "Campo obrigatório")
 
-                    InputEdicao("Categoria", categoria.toString(), { novoValor ->
-                        categoria = CategoriaEstoque.valueOf(novoValor)
-                    }, categoriaErro, "Campo obrigatório")
-
+//                    InputEdicao("Categoria", categoria.toString(), { novoValor ->
+//                        categoria = CategoriaEstoque.valueOf(novoValor)
+//                    }, categoriaErro, "Campo obrigatório")
+                    CategoriaEstoqueSelectBox (
+                        selectedOption = categoria,
+                        onCategoriaEstoqueChange = { newCategory ->
+                            categoria = CategoriaEstoque.valueOf(newCategory)
+                        }
+                    )
 //                    var localArmazenamento by remember { mutableStateOf(estoque.localArmazenamento) }
 
                     LocalArmazenamentoSelectBoxEditar(
@@ -158,6 +163,8 @@ fun EditarScreen(
                             localArmazenamentoErro = localArmazenamento.isBlank()
                         }
                     )
+
+                    Spacer(modifier = Modifier.height(40.dp))
 
                     // Componente de ImagemPasso1
                     EdicaoImagemPasso1(
@@ -332,6 +339,7 @@ fun LocalArmazenamentoSelectBoxEditar(
                     colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
                 )
                 ExposedDropdownMenu(
+                    modifier = Modifier.background(color = White),
                     expanded = expanded,
                     onDismissRequest = { expanded = false }
                 ) {

@@ -101,8 +101,8 @@ fun PratoScreen(
         topBar = { FotoTop(onClickPratoItem, onPratoItemVoltarClick) }
     ) { padding ->
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
                 .padding(padding)
         ) {
             Column(
