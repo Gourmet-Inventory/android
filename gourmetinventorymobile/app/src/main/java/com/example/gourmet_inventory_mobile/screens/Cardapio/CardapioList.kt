@@ -116,8 +116,10 @@ fun CardapioListScreen(
             BottomBarGarcom(navController = navController, onClick = onCardapioClick)
         }
     ) { padding ->
-        Surface(modifier = Modifier.fillMaxSize()) {
-            val context = LocalContext.current
+        Surface(
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
+        ) {            val context = LocalContext.current
             var searchText by remember { mutableStateOf("") }
 
             val listaPratos = pratoViewModel.data

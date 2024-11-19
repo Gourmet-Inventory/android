@@ -109,7 +109,10 @@ fun ComandaListScreen(
             BottomBarGarcom(navController = navController, onClick = onComandaClick)
         }
     ) { padding ->
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface(
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
+        ) {
             val context = LocalContext.current
             var searchText by remember { mutableStateOf("") }
             var selectedOptionIndex by remember { mutableStateOf(0) }

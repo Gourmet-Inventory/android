@@ -146,9 +146,8 @@ fun CadastroItemManipulavel2Screen(
     }
 
     Surface(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(color = Color.Black)
+        color = Color.White,
+        modifier = Modifier.fillMaxSize()
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

@@ -94,9 +94,9 @@ fun CadastroItemScreen(
     }
 
     Surface(
+        color = Color.White,
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White)
     ) {
         LazyColumn {
             item {

@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -103,7 +104,10 @@ fun ListaFornecedoresScreen(
             BottomBarGerente(navController = navController, onClick = onListaFornecedoresClick)
         }
     ) { padding ->
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface(
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
+        ) {
             val context = LocalContext.current
 
             // Estado para o texto do campo de pesquisa

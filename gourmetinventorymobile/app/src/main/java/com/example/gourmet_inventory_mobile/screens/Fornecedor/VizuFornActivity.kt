@@ -1,15 +1,21 @@
 package com.example.gourmet_inventory_mobile.screens.Fornecedor
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
@@ -33,8 +39,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.model.Fornecedor
+import androidx.compose.material3.Divider
+import com.example.gourmet_inventory_mobile.screens.Estoque.ItemListaEstoque
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
+import com.example.gourmet_inventory_mobile.ui.theme.JostLight
+import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 
 @Composable
 fun VizuFornScreen(
@@ -43,71 +53,21 @@ fun VizuFornScreen(
 ) {
     val context = LocalContext.current
     val resources = context.resources
-    var currentForn: Fornecedor? by remember { mutableStateOf(null) }
-
-    var nomeFornecedor by remember {
-        mutableStateOf("")
-    }
-    var cnpj by remember {
-        mutableStateOf("")
-    }
-    var cep by remember {
-        mutableStateOf("")
-    }
-    var logradouro by remember {
-        mutableStateOf("")
-    }
-    var complemento by remember {
-        mutableStateOf("")
-    }
-    var bairro by remember {
-        mutableStateOf("")
-    }
-    var localidade by remember {
-        mutableStateOf("")
-    }
-    var uf by remember {
-        mutableStateOf("")
-    }
-    var numeracao by remember {
-        mutableStateOf("")
-    }
-    var telefone by remember {
-        mutableStateOf("")
-    }
-    var categoria by remember {
-        mutableStateOf("")
-    }
-
-    nomeFornecedor = fornecedor?.nomeFornecedor ?: ""
-    cnpj = fornecedor?.cnpj ?: ""
-    cnpj = fornecedor?.cnpj ?: ""
-    cep = fornecedor?.cep ?: ""
-    logradouro = fornecedor?.logradouro ?: ""
-    complemento = fornecedor?.complemento ?: ""
-    bairro = fornecedor?.bairro ?: ""
-    localidade = fornecedor?.localidade ?: ""
-    uf = fornecedor?.uf ?: ""
-    numeracao = fornecedor?.numeracaoLogradouro ?: ""
-    telefone = fornecedor?.telefone ?: ""
-    categoria = fornecedor?.categoria ?: ""
 
     Scaffold(
         topBar = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(top = 16.dp, start = 10.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
                     onClick = { onVizuFornVoltarClick() },
-                    modifier = Modifier
-                        .size(50.dp)
+                    modifier = Modifier.size(50.dp)
                 ) {
                     Icon(
-                        modifier = Modifier
-                            .fillMaxSize(),
+                        modifier = Modifier.fillMaxSize(),
                         imageVector = Icons.Default.KeyboardArrowLeft,
                         contentDescription = "Voltar",
                     )
@@ -115,84 +75,139 @@ fun VizuFornScreen(
             }
         }
     ) { padding ->
-
         Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Color.White)
+            color = Color.White,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
+            Column {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(80.dp)
-                        .padding(top = 20.dp),
+                        .height(100.dp)
+                        .padding(top = 60.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Top
                 ) {
                     Text(
                         text = fornecedor.nomeFornecedor,
-                        modifier = Modifier,
                         color = Black,
                         textAlign = TextAlign.Center,
-                        style = TextStyle(
-                            fontSize = 35.sp
-                        ),
+                        style = TextStyle(fontSize = 35.sp),
                         fontFamily = JostBold
                     )
                 }
 
-                cnpj?.let {
-                    InfoForn(titulo = "CNPJ", valorCampo = it)
+                Box(
+                    modifier = Modifier
+                        .height(730.dp)
+                        .padding(end = 10.dp, top = 40.dp)
+                ) {
+                    DrawScrollableView(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        content = {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .padding(start = 35.dp, end = 15.dp),
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                fornecedor.cnpj?.let {
+                                    InfoForn(titulo = "CNPJ", valorCampo = it)
+                                }
 
+                                fornecedor.cep?.let {
+                                    InfoForn(titulo = "CEP", valorCampo = it)
+                                }
+
+                                fornecedor.logradouro?.let {
+                                    InfoForn(titulo = "Logradouro", valorCampo = it)
+                                }
+
+                                fornecedor.complemento?.let {
+                                    InfoForn(titulo = "Complemento", valorCampo = it)
+                                }
+
+                                fornecedor.bairro?.let {
+                                    InfoForn(titulo = "Bairro", valorCampo = it)
+                                }
+
+                                fornecedor.localidade?.let {
+                                    InfoForn(titulo = "Localidade", valorCampo = it)
+                                }
+
+                                fornecedor.uf?.let {
+                                    InfoForn(titulo = "UF", valorCampo = it)
+                                }
+
+                                fornecedor.numeracaoLogradouro?.let {
+                                    InfoForn(titulo = "Numeração", valorCampo = it)
+                                }
+
+                                fornecedor.telefone?.let {
+                                    InfoForn(titulo = "Telefone", valorCampo = it)
+                                }
+
+                                fornecedor.categoria?.let {
+                                    InfoForn(titulo = "Categoria", valorCampo = it)
+                                }
+                            }
+                        }
+                    )
                 }
-
-                cep?.let {
-                    InfoForn(titulo = "CEP", valorCampo = it)
-                }
-
-                logradouro?.let {
-                    InfoForn(titulo = "Logradouro", valorCampo = it)
-                }
-
-                complemento?.let {
-                    InfoForn(titulo = "Complemento", valorCampo = it)
-                }
-
-                bairro?.let {
-                    InfoForn(titulo = "Bairro", valorCampo = it)
-                }
-
-                localidade?.let {
-                    InfoForn(titulo = "Localidade", valorCampo = it)
-                }
-
-                uf?.let {
-                    InfoForn(titulo = "UF", valorCampo = it)
-                }
-
-                numeracao?.let {
-                    InfoForn(titulo = "Numeração", valorCampo = it)
-                }
-
-                telefone?.let {
-                    InfoForn(titulo = "Telefone", valorCampo = it)
-                }
-
-                categoria?.let {
-                    InfoForn(titulo = "Categoria", valorCampo = it)
-                }
-
-
+//               LazyColumn(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(700.dp)
+//                        .padding(top = 40.dp),
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//
+//                    fornecedor.cnpj?.let {
+//                        item { InfoForn(titulo = "CNPJ", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.cep?.let {
+//                        item { InfoForn(titulo = "CEP", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.logradouro?.let {
+//                        item { InfoForn(titulo = "Logradouro", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.complemento?.let {
+//                        item { InfoForn(titulo = "Complemento", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.bairro?.let {
+//                        item { InfoForn(titulo = "Bairro", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.localidade?.let {
+//                        item { InfoForn(titulo = "Localidade", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.uf?.let {
+//                        item { InfoForn(titulo = "UF", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.numeracaoLogradouro?.let {
+//                        item { InfoForn(titulo = "Numeração", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.telefone?.let {
+//                        item { InfoForn(titulo = "Telefone", valorCampo = it) }
+//                    }
+//
+//                    fornecedor.categoria?.let {
+//                        item { InfoForn(titulo = "Categoria", valorCampo = it) }
+//                    }
+//                }
             }
         }
     }
 }
+
 
 @Preview
 @Composable
@@ -226,27 +241,37 @@ fun InfoForn(
 //        horizontalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
-            .width(320.dp)
-            .height(70.dp)
+            .width(330.dp)
+            .height(90.dp)
     ) {
         Text(
             modifier = Modifier
-                .padding(top = 10.dp)
+                .padding(top = 0.dp)
                 .height(30.dp),
             text = "$titulo:",
             color = Black,
-            fontSize = 21.sp,
-            fontFamily = JostBold,
-            textDecoration = TextDecoration.Underline
+            fontSize = 20.sp
         )
 
         Text(
             modifier = Modifier
-                .padding(top = 3.dp)
-                .height(25.dp),
+                .height(35.dp)
+                .horizontalScroll(rememberScrollState()),
             text = valorCampo,
             color = Black,
-            fontSize = 21.sp
+            fontSize = 20.sp,
+            fontFamily = JostBold
         )
+
+//        Coloque um espaço aqui
+        Spacer(modifier = Modifier.height(5.dp))
+        if (titulo != "Categoria") {
+            Divider(
+                color = Color.Gray,
+                thickness = 1.dp, // Espessura da linha
+                modifier = Modifier
+                    .padding(horizontal = 0.dp)
+            )
+        }
     }
 }
