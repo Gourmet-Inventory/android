@@ -1,6 +1,6 @@
 package com.example.gourmet_inventory_mobile.repository.estoque
 
-import com.example.gourmet_inventory_mobile.model.Ingrediente
+import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Prato
 import retrofit2.Response

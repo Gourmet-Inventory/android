@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -422,7 +423,8 @@ fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> 
             )
             ExposedDropdownMenu(
                 expanded = expanded,
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(color = White)
             ) {
                 Medidas.values().forEach { selectionOption ->
                     DropdownMenuItem(
@@ -486,7 +488,8 @@ fun LocalArmazenamentoSelectBoxCadastrar(
                 )
                 ExposedDropdownMenu(
                     expanded = expanded,
-                    onDismissRequest = { expanded = false }
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(color = White)
                 ) {
                     options.forEach { selectionOption ->
                         DropdownMenuItem(
@@ -517,11 +520,11 @@ fun InputCadastro2(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .width(180.dp)
-            .height(140.dp)
+            .height(130.dp)
     ) {
         Column(
             modifier = Modifier
-                .size(width = 350.dp, height = 100.dp)
+                .size(width = 380.dp, height = 100.dp)
         ) {
             Text(
                 modifier = Modifier
@@ -587,6 +590,10 @@ fun Passo2Criacao(
             }
         )
         RadioButton(
+            colors = RadioButtonDefaults.colors(
+                selectedColor = GI_AzulMarinho,
+                unselectedColor = Black,
+            ),
             selected = selectedOptionIndex == 1,
             onClick = { selectedOptionIndex = 1 }
         )

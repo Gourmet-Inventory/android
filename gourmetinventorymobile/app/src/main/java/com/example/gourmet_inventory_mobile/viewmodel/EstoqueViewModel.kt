@@ -5,14 +5,19 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
+import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 // Sealed class para representar os estados de requisição de um estoque
 sealed class EstoqueCriacaoState {
@@ -24,7 +29,7 @@ sealed class EstoqueCriacaoState {
 sealed class EstoqueConsultaState {
     object Idle : EstoqueConsultaState()
     object Loading : EstoqueConsultaState()
-    data class Success(var estoqueConsulta: List<EstoqueConsulta>) : EstoqueConsultaState()
+    data class Success(val estoqueConsulta: List<EstoqueItemDiscriminator>) : EstoqueConsultaState()
     data class Error(val message: String) : EstoqueConsultaState()
 }
 sealed class EstoqueDelecaoState {
@@ -34,17 +39,63 @@ sealed class EstoqueDelecaoState {
     data class Error(val message: String) : EstoqueDelecaoState()
 }
 
+fun parseEstoqueItem(data: Map<String, Any>): EstoqueItemDiscriminator {
+    Log.d("parseEstoqueItem", "Data recebida: $data")
+
+    val manipulado = data["manipulado"] as? Boolean ?: throw IllegalArgumentException("Campo 'manipulado' está ausente ou inválido.")
+    return when (manipulado) {
+        true -> {
+            Log.d("parseEstoqueItem", "Processando item manipulado.")
+            (data["receita"] as? ReceitaConsultaDto)?.let {
+                EstoqueItemDiscriminator.Manipulado(
+                    idItem = (data["idItem"] as? Double)?.toLong() ?: throw IllegalArgumentException("Campo 'idItem' ausente ou inválido."),
+                    manipulado = manipulado,
+                    lote = data["lote"] as? String ?: throw IllegalArgumentException("Campo 'lote' ausente ou inválido."),
+                    nome = data["nome"] as? String ?: throw IllegalArgumentException("Campo 'nome' ausente ou inválido."),
+                    categoria = data["categoria"] as? String ?: throw IllegalArgumentException("Campo 'categoria' ausente ou inválido."),
+                    tipoMedida = data["tipoMedida"] as? String ?: throw IllegalArgumentException("Campo 'tipoMedida' ausente ou inválido."),
+                    unitario = (data["unitario"] as? Double)?.toInt() ?: 0,
+                    valorMedida = data["valorMedida"] as? Double ?: 0.0,
+                    valorTotal = data["valorTotal"] as? Double ?: 0.0,
+                    localArmazenamento = data["localArmazenamento"] as? String ?: "",
+                    dtaCadastro = LocalDate.parse(data["dtaCadastro"] as? String ?: throw IllegalArgumentException("Campo 'dtaCadastro' ausente ou inválido.")),
+                    dtaAviso = LocalDate.parse(data["dtaAviso"] as? String ?: throw IllegalArgumentException("Campo 'dtaAviso' ausente ou inválido.")),
+                    descricao = (data["descricao"] as? String)!!,
+                    receita = it
+                )
+            } ?: throw IllegalArgumentException("Campo 'receita' ausente ou inválido.")
+        }
+        false -> {
+            Log.d("parseEstoqueItem", "Processando item não manipulado.")
+            EstoqueItemDiscriminator.Industrializado(
+                idItem = (data["idItem"] as? Double)?.toLong() ?: throw IllegalArgumentException("Campo 'idItem' ausente ou inválido."),
+                manipulado = manipulado,
+                lote = data["lote"] as? String ?: throw IllegalArgumentException("Campo 'lote' ausente ou inválido."),
+                nome = data["nome"] as? String ?: throw IllegalArgumentException("Campo 'nome' ausente ou inválido."),
+                categoria = CategoriaEstoque.valueOf(data["categoria"] as? String ?: throw IllegalArgumentException("Campo 'categoria' ausente ou inválido.")),
+                tipoMedida = Medidas.valueOf(data["tipoMedida"] as? String ?: throw IllegalArgumentException("Campo 'tipoMedida' ausente ou inválido.")),
+                unitario = (data["unitario"] as? Double)?.toInt() ?: 0,
+                valorMedida = data["valorMedida"] as? Double ?: 0.0,
+                valorTotal = data["valorTotal"] as? Double ?: 0.0,
+                localArmazenamento = data["localArmazenamento"] as? String ?: "",
+                dtaCadastro = LocalDate.parse(data["dtaCadastro"] as? String ?: throw IllegalArgumentException("Campo 'dtaCadastro' ausente ou inválido.")),
+                dtaAviso = LocalDate.parse(data["dtaAviso"] as? String ?: throw IllegalArgumentException("Campo 'dtaAviso' ausente ou inválido.")),
+                marca = data["marca"] as? String ?: ""
+            )
+        }
+        else -> throw IllegalArgumentException("Tipo desconhecido: $manipulado")
+    }
+}
+
 class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewModel() {
+
     private val _estoqueConsultaState = MutableStateFlow<EstoqueConsultaState>(EstoqueConsultaState.Idle)
     val estoqueConsultaState: StateFlow<EstoqueConsultaState> = _estoqueConsultaState
-
     private val _estoqueCriacaoState = MutableStateFlow<EstoqueCriacaoState>(EstoqueCriacaoState.Idle)
     val estoqueCriacaoState: StateFlow<EstoqueCriacaoState> = _estoqueCriacaoState
-    var data = mutableStateListOf<EstoqueConsulta>()
+    var data = mutableStateListOf<Any>()
         private set
-
     private val _deletarEstoqueState = MutableStateFlow<EstoqueDelecaoState>(EstoqueDelecaoState.Idle)
-
 
     fun cadastrarEstoque(context: Context, estoqueCriacao: EstoqueCriacao) {
         _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
@@ -104,17 +155,21 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
                     return@launch
                 }
                 if (response.isSuccessful && response.body() != null) {
+                    Log.d("EstoqueViewModel", "Response é bem sucedido e corpo da resposta não é nulo")
+                    val estoqueItens = response.body()?.map { parseEstoqueItem(it) } ?: emptyList()
+                    Log.d("EstoqueViewModel", "estoqueItens: $estoqueItens")
+
                     _estoqueConsultaState.value = EstoqueConsultaState.Success(emptyList())
-                    _estoqueConsultaState.value = EstoqueConsultaState.Success(response.body()!!)
+                    _estoqueConsultaState.value = EstoqueConsultaState.Success(estoqueItens)
                     Log.d("EstoqueViewModel", "_estoqueConsultaState.value: ${_estoqueConsultaState.value}")
                     data.clear()
                     data.addAll(response.body()!!)
                     Log.d("EstoqueViewModel", "data: $data")
                 } else {
-                    _estoqueConsultaState.value = EstoqueConsultaState.Error("Erro ao obter estoque")
+                    _estoqueConsultaState.value = EstoqueConsultaState.Error("Erro ao obter estoque ${response}")
                 }
             } catch (e: Exception) {
-                _estoqueConsultaState.value = EstoqueConsultaState.Error("Erro ao obter estoque")
+                _estoqueConsultaState.value = EstoqueConsultaState.Error("Erro ao obter estoque catch")
             }
         }
     }

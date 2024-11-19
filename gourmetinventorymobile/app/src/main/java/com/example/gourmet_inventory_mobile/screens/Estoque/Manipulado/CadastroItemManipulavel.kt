@@ -1,5 +1,6 @@
 package com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado
 
+import SharedViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -25,9 +26,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,31 +45,41 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
+import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.CategoriaEstoqueSelectBox
+import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.LocalArmazenamentoSelectBoxCadastrar
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
+import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 
 
 @Composable
 fun CadastroItemManipulavelScreen(
-    onCadastroItemVoltarClick: () -> Unit = {},
-    onCadastroItemProximoClick: () -> Unit = {}
+    sharedViewModel: SharedViewModel,
+    onCadastroItemManipuladoVoltarClick: () -> Unit = {},
+    onCadastroItemManipuladoProximoClick: () -> Unit = {}
 ) {
+    val estoque by sharedViewModel.estoque.collectAsState()
+
     var nome by remember {
-        mutableStateOf("")
+        mutableStateOf(estoque.nome)
     }
     var lote by remember {
-        mutableStateOf("")
+        mutableStateOf(estoque.lote)
     }
     var categoria by remember {
-        mutableStateOf("")
+        mutableStateOf(estoque.categoria.toString())
     }
+    var selectedCategory by remember { mutableStateOf(if (estoque.categoria == null) CategoriaEstoque.OUTROS.name else estoque.categoria) }
+
     var localArmazenamento by remember {
-        mutableStateOf("")
+        mutableStateOf(estoque.localArmazenamento)
     }
 
     var marca by remember {
-        mutableStateOf("")
+        mutableStateOf(estoque.marca)
     }
 
     Surface(modifier = Modifier
@@ -88,10 +101,11 @@ fun CadastroItemManipulavelScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(onClick = {
-                            onCadastroItemVoltarClick()
+                            sharedViewModel.limparEstoque()
+                            onCadastroItemManipuladoVoltarClick()
                         }) {
                             Icon(
-                                imageVector = androidx.compose.material.icons.Icons.Default.KeyboardArrowLeft,
+                                imageVector = Icons.Default.KeyboardArrowLeft,
                                 contentDescription = "Voltar",
                                 Modifier.size(44.dp),
                                 tint = Color.Black
@@ -112,9 +126,7 @@ fun CadastroItemManipulavelScreen(
                             modifier = Modifier,
                             color = Black,
                             textAlign = TextAlign.Center,
-                            style = TextStyle(
-                                fontSize = 30.sp
-                            )
+                            style = TextStyle(fontSize = 35.sp, fontFamily = JostBold)
                         )
                     }
                     Text(
@@ -126,25 +138,62 @@ fun CadastroItemManipulavelScreen(
                             fontSize = 18.sp
                         )
                     )
-                    InputCadastroManipulavel(titulo = "Nome",valorCampo = nome, mudaValor = { novoValor ->
+                    InputCadastroManipulavel(titulo = "Nome",valorCampo = nome,
+                        mudaValor = { novoValor ->
                         nome = novoValor })
 
-                    InputCadastroManipulavel(titulo = "Lote",valorCampo = lote, mudaValor = { novoValor ->
+                    InputCadastroManipulavel(titulo = "Lote",valorCampo = lote,
+                        mudaValor = { novoValor ->
                         lote = novoValor })
 
-                    InputCadastroManipulavel(titulo = "Categoria",valorCampo = categoria, mudaValor = { novoValor ->
-                        categoria = novoValor })
+                    CategoriaEstoqueSelectBox(
+                        selectedOption = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                        onCategoriaEstoqueChange = { newCategory ->
+                            selectedCategory = CategoriaEstoque.valueOf(newCategory)
+                        }
+                    )
 
-                    InputCadastroManipulavel(titulo = "Categoria",valorCampo = marca, mudaValor = { novoValor ->
+                    InputCadastroManipulavel(titulo = "Marca",valorCampo = marca,
+                        mudaValor = { novoValor ->
                         marca = novoValor })
 
-                    StyledSelectBox()
+//                    StyledSelectBox(
+//                        selectedLocalArmazenamento = localArmazenamento,
+//                        onLocalArmazenamentoSelected = { novoValor ->
+//                            localArmazenamento = novoValor
+//                        }
+//                    )
+                    LocalArmazenamentoSelectBoxCadastrar(
+                        selectedOption = localArmazenamento,
+                        onLocalArmazenamentoChange = { novoValor ->
+                            localArmazenamento = novoValor
+                        }
+                    )
 
-                    ImagemPassoMaipulavel1(onCadastroItemProximoClick = onCadastroItemProximoClick)
+                    ImagemPassoMaipulavel1(onCadastroItemProximoClick = {
+                        val novoEstoque = estoque.copy(
+                            nome = nome,
+                            lote = lote,
+                            categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                            marca = marca,
+                            localArmazenamento = localArmazenamento
+                        )
+                        sharedViewModel.atualizarEstoque(novoEstoque)
+                        onCadastroItemManipuladoProximoClick()
+                    })
 
                     Button(
                         onClick = {
-                            onCadastroItemProximoClick()
+                            val novoEstoque = estoque.copy(
+                                nome = nome,
+                                lote = lote,
+                                categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                                marca = marca,
+                                localArmazenamento = localArmazenamento
+                            )
+
+                            sharedViewModel.atualizarEstoque(novoEstoque)
+                            onCadastroItemManipuladoProximoClick()
                         },
                         modifier = Modifier
                             .height(55.dp)
@@ -183,15 +232,22 @@ fun CadastroItemManipulavelScreen(
 @Preview
 @Composable
 fun CadastroManipulavelScreen() {
-    CadastroItemManipulavelScreen()
+    CadastroItemManipulavelScreen(
+        sharedViewModel = SharedViewModel(),
+        onCadastroItemManipuladoVoltarClick = {},
+        onCadastroItemManipuladoProximoClick = {}
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StyledSelectBox() {
+fun StyledSelectBox(
+    selectedLocalArmazenamento: String,
+    onLocalArmazenamentoSelected: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("Selecione um local") }
-    val options = listOf("Freezer", "Geladeira", "Pratileira AC-001", "Pratileira AC-002", "Pratileira AC-003", "Pratileira AC-004")
+    var selectedOption by remember { mutableStateOf(if (selectedLocalArmazenamento == "") "Selecione um local" else selectedLocalArmazenamento) }
+    val options = listOf("Cozinha", "Armário", "Geladeira", "Freezer")
 
     Row (
         horizontalArrangement = Arrangement.Center,
@@ -271,7 +327,7 @@ fun InputCadastroManipulavel(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .height(120.dp)
+            .height(110.dp)
 
     ){
         Column(
@@ -286,23 +342,21 @@ fun InputCadastroManipulavel(
                 text = "$titulo:",
                 color = Black,
                 fontSize = 22.sp
-//                fontFamily = JostRegular
             )
             OutlinedTextField(
-
+                singleLine = true,
                 value = valorCampo,
                 onValueChange = { novoValorDoCampo ->
                     mudaValor(novoValorDoCampo)
                 },
                 modifier = Modifier
-                    .height(50.dp)
+                    .height(55.dp)
                     .fillMaxSize()
                     .background(color = White, shape = RoundedCornerShape(5.dp))
                     .border(
                         width = 1.dp,
                         color = Color.Black
                     )
-
             )
         }
 
@@ -390,6 +444,10 @@ fun ImagemPassoMaipulavel1(
             .padding(4.dp)
     ) {
         RadioButton(
+            colors = RadioButtonDefaults.colors(
+                selectedColor = GI_Laranja,
+                unselectedColor = Black,
+            ),
             selected = selectedOptionIndex == 1,
             onClick = { selectedOptionIndex = 1 }
         )

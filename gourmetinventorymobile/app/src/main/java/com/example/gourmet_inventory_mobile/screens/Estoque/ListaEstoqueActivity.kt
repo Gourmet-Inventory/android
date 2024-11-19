@@ -1,4 +1,5 @@
 package com.example.gourmet_inventory_mobile.screens.Estoque
+
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -46,8 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Usuario.User
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_CianoClaro
@@ -62,7 +62,6 @@ import com.example.gourmet_inventory_mobile.utils.SearchBox
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import kotlinx.coroutines.flow.first
-import org.koin.core.component.getScopeName
 import java.time.format.DateTimeFormatter
 
 @Composable
@@ -119,34 +118,38 @@ fun ListaEstoqueScreen(
 
             // Obtém o ViewModel do Koin
             val estoqueState by viewModel.estoqueConsultaState.collectAsState()
+            Log.d("ListaEstoqueScreen", "estoqueState: ${estoqueState}")
 
             val isLoading = estoqueState is EstoqueConsultaState.Loading
-
             val listaEstoque = (estoqueState as? EstoqueConsultaState.Success)?.estoqueConsulta ?: emptyList()
-//            List(1) { EstoqueConsulta(
-//                1,
-//                Empresa(1, "nome"),
-//                true,
-//                "lote",
-//                "nome",
-//                "categoria",
-//                Medidas.UNIDADE,
-//                1,
-//                1.0,
-//                1.0,
-//                "localArmazenamento",
-//                LocalDate.now(),
-//                LocalDate.now().plusDays(1),
-//                "marca"
-//            ) }
+
+//            val listaEstoque = (estoqueState as? EstoqueConsultaState.Success)
+//                ?.estoqueConsulta
+//                ?.mapNotNull { it as? EstoqueConsulta }
+//                ?: emptyList()
             Log.d("ListaEstoqueScreen", "listaEstoque: $listaEstoque")
+            val filteredEstoque = listaEstoque.filter { estoqueItem ->
+                val nome = estoqueItem.nome ?: ""
+                val dtaAviso = estoqueItem.dtaAviso?.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) ?: ""
+                val unitario = estoqueItem.unitario?.toString() ?: ""
+
+                nome.contains(texto, ignoreCase = true) ||
+                        dtaAviso.contains(texto, ignoreCase = true) ||
+                        unitario.contains(texto, ignoreCase = true)
+            }
+
+            Log.d("ListaEstoqueScreen", "Filtered estoque: $filteredEstoque")
 
             // Filtra a lista com base no texto da pesquisa
-            val filteredEstoque = listaEstoque.filter { estoqueItem ->
-                estoqueItem.nome.contains(texto, ignoreCase = true) ||
-                        estoqueItem.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")).contains(texto, ignoreCase = true) ||
-                        estoqueItem.unitario.toString().contains(texto, ignoreCase = true)
-            }
+
+//            val filteredEstoque =
+//                (listaEstoque as? List<EstoqueItemDiscriminator>)?.filter { estoqueItem ->
+//                    estoqueItem.nome.contains(texto, ignoreCase = true) ||
+//                            estoqueItem.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+//                                .contains(texto, ignoreCase = true) ||
+//                            estoqueItem.unitario.toString().contains(texto, ignoreCase = true)
+//                }
+            Log.d("ListaEstoqueScreen", "filteredEstoque: $filteredEstoque")
 
             Box(modifier = Modifier.fillMaxSize()) {
                 Column(
@@ -164,7 +167,7 @@ fun ListaEstoqueScreen(
                             fontSize = 34.sp,
                             modifier = Modifier.padding(bottom = 16.dp)
                         )
-                        AddButton(onAddClick = { showDialog = true })
+                        AddButton(onAddClick = { showDialog = true }, containerColor = GI_AzulMarinho)
                     }
 
                     SearchBox(
@@ -180,29 +183,60 @@ fun ListaEstoqueScreen(
                     if (isLoading) {
 //                        CircularProgressIndicator()
                         LoadingList()
-                    } else {
-                        if (filteredEstoque.isEmpty()) {
-                            Column (
-                                modifier = Modifier.fillMaxSize().padding(top = 20.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ){
-                                Text(
-                                    text = "Nenhum estoque encontrado",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier.padding(top = 20.dp)
-                                )
-                                Spacer(modifier = Modifier.height(40.dp))
-                                Image(
-                                    painter = painterResource(id = R.drawable.estoquevazio),
-                                    contentDescription = "imagem de estoque vazio",
-                                    modifier = Modifier.padding(top = 20.dp).height(200.dp).width(200.dp)
-                                )
+                    } else if (estoqueState is EstoqueConsultaState.Success) {
+                        if (filteredEstoque != null) {
+                            if (filteredEstoque.isNullOrEmpty()) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(top = 20.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = "Nenhum estoque encontrado",
+                                        fontSize = 20.sp,
+                                        modifier = Modifier.padding(top = 20.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(40.dp))
+                                    Image(
+                                        painter = painterResource(id = R.drawable.estoquevazio),
+                                        contentDescription = "imagem de estoque vazio",
+                                        modifier = Modifier
+                                            .padding(top = 20.dp)
+                                            .height(200.dp)
+                                            .width(200.dp)
+                                    )
+                                }
+                            } else {
+                                Log.d("ListaEstoqueScreen", "filteredEstoque: $filteredEstoque")
+                                if (filteredEstoque != null) {
+                                    ItensListaEstoque(
+                                        estoque = filteredEstoque,
+                                        onListaEstoqueClick = onListaEstoqueClick
+                                    )
+                                }
                             }
-                        } else {
-                            Log.d("ListaEstoqueScreen", "filteredEstoque: $filteredEstoque")
-                            ItensListaEstoque(
-                                estoque = filteredEstoque,
-                                onListaEstoqueClick = onListaEstoqueClick
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(top = 20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Nenhum estoque encontrado",
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(top = 20.dp)
+                            )
+                            Spacer(modifier = Modifier.height(40.dp))
+                            Image(
+                                painter = painterResource(id = R.drawable.estoquevazio),
+                                contentDescription = "imagem de estoque vazio",
+                                modifier = Modifier
+                                    .padding(top = 20.dp)
+                                    .height(200.dp)
+                                    .width(200.dp)
                             )
                         }
                     }
@@ -235,10 +269,10 @@ fun ListaEstoqueScreen(
 //}
 
 @Composable
-fun AddButton(onAddClick: () -> Unit) {
+fun AddButton(onAddClick: () -> Unit, containerColor: Color) {
     SmallFloatingActionButton(
         onClick = onAddClick,
-        containerColor = GI_AzulMarinho,
+        containerColor = containerColor,
         contentColor = White,
         modifier = Modifier.width(70.dp),
         shape = RoundedCornerShape(20.dp)
@@ -256,9 +290,9 @@ fun EscolhaTipoDeEstoque(
     if (showDialog) {
         AlertDialog(
             modifier = Modifier
-                .background(Color.Transparent, shape = RoundedCornerShape(10.dp)),
+                .background(Color.White, shape = RoundedCornerShape(10.dp)),
             onDismissRequest = { onDismiss() },
-
+            containerColor = Color.White,
             title = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -306,7 +340,7 @@ fun EscolhaTipoDeEstoque(
                     }
                     OutlinedButton(
                         onClick = {
-                            onListaEstoqueClick("cadastrarItemEstoque")
+                            onListaEstoqueClick("cadastrarItemEstoqueManilpulado")
                             onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -341,7 +375,7 @@ fun EscolhaPreview() {
 
 @Composable
 fun ItensListaEstoque(
-    estoque: List<EstoqueConsulta>,
+    estoque: List<EstoqueItemDiscriminator>,
     onListaEstoqueClick: (String) -> Unit
 ) {
     Box(
@@ -373,7 +407,7 @@ fun ItensListaEstoque(
 
 @Composable
 fun ItemListaEstoque(
-    estoqueItem: EstoqueConsulta,
+    estoqueItem: EstoqueItemDiscriminator,
     onListaEstoqueClick: (String) -> Unit,
 ) {
     Row(
@@ -386,7 +420,20 @@ fun ItemListaEstoque(
                 RoundedCornerShape(8.dp)
             )
             .clickable(onClick = {
-                onListaEstoqueClick("itemEstoque/${estoqueItem.idItem}")
+                when (estoqueItem) {
+                    is EstoqueItemDiscriminator.Manipulado -> {
+                        onListaEstoqueClick("itemEstoqueManipulado/${estoqueItem.idItem}")
+                    }
+
+                    is EstoqueItemDiscriminator.Industrializado -> {
+                        onListaEstoqueClick("itemEstoque/${estoqueItem.idItem}")
+                    }
+                }
+//                if (estoqueItem.manipulado) {
+//                    onListaEstoqueClick("itemEstoqueManipulado/${estoqueItem.idItem}")
+//                } else {
+//                    onListaEstoqueClick("itemEstoque/${estoqueItem.idItem}")
+//                }
             }),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -425,7 +472,13 @@ fun ItemListaEstoque(
                 verticalArrangement = Arrangement.SpaceAround
             ) {
                 Text(
-                    text = "Data de Aviso: ${estoqueItem.dtaAviso.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))}",
+                    text = "Data de Aviso: ${
+                        estoqueItem.dtaAviso.format(
+                            DateTimeFormatter.ofPattern(
+                                "dd/MM/yyyy"
+                            )
+                        )
+                    }",
                     fontSize = 16.sp
                 )
                 Text(

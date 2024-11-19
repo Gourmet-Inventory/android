@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import java.time.format.DateTimeFormatter
 
@@ -46,7 +47,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun ItemEstoqueScreen(
-    estoqueConsulta: EstoqueConsulta,
+    estoqueConsulta: EstoqueItemDiscriminator.Industrializado,
     onItemEstoqueClick: (String) -> Unit,
     onItemEstoqueViewEditarClick: () -> Unit,
     onItemEstoqueViewExcluirClick: (String) -> Unit

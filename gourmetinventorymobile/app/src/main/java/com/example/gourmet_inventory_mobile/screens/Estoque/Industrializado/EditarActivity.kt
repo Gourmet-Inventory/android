@@ -47,6 +47,7 @@ import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
@@ -55,7 +56,7 @@ import java.time.LocalDate
 
 @Composable
 fun EditarScreen(
-    estoque: EstoqueConsulta,
+    estoque: EstoqueItemDiscriminator.Industrializado,
     sharedViewModel: SharedViewModel,
     onEditarItemVoltarClick: () -> Unit,
     onEditarItemProximoClick: () -> Unit,
@@ -398,11 +399,11 @@ fun EdicaoScreenPreview(): Unit {
         sharedViewModel = SharedViewModel(),
         onEditarItemVoltarClick = {},
         onEditarItemProximoClick = {},
-        estoque = EstoqueConsulta(
+        estoque = EstoqueItemDiscriminator.Industrializado(
             idItem = 1,
-            manipulado = true,
+            manipulado = false,
             lote = "123",
-            nome = "Teste",
+            nome = "Arroz",
             categoria = CategoriaEstoque.OUTROS,
             tipoMedida = Medidas.UNIDADE,
             unitario = 1,
@@ -410,8 +411,8 @@ fun EdicaoScreenPreview(): Unit {
             valorTotal = 1.0,
             localArmazenamento = "Cozinha",
             dtaCadastro = LocalDate.now(),
-            dtaAviso = LocalDate.now(),
-            marca = "Teste"
-        )
+            dtaAviso = LocalDate.now().plusDays(1),
+            marca = "Tio João"
+        ),
     )
 }
