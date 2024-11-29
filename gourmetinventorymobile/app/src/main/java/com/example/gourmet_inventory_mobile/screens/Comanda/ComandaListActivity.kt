@@ -122,6 +122,7 @@ fun ComandaListScreen(
             val viewModel = koinViewModel<ComandaViewModel>()
 
             val listaComandas = viewModel.data
+            Log.d("ComandaListScreen", "Lista de comandas: $listaComandas")
             val isLoading = viewModel.isLoading
 
 //            val empresa = Empresa(1, "123456789")
@@ -133,6 +134,10 @@ fun ComandaListScreen(
             // Filtra a lista com base no texto da pesquisa e na opção selecionada
             val filteredComandas = listaComandas.filter { comanda ->
                 comanda.mesa.contains(searchText, ignoreCase = true) ||
+                        comanda.status.contains(searchText, ignoreCase = true) ||
+                        comanda.mesa.contains(searchText, ignoreCase = true) ||
+                        comanda.total.toString().contains(searchText, ignoreCase = true) ||
+                        comanda.id.toString().contains(searchText, ignoreCase = true) ||
                         comanda.titulo.contains(searchText, ignoreCase = true)
             }
 
@@ -220,7 +225,6 @@ fun ComandaListScreen(
                             ItensComanda(
                                 comandas = filteredComandas,
                                 onComandaClick = onComandaClick,
-                                isSent = isSent
                             )
                         }
 
@@ -231,7 +235,6 @@ fun ComandaListScreen(
                             ItensComanda(
                                 comandas = comandasDoUsuario,
                                 onComandaClick = onComandaClick,
-                                isSent = isSent
                             )
                         }
                     }
@@ -254,7 +257,6 @@ fun ComandaListPreview() {
 fun ItensComanda(
     comandas: List<Comanda>,
     onComandaClick: (String) -> Unit,
-    isSent: String
 ) {
     Box(
         modifier = Modifier
@@ -273,7 +275,6 @@ fun ItensComanda(
                         ItemComanda(
                             comanda = comanda,
                             onComandaClick = onComandaClick,
-                            isSent = isSent
                         )
                     }
                 }
@@ -286,7 +287,7 @@ fun ItensComanda(
 fun ItemComanda(
     comanda: Comanda,
     onComandaClick: (String) -> Unit,
-    isSent: String
+//    isSent: String
 ) {
     val resourses = LocalContext.current.resources
 
@@ -297,7 +298,7 @@ fun ItemComanda(
             .background(White.copy(alpha = 0.2f), RoundedCornerShape(8.dp))
             .border(1.dp, Black, RoundedCornerShape(8.dp))
             .clickable {
-                onComandaClick("comandaView")
+                onComandaClick("comandaView/${comanda.id}")
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -334,9 +335,10 @@ fun ItemComanda(
                     modifier = Modifier
                         .size(24.dp)
                         .background(
-                            if (isSent == resourses.getString(R.string.comandaStatus1)) Color.Yellow
-                            else if (isSent == resourses.getString(R.string.comandaStatus2)) Color.Blue
-                            else if (isSent == resourses.getString(R.string.comandaStatus3)) Color.Red
+                            if (comanda.status.equals(resourses.getString(R.string.comandaStatus0))) Color.Yellow
+                            else if (comanda.status.equals(resourses.getString(R.string.comandaStatus1))) Color.Green
+                            else if (comanda.status.equals(resourses.getString(R.string.comandaStatus2))) Color.Blue
+                            else if (comanda.status.equals(resourses.getString(R.string.comandaStatus3))) Color.Red
                             else Color.Gray,
                             shape = RoundedCornerShape(12.dp)
                         )

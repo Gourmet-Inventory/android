@@ -9,7 +9,7 @@ import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
@@ -97,18 +97,18 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         private set
     private val _deletarEstoqueState = MutableStateFlow<EstoqueDelecaoState>(EstoqueDelecaoState.Idle)
 
-    fun cadastrarEstoque(context: Context, estoqueCriacao: EstoqueCriacao) {
+    fun cadastrarEstoque(context: Context, estoqueCriacaoDto: EstoqueCriacaoDto) {
         _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
 
         viewModelScope.launch {
             val user = DataStoreUtils(context).obterUsuario()?.first()
-            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacao")
+            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacaoDto")
             val idEmpresa = user?.empresa?.idEmpresa
             Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")
 
             try {
                 val response = idEmpresa?.let {
-                    estoqueRepository.createEstoque(it, estoqueCriacao)
+                    estoqueRepository.createEstoque(it, estoqueCriacaoDto)
                 }
 
                 if (response == null) {
@@ -174,19 +174,19 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         }
     }
 
-    fun atualizarEstoque(context: Context, idEstoque: Long,estoqueCriacao: EstoqueCriacao) {
+    fun atualizarEstoque(context: Context, idEstoque: Long, estoqueCriacaoDto: EstoqueCriacaoDto) {
         _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
-        Log.d("EstoqueViewModel", "AtualizarEstoque: $estoqueCriacao")
+        Log.d("EstoqueViewModel", "AtualizarEstoque: $estoqueCriacaoDto")
 
         viewModelScope.launch {
             val user = DataStoreUtils(context).obterUsuario()?.first()
-            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacao")
+            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacaoDto")
             val idEmpresa = user?.empresa?.idEmpresa
             Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")
 
             try {
                 val response = idEmpresa?.let {
-                    estoqueCriacao.toEstoque(user.empresa).let { estoque ->
+                    estoqueCriacaoDto.toEstoque(user.empresa).let { estoque ->
                         estoqueRepository.updateEstoque(idEstoque, estoque)
                     }
                 }

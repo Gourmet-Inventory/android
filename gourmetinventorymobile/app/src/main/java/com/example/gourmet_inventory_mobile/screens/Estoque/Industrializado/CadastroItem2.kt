@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -43,12 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
@@ -65,9 +68,9 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun CadastroItem2Screen(
     sharedViewModel: SharedViewModel,
-    onCadastroItem2AnteriorClick: (EstoqueCriacao?) -> Unit,
+    onCadastroItem2AnteriorClick: (EstoqueCriacaoDto?) -> Unit,
     onCadastroItemCadastrarClick: (EstoqueConsulta?) -> Unit,
-    estoque: EstoqueCriacao?
+    estoque: EstoqueCriacaoDto?
 ) {
     val estoque by sharedViewModel.estoque.collectAsState()
     Log.d("CadastroItem2Screen", "Estoque: $estoque")
@@ -115,10 +118,10 @@ fun CadastroItem2Screen(
     val viewModel = koinViewModel<EstoqueViewModel>()
     val estoqueState by viewModel.estoqueCriacaoState.collectAsState()
 
-    fun criarEstoqueAtualizado(): EstoqueCriacao? {
+    fun criarEstoqueAtualizado(): EstoqueCriacaoDto? {
         Log.d("CadastroItem2Screen", "Criando EstoqueCriacao")
         return try {
-            EstoqueCriacao(
+            EstoqueCriacaoDto(
                 lote = estoque?.lote ?: "",
                 manipulado = estoque?.manipulado ?: false,
                 nome = estoque?.nome ?: "",
@@ -219,6 +222,7 @@ fun CadastroItem2Screen(
                             .border(1.dp, Color.Black)
                             .width(180.dp),
                         singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                     )
                 }
 
@@ -373,7 +377,7 @@ fun Cadastro2ScreenPreview() {
     CadastroItem2Screen(
         onCadastroItem2AnteriorClick = {},
         onCadastroItemCadastrarClick = {},
-        estoque = EstoqueCriacao(
+        estoque = EstoqueCriacaoDto(
             lote = "123",
             manipulado = true,
             nome = "Nome",
@@ -424,7 +428,7 @@ fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> 
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.background(color = White)
+//                modifier = Modifier.background(color = White)
             ) {
                 Medidas.values().forEach { selectionOption ->
                     DropdownMenuItem(
@@ -489,7 +493,7 @@ fun LocalArmazenamentoSelectBoxCadastrar(
                 ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(color = White)
+//                    modifier = Modifier.background(color = White)
                 ) {
                     options.forEach { selectionOption ->
                         DropdownMenuItem(
@@ -557,6 +561,7 @@ fun InputCadastro2(
                 },
                 singleLine = true,
                 isError = isErro,
+                keyboardOptions = if (titulo == "Valor Medida") KeyboardOptions(keyboardType = KeyboardType.Number) else KeyboardOptions.Default
             )
             if (isErro) {
                 Text(
@@ -591,7 +596,7 @@ fun Passo2Criacao(
         )
         RadioButton(
             colors = RadioButtonDefaults.colors(
-                selectedColor = GI_AzulMarinho,
+//                selectedColor = GI_AzulMarinho,
                 unselectedColor = Black,
             ),
             selected = selectedOptionIndex == 1,

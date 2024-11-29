@@ -1,11 +1,7 @@
 package com.example.gourmet_inventory_mobile.repository.estoque
 
 import com.example.gourmet_inventory_mobile.model.Comanda
-import com.example.gourmet_inventory_mobile.model.estoque.Estoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import com.example.gourmet_inventory_mobile.service.ComandaService
-import com.example.gourmet_inventory_mobile.service.EstoqueService
 import retrofit2.Response
 
 class ComandaRepositoryImpl(private val service: ComandaService) : ComandaRepository {
@@ -20,5 +16,13 @@ class ComandaRepositoryImpl(private val service: ComandaService) : ComandaReposi
 
     override suspend fun createComanda(comanda: Comanda): Response<Comanda> {
         return service.createComanda(comanda)
+    }
+
+    override suspend fun updateComandaStatus(id: Long, status: String): Response<Comanda> {
+        return service.updateComandaStatus(id, status)
+    }
+
+    override suspend fun deleteComanda(id: Long): Response<Unit> {
+        return service.deleteComanda(id)
     }
 }

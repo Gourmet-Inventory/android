@@ -37,6 +37,7 @@ class PratoViewModel(private val pratoRepository: PratoRepository): ViewModel() 
 
                 if (response != null) {
                     if (response.code() == 204) {
+                        data.removeAll(data)
                         Log.d("PratoViewModel", "Response é nulo")
                         isLoading = false
 

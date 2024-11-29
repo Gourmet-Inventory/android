@@ -46,9 +46,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
@@ -66,7 +65,7 @@ import java.time.format.DateTimeFormatter
 fun Editar2Screen(
     estoqueViewModel: EstoqueViewModel,
     sharedViewModel: SharedViewModel,
-    onEditarItem2AnteriorClick: (EstoqueCriacao?) -> Unit,
+    onEditarItem2AnteriorClick: (EstoqueCriacaoDto?) -> Unit,
     onEditarItem2SalvarClick: () -> Unit,
     idItem: Long
 ) {
@@ -373,6 +372,7 @@ fun Editar2Screen(
                     Toast.makeText(context, "Edição efetuada com sucesso!", Toast.LENGTH_SHORT)
                         .show()
                     onEditarItem2SalvarClick()
+                    sharedViewModel.limparEstoque()
                 }
             }
 
@@ -518,7 +518,7 @@ fun InputEdicao2(
 
 @Composable
 fun Passo2Edicao(
-    onEditarItem2AnteriorClick: (EstoqueCriacao?) -> Unit
+    onEditarItem2AnteriorClick: (EstoqueCriacaoDto?) -> Unit
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
 

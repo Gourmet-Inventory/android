@@ -46,8 +46,7 @@ import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Medidas
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
@@ -364,9 +363,9 @@ fun EdicaoImagemPasso1(
     lote: String,
     categoria: String,
     localArmazenamento: String,
-    onEditarItemProximoClick: (estoque: EstoqueCriacao?) -> Unit,
+    onEditarItemProximoClick: (estoque: EstoqueCriacaoDto?) -> Unit,
     atualizaErros: (ErrosEdicao) -> Unit,
-    estoque: EstoqueCriacao? = null
+    estoque: EstoqueCriacaoDto? = null
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
 

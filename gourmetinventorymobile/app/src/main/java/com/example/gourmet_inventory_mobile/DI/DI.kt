@@ -112,8 +112,8 @@ val appModule = module {
     }
 
     single<ComandaRepository> {
-//        ComandaRepositoryImpl(get())
-        ComandaRepositoryImplLocal()
+        ComandaRepositoryImpl(get())
+//        ComandaRepositoryImplLocal()
     }
 
     viewModel<ComandaViewModel> {

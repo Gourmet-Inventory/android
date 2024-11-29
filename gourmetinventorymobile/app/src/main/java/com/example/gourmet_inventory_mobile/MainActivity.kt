@@ -123,6 +123,19 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
+                        composable("comandaList") {
+                            LaunchedEffect(Unit) {
+                                viewModelComanda.data.clear()
+                                viewModelComanda.getComandas()
+                            }
+                            ComandaListScreen(
+                                navController = navController,
+                                onComandaClick = { route ->
+                                    navController.navigate(route)
+                                },
+                            )
+                        }
+
                         composable("cardapioItem/{idPrato}") { backStackEntry ->
                             val idPrato =
                                 backStackEntry.arguments?.getString("idPrato")?.toIntOrNull()
@@ -149,14 +162,6 @@ class MainActivity : ComponentActivity() {
 
                         }
 
-                        composable("comandaList") {
-                            ComandaListScreen(
-                                navController = navController,
-                                onComandaClick = { route ->
-                                    navController.navigate(route)
-                                },
-                            )
-                        }
 
                         composable("viewPerfil") {
                             ViewPerfilScreen(
@@ -226,15 +231,26 @@ class MainActivity : ComponentActivity() {
 
                         }
 
-                        composable("comandaView") {
+                        composable("comandaView/{idComanda}") { backStackEntry ->
+                            val idComanda =
+                                backStackEntry.arguments?.getString("idComanda")?.toIntOrNull()
+                            Log.d("MainActivity", "idComanda: $idComanda")
+
+//                            LaunchedEffect(idComanda) {
+//                                viewModelComanda.getComandas()
+//                            }
+
+                            val comanda = viewModelComanda.data.find { it.id == idComanda?.toLong() }
+                            Log.d("MainActivity", "comanda: $comanda")
+
                             ComandaViewScreen(
+                                comanda = comanda,
                                 viewModel = viewModelComanda,
                                 navController = navController,
                                 onComandaViewClick = { route ->
                                     navController.navigate(route)
                                 },
                                 onComandaViewVoltarClick = {
-                                    clickedAction = "Voltar"
                                     navController.popBackStack()
                                 }
                             )
@@ -365,7 +381,9 @@ class MainActivity : ComponentActivity() {
 
                             idItem?.let { id ->
 //                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
-                                val listaEstoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta ?: emptyList()
+                                val listaEstoque =
+                                    (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta
+                                        ?: emptyList()
 
                                 val itemEstoque =
                                     (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
@@ -413,7 +431,8 @@ class MainActivity : ComponentActivity() {
 
                         composable("itemEstoque/{estoqueItem.idItem}") { backStackEntry ->
                             val idItem =
-                                backStackEntry.arguments?.getString("estoqueItem.idItem")?.toIntOrNull()
+                                backStackEntry.arguments?.getString("estoqueItem.idItem")
+                                    ?.toIntOrNull()
 
                             idItem?.let { id ->
 //                                val itemEstoque =

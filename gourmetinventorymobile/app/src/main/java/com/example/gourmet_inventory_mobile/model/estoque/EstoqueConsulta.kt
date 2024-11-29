@@ -26,8 +26,8 @@ data class EstoqueConsulta (
     val dtaAviso: LocalDate,
     val marca: String
 ) : java.io.Serializable , android.os.Parcelable {
-    fun toEstoqueCriacao(): EstoqueCriacao {
-        return EstoqueCriacao(
+    fun toEstoqueCriacao(): EstoqueCriacaoDto {
+        return EstoqueCriacaoDto(
             lote = this.lote,
             nome = this.nome,
             categoria = this.categoria,

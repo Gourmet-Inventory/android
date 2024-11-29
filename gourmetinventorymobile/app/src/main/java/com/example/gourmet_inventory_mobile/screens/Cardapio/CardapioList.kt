@@ -165,7 +165,7 @@ fun CardapioListScreen(
                                     Toast.LENGTH_SHORT
                                 ).show()
                             } else {
-                                navController.navigate("comandaView")
+                                navController.navigate("comandaView/${null}")
                             }
                         }) {
                         Text(text = "Ver Comanda")
@@ -215,19 +215,13 @@ fun CardapioListScreen(
                             )
                         }
                     } else {
-                        Log.d("ListaEstoqueScreen", "filteredEstoque: $filteredCardapio")
+                        Log.d("CardapioListScreen", "filteredCardapio: $filteredCardapio")
                         ItensCardapio(
                             pratos = filteredCardapio,
                             onCardapioClick = onCardapioClick
                         )
                     }
                 }
-
-                ItensCardapio(
-                    pratos = filteredCardapio,
-                    onCardapioClick = onCardapioClick
-                )
-
             }
         }
     }
@@ -305,7 +299,7 @@ fun ItemPrato(
             )
         }
         Image(
-            painter = painterResource(id = R.drawable.bro),
+            painter = painterResource(id = R.drawable.pizza),
             contentDescription = "Imagem do prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier

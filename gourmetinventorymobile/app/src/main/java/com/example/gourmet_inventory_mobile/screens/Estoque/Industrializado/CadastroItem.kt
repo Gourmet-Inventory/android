@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
@@ -297,9 +297,9 @@ fun ImagemPasso1(
     lote: String,
     categoria: CategoriaEstoque,
     marca: String,
-    onCadastroItemProximoClick: (estoque: EstoqueCriacao?) -> Unit = {},
+    onCadastroItemProximoClick: (estoque: EstoqueCriacaoDto?) -> Unit = {},
     atualizaErros: (ErrosCadastro) -> Unit,
-    estoque: EstoqueCriacao? = null
+    estoque: EstoqueCriacaoDto? = null
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
 
@@ -312,7 +312,7 @@ fun ImagemPasso1(
     ) {
         RadioButton(
             colors = RadioButtonDefaults.colors(
-                selectedColor = GI_Laranja,
+//                selectedColor = GI_Laranja,
                 unselectedColor = Black,
             ),
             selected = selectedOptionIndex == 1,
@@ -384,7 +384,7 @@ fun CategoriaEstoqueSelectBox(
                 ExposedDropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.background(color = White)
+//                    modifier = Modifier.background(color = White)
                 ) {
                     CategoriaEstoque.values().forEach { selectionOption ->
                         DropdownMenuItem(
