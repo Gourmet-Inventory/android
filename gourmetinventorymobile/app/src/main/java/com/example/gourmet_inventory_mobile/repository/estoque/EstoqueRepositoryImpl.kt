@@ -2,8 +2,7 @@ package com.example.gourmet_inventory_mobile.repository.estoque
 
 import com.example.gourmet_inventory_mobile.model.estoque.Estoque
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueManipuladoConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.service.EstoqueService
 import retrofit2.Response
 
@@ -14,14 +13,14 @@ class EstoqueRepositoryImpl(private val serviceEstoque: EstoqueService) : Estoqu
 
     override suspend fun createEstoque(
         idEmpresa: Long,
-        estoque: EstoqueCriacao
+        estoque: EstoqueCriacaoDto
     ): Response<EstoqueConsulta> {
         return serviceEstoque.createEstoque(idEmpresa, estoque)
     }
 
     override suspend fun createEstoqueManipulado(
         idEmpresa: Long,
-        estoque: EstoqueCriacao
+        estoque: EstoqueCriacaoDto
     ): Response<EstoqueConsulta> {
         return serviceEstoque.createEstoqueManipulado(idEmpresa, estoque)
     }

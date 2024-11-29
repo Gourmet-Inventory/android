@@ -7,8 +7,15 @@
     <string name="gerente">administrador</string>
     <string name="garcom">normal</string>
 
-<!--    <string name="comandaStatus0">enviada</string>-->
-    <string name="comandaStatus1">em andamento</string>
-    <string name="comandaStatus2">pronta</string>
-    <string name="comandaStatus3">finalizada</string>
+    <string name="comandaStatus0">Enviada</string>
+    <string name="comandaStatus1">Pronta</string>
+    <string name="comandaStatus2">Entregue</string>
+    <string name="comandaStatus3">Finalizada</string>
+
+    <string name="comandaStatus0Texto">Enviar comanda para a cozinha</string>
+    <string name="comandaStatus0.5Texto">Comanda enviada para cozinha</string>
+    <string name="comandaStatus1Texto">Comanda pronta para entrega</string>
+    <string name="comandaStatus2Texto">Comanda entregue</string>
+    <string name="comandaStatus3Texto">Comanda finalizada</string>
+
 </resources>

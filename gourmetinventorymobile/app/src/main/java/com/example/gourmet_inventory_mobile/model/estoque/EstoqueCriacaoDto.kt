@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 @Serializable
 @Parcelize
-data class EstoqueCriacao(
+data class EstoqueCriacaoDto(
     var lote: String,
     var manipulado: Boolean,
     var nome: String,

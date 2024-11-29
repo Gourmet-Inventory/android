@@ -1,9 +1,11 @@
 package com.example.gourmet_inventory_mobile.screens.Comanda
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -36,6 +39,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +56,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.gourmet_inventory_mobile.R
+import com.example.gourmet_inventory_mobile.model.Comanda
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.ui.theme.Black
@@ -60,12 +66,16 @@ import com.example.gourmet_inventory_mobile.ui.theme.GI_BrancoFundo
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
+import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaAtualizacaoState
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaCriacaoSate
+import com.example.gourmet_inventory_mobile.viewmodel.ComandaDelecaoState
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 
 @Composable
 fun ComandaViewScreen(
+    comanda: Comanda?,
     viewModel: ComandaViewModel,
     navController: NavController,
     onComandaViewClick: (String) -> Unit,
@@ -77,12 +87,34 @@ fun ComandaViewScreen(
     val pedidos by viewModel.listaPratosComanda.collectAsState()
 
     val comandaCriacaoSate by viewModel.comandaCriacaoState.collectAsState()
-    val comanda = viewModel.comandaAtual.collectAsState()
+    val comandaCriacao = viewModel.comandaAtual.collectAsState()
+    val comandaDelecaoState by viewModel.deletarComandaState.collectAsState()
+    val comandaAtualizacaoState by viewModel.atualizarComandaState.collectAsState()
 
-    val total = pedidos.sumOf { it.preco }
+    val resouce = context.resources
+
+    val textoStatus =
+        if (comanda != null)
+            when (comanda.status) {
+                resouce.getString(R.string.comandaStatus0) -> resouce.getString(R.string.comandaStatus0_5Texto)
+                resouce.getString(R.string.comandaStatus1) -> resouce.getString(R.string.comandaStatus1Texto)
+                resouce.getString(R.string.comandaStatus2) -> resouce.getString(R.string.comandaStatus2Texto)
+                resouce.getString(R.string.comandaStatus3) -> resouce.getString(R.string.comandaStatus3Texto)
+                else -> {
+                    resouce.getString(R.string.comandaStatus0Texto)
+                }
+            }
+        else resouce.getString(R.string.comandaStatus0Texto)
+
+
+    val total =
+        if (comanda == null) pedidos.sumOf { it.preco }
+        else comanda.itens.sumOf { it.preco }
+    Log.d("ComandaViewScreen", "total: $total")
+
 //    var isSent by remember { mutableStateOf(false) } // Estado do status
-    val titulo by remember { mutableStateOf("") }
-    val mesa by remember { mutableStateOf("") }
+//    val titulo by remember { mutableStateOf("") }
+//    val mesa by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -118,11 +150,15 @@ fun ComandaViewScreen(
                         .fillMaxWidth()
                         .padding(end = 16.dp, start = 16.dp, bottom = 10.dp, top = 20.dp)
                 ) {
-                    Text(text = "Comanda 03", fontSize = 34.sp)
-                    Text(text = "Mesa 1", fontSize = 22.sp)
+                    Text(
+                        text = if (comanda != null) "Comanda: ${comanda!!.id.toString()}" else "Comanda ...",
+                        fontSize = 34.sp
+                    )
+                    Text(
+                        text = if (comanda != null) "Mesa: ${comanda!!.mesa}" else "Mesa ...",
+                        fontSize = 22.sp
+                    )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
 
                 Box(
                     modifier = Modifier
@@ -143,30 +179,44 @@ fun ComandaViewScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Button(
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = GI_AzulMarinho, contentColor = Color.White
-                                ),
-                                onClick = {
-                                    onComandaViewClick("cardapio")
+                            if (comanda == null) {
+                                Button(
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = GI_AzulMarinho, contentColor = Color.White
+                                    ),
+                                    onClick = {
+                                        onComandaViewClick("cardapio")
+                                    }
+                                ) {
+                                    Text(text = "Adicionar pedido")
                                 }
-                            ) {
-                                Text(text = "Adicionar pedido")
                             }
                         }
 
-                        Divider(
-                            color = Black,
-                            thickness = 1.dp,
-                            modifier = Modifier.padding(vertical = 8.dp)
+                        if (comanda == null) {
+                            Divider(
+                                color = Black,
+                                thickness = 1.dp,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+
+                        ItensComanda(
+                            comanda = comanda,
+                            if (comanda == null) pedidos else comanda.itens,
+                            viewModel,
+                            onComandaViewClick
                         )
 
-                        ItensComanda(pedidos, viewModel, onComandaViewClick)
-
                         Divider(
                             color = Black,
                             thickness = 1.dp,
-                            modifier = Modifier.padding(vertical = 8.dp)
+                            modifier = Modifier.padding(
+                                bottom = 8.dp,
+                                top = if (comanda == null) 8.dp else 50.dp
+                            )
                         )
 
                         Row(
@@ -187,98 +237,196 @@ fun ComandaViewScreen(
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(20.dp))
 
+                val statusAtt =
+                    when (comanda?.status) {
+                        resouce.getString(R.string.comandaStatus0) -> resouce.getString(
+                            R.string.comandaStatus1
+                        )
+
+                        resouce.getString(R.string.comandaStatus1) -> resouce.getString(
+                            R.string.comandaStatus2
+                        )
+
+                        resouce.getString(R.string.comandaStatus2) -> resouce.getString(
+                            R.string.comandaStatus3
+                        )
+
+                        resouce.getString(R.string.comandaStatus3) -> resouce.getString(
+                            R.string.comandaStatus3
+                        )
+
+                        else -> {
+                            resouce.getString(R.string.comandaStatus0)
+                        }
+                    }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Button(
                         onClick = {
-                            showDialog = true
-//                            onComandaViewClick("comandaList")
-//                            Toast.makeText(context, "Comanda enviada", Toast.LENGTH_SHORT).show()
+                            if (comanda != null) {
+                                viewModel.updateComandaStatus(comanda!!.id!!, comanda.status, context)
+                                onComandaViewClick("comandaList")
+                                Toast.makeText(
+                                    context,
+                                    "Comanda atualizada",
+                                    Toast.LENGTH_SHORT).show()
+                            } else {
+                                showDialog = true
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = GI_Verde, contentColor = Color.White
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .padding(end = 8.dp)
+                            //        .padding(end = 8.dp)
                             .height(45.dp),
                         shape = RoundedCornerShape(4.dp)
                     ) {
+                        if (comandaAtualizacaoState is ComandaAtualizacaoState.Loading) {
+                            CircularProgressIndicator(color = GI_AzulMarinho)
+                        }
                         Icon(
                             imageVector = Icons.Default.Send,
                             contentDescription = "Enviar"
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Enviar")
-                    }
-                    Button(
-                        onClick = {
-                            viewModel.limparComanda()
-                            onComandaViewClick("cardapio")
-                            Toast.makeText(context, "Comanda cancelada", Toast.LENGTH_SHORT).show()
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red, contentColor = Color.White
-                        ),
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 8.dp)
-                            .height(45.dp),
-                        shape = RoundedCornerShape(4.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Cancelar"
+                        Text(
+                            text = if (comanda != null) "Atualizar p/ ${statusAtt}" else "Enviar",
+                            Modifier.horizontalScroll(
+                                enabled = true,
+                                reverseScrolling = true,
+                                state = rememberScrollState()
+                            )
                         )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(text = "Cancelar")
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Botão de cancelar comanda ou deletar comanda se já enviada
+                    if (comanda?.status == "Enviada" || comanda == null) {
+                        Button(
+                            onClick = {
+                                if (comanda != null) {
+                                    comanda!!.id?.let {
+                                        viewModel.deleteComanda(it)
+                                        onComandaViewClick("comandaList")
+                                        Toast.makeText(
+                                            context,
+                                            "Comanda deletada",
+                                            Toast.LENGTH_SHORT).show()
+                                    }
+                                } else {
+                                    viewModel.limparComanda()
+                                    onComandaViewClick("cardapio")
+                                    Toast.makeText(context, "Comanda cancelada", Toast.LENGTH_SHORT).show()
+                                }
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Red, contentColor = Color.White
+                            ),
+                            modifier = Modifier
+//                                .weight(1f)
+//                                .padding(start = 8.dp)
+                                .width(140.dp)
+                                .height(45.dp),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Deletar"
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = if (comanda != null) "Deletar" else "Cancelar",
+                                Modifier.horizontalScroll(
+                                    enabled = true,
+                                    reverseScrolling = true,
+                                    state = rememberScrollState()
+                                )
+                            )
+//                            when (comandaDelecaoState) {
+//                                is ComandaDelecaoState.Idle -> {
+//                                    Icon(
+//                                        imageVector = Icons.Default.Delete,
+//                                        contentDescription = "Deletar"
+//                                    )
+//                                    Spacer(modifier = Modifier.width(8.dp))
+//                                    Text(
+//                                        text = if (comanda != null) "Deletar comanda" else "Cancelar",
+//                                        Modifier.horizontalScroll(
+//                                            enabled = true,
+//                                            reverseScrolling = true,
+//                                            state = rememberScrollState()
+//                                        )
+//                                    )
+//                                }
+//                                is ComandaDelecaoState.Success -> {
+//                                    onComandaViewClick("comandaList")
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Comanda deletada com sucesso",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                }
+//                                is ComandaDelecaoState.Error -> {
+//                                    Toast.makeText(
+//                                        context,
+//                                        "Erro ao deletar comanda",
+//                                        Toast.LENGTH_SHORT
+//                                    ).show()
+//                                }
+//                                ComandaDelecaoState.Loading -> {
+//                                    CircularProgressIndicator(color = GI_AzulMarinho)
+//                                }
+                        }
                     }
                 }
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp)
+//                        .padding(start = 20.dp, end = 20.dp)
                 ) {
-                    Box(modifier = Modifier
-                        .size(24.dp)
-//                        .background(
-//                            if (isSent) Color.Red else Color.Gray,
-//                            shape = RoundedCornerShape(12.dp)
-//                        )
-                        .clickable {
-//                            isSent = !isSent
-                        })
-                    Spacer(modifier = Modifier.width(8.dp))
+//                    Box(modifier = Modifier
+//                        .size(24.dp)
+////                        .background(
+////                            if (isSent) Color.Red else Color.Gray,
+////                            shape = RoundedCornerShape(12.dp)
+////                        )
+//                        .clickable {
+////                            isSent = !isSent
+//                        })
+//                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Status: Mandar comanda para cozinha",
-                        fontSize = 14.sp,
+                        text = "Status: ${textoStatus}",
+                        fontSize = 15.sp,
                         color = Color.Gray
                     )
                 }
             }
 
-            if(comandaCriacaoSate is ComandaCriacaoSate.Success){
-                onComandaViewClick("comandaList")
-                Toast.makeText(
-                    context,
-                    "Comanda criada com sucesso",
-                    Toast.LENGTH_SHORT
-                ).show()
-            } else if(comandaCriacaoSate is ComandaCriacaoSate.Error){
-                Toast.makeText(
-                    context,
-                    "Erro ao criar comanda",
-                    Toast.LENGTH_SHORT
-                ).show()
+            LaunchedEffect(comandaAtualizacaoState) {
+                if (comandaAtualizacaoState is ComandaAtualizacaoState.Success) {
+                    Toast.makeText(
+                        context,
+                        "Comanda atualizada com sucesso",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onComandaViewClick("comandaList")
+                }
+                if (comandaAtualizacaoState is ComandaAtualizacaoState.Error) {
+                    Toast.makeText(
+                        context,
+                        "Erro ao atualizar comanda",
+                        Toast.LENGTH_SHORT).show()
+                }
             }
 
             if (showDialog) {
@@ -288,7 +436,8 @@ fun ComandaViewScreen(
                     onDismiss = { showDialog = false },
                     comandaCriacaoState = comandaCriacaoSate,
                     context = context,
-                    onComandaViewClick = onComandaViewClick
+                    onComandaViewClick = onComandaViewClick,
+                    navController = navController
                 )
             }
         }
@@ -297,10 +446,14 @@ fun ComandaViewScreen(
 
 @Composable
 fun ItensComanda(
+    comanda: Comanda?,
     pedidos: List<Prato>,
     viewModel: ComandaViewModel,
     onComandaViewClick: (String) -> Unit
 ) {
+    // Agrupa os itens e conta as ocorrências
+    val groupedPedidos = pedidos.groupingBy { it.nome }.eachCount()
+
     Box(
         modifier = Modifier
             .height(350.dp)
@@ -313,9 +466,13 @@ fun ItensComanda(
                         .fillMaxWidth()
                         .padding(top = 3.dp, start = 8.dp, end = 8.dp, bottom = 3.dp)
                 ) {
-                    pedidos.forEach { pedido ->
+                    groupedPedidos.forEach { (nome, quantidade) ->
+                        // Busca o prato correspondente para renderizar
+                        val prato = pedidos.first { it.nome == nome }
                         ItemComanda(
-                            pedido = pedido,
+                            comanda = comanda,
+                            pedido = prato,
+                            quantidade = quantidade,
                             onComandaViewClick = onComandaViewClick,
                             viewModel = viewModel
                         )
@@ -329,8 +486,16 @@ fun ItensComanda(
     }
 }
 
+
 @Composable
-fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit, viewModel: ComandaViewModel) {
+fun ItemComanda(
+    comanda: Comanda?,
+    pedido: Prato,
+    quantidade: Int,
+    onComandaViewClick: (String) -> Unit,
+    viewModel: ComandaViewModel
+) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -338,11 +503,12 @@ fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit, viewModel: 
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        // Nome do prato com a quantidade
         Text(
-            text = "${pedido.idPrato}x ${pedido.nome}",
+            text = "${quantidade}x ${pedido.nome}",
             modifier = Modifier
                 .clickable {
-                    onComandaViewClick("cardapioItem")
+                    onComandaViewClick("cardapioItem/${pedido.idPrato}")
                 },
             textDecoration = TextDecoration.Underline
         )
@@ -350,7 +516,8 @@ fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit, viewModel: 
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(end = 8.dp)
         ) {
-            Text(text = "R$${pedido.preco * 1}")
+            // Preço total (quantidade * preço unitário)
+            Text(text = "R$${pedido.preco * quantidade}")
             Icon(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Deletar",
@@ -358,26 +525,39 @@ fun ItemComanda(pedido: Prato, onComandaViewClick: (String) -> Unit, viewModel: 
                 modifier = Modifier
                     .padding(start = 8.dp)
                     .size(30.dp)
-//                    .clip(RoundedCornerShape(8.dp))
                     .clickable {
-                        viewModel.removerPrato(pedido)
+                        if (comanda != null) {
+                            Toast
+                                .makeText(
+                                    context,
+                                    "Ação não permitida",
+                                    Toast.LENGTH_SHORT
+                                )
+                                .show()
+                        } else {
+                            viewModel.removerPrato(pedido)
+                        }
                     }
             )
         }
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DadosPostComanda(
     context: Context,
+    navController: NavController,
     viewModel: ComandaViewModel,
     showDialog: Boolean,
     onDismiss: () -> Unit,
     comandaCriacaoState: ComandaCriacaoSate,
     onComandaViewClick: (String) -> Unit
 ) {
-    if (showDialog) {
+    var showDialogIn by remember { mutableStateOf(showDialog) }
+
+    if (showDialogIn) {
         var titulo by remember { mutableStateOf("") }
         var mesa by remember { mutableStateOf("") }
 
@@ -402,21 +582,22 @@ fun DadosPostComanda(
 
             text = {
                 Column {
-                    OutlinedTextField(
-                        value = titulo,
-                        onValueChange = {
-                            titulo = it
-                            viewModel.updateComandaAtualTitulo(it)
-                        },
-                        label = { Text("Título") },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+//                    OutlinedTextField(
+//                        value = titulo,
+//                        onValueChange = {
+//                            titulo = it
+//                            viewModel.updateComandaAtualTitulo(it)
+//                        },
+//                        label = { Text("Título") },
+//                        modifier = Modifier.fillMaxWidth(),
+//                    )
+//                    Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
                         value = mesa,
                         onValueChange = {
                             mesa = it
                             viewModel.updateComandaAtualMesa(it)
+                            viewModel.updateComandaAtualTitulo("Comanda: ")
                         },
                         label = { Text("Mesa") },
                         modifier = Modifier.fillMaxWidth()
@@ -434,7 +615,7 @@ fun DadosPostComanda(
                 ) {
                     OutlinedButton(
                         onClick = {
-                            viewModel.createComanda(context)
+                            viewModel.createComanda(context, navController)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = GI_Laranja,
@@ -443,11 +624,11 @@ fun DadosPostComanda(
                         shape = RoundedCornerShape(5.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(75.dp)
-                            .padding(bottom = 30.dp),
+                            .height(80.dp)
+                            .padding(bottom = 30.dp)
                     ) {
                         if (comandaCriacaoState is ComandaCriacaoSate.Loading) {
-                            CircularProgressIndicator(color = GI_BrancoFundo)
+                            CircularProgressIndicator(color = GI_AzulMarinho)
                         } else {
                             Text(
                                 text = "CONFIRMAR",
@@ -462,6 +643,27 @@ fun DadosPostComanda(
             }
         )
     }
+    //Validação de estado de requisição
+    LaunchedEffect(comandaCriacaoState) {
+        if (comandaCriacaoState is ComandaCriacaoSate.Success) {
+            Toast.makeText(
+                context,
+                "Comanda criada com sucesso",
+                Toast.LENGTH_SHORT
+            ).show()
+            showDialogIn = false
+            onComandaViewClick("comandaList")
+        }
+    }
+    LaunchedEffect(comandaCriacaoState) {
+        if (comandaCriacaoState is ComandaCriacaoSate.Error) {
+            Toast.makeText(
+                context,
+                "Erro ao criar comanda",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 }
 
 @Preview(showSystemUi = true)
@@ -475,6 +677,7 @@ fun DadosPostComandaPreview() {
         showDialog = true,
         onDismiss = {},
         comandaCriacaoState = ComandaCriacaoSate.Loading,
-        onComandaViewClick = {}
+        onComandaViewClick = {},
+        navController = NavController(LocalContext.current)
     )
 }

@@ -110,4 +110,12 @@ class ComandaRepositoryImplLocal(): ComandaRepository {
             total = 1.0
         ))
     }
+
+    override suspend fun updateComandaStatus(id: Long, status: String): Response<Comanda> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteComanda(id: Long): Response<Unit> {
+        TODO("Not yet implemented")
+    }
 }

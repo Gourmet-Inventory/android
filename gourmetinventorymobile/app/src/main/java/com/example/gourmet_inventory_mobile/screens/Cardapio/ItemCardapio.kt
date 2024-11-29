@@ -65,13 +65,16 @@ fun PratoScreen(
     // Acesso à lista de pratos adicionados à comanda
     val listaPratosComanda = viewModel.listaPratosComanda
 
+    var contagemPratos by remember { mutableStateOf("1") }
     // Função para adicionar o prato atual à lista de comanda
     fun adicionarPratoNaComanda() {
-        viewModel.adicionarPrato(prato)
+        val quantidade = contagemPratos.toIntOrNull() ?: 1
+        repeat(quantidade) {
+            viewModel.adicionarPrato(prato)
+        }
         onClickPratoItem("cardapio")
-        Log.d("PratoScreen", "Prato adicionado: ${listaPratosComanda.value.size} - $listaPratosComanda")
+        Log.d("PratoScreen", "Adicionados $quantidade pratos. Total: ${listaPratosComanda.value.size}")
     }
-
 
     var nome by remember { mutableStateOf("") }
     var descricao by remember { mutableStateOf("") }
@@ -94,8 +97,6 @@ fun PratoScreen(
     }
 
     Log.d("PratoScreen", "Prato: $listaPratosComanda")
-
-    var contagemPratos by remember { mutableStateOf("1") }
 
     Scaffold(
         topBar = { FotoTop(onClickPratoItem, onPratoItemVoltarClick) }
@@ -178,6 +179,7 @@ fun PratoScreen(
                             .size(60.dp)
                             .clickable {
                                 contagemPratos = (contagemPratos.toInt() + 1).toString()
+                                Log.d("PratoScreen", "Contagem: $contagemPratos")
                             }
                     )
                 }
@@ -235,7 +237,7 @@ fun PratoScreen(
 fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String) -> Unit) {
     Box {
         Image(
-            painter = painterResource(id = R.drawable.bro),
+            painter = painterResource(id = R.drawable.pizza),
             contentDescription = "Prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier

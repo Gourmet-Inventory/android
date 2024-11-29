@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteConsultaDto
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +19,7 @@ class SharedViewModel constructor() : ViewModel() {
         private set
 
     private val _estoque = MutableStateFlow(
-        EstoqueCriacao(
+        EstoqueCriacaoDto(
             lote = "",
             manipulado = false,
             nome = "",
@@ -34,9 +34,9 @@ class SharedViewModel constructor() : ViewModel() {
         )
     )
 
-    val estoque: StateFlow<EstoqueCriacao> = _estoque.asStateFlow()
+    val estoque: StateFlow<EstoqueCriacaoDto> = _estoque.asStateFlow()
 
-    fun atualizarEstoque(novoEstoque: EstoqueCriacao) {
+    fun atualizarEstoque(novoEstoque: EstoqueCriacaoDto) {
         viewModelScope.launch {
             _estoque.emit(
                 novoEstoque
@@ -46,9 +46,9 @@ class SharedViewModel constructor() : ViewModel() {
         Log.d("SharedViewModel", "Estoque atualizado: $novoEstoque")
     }
 
-    fun criarEstoqueAtualizado(estoque : EstoqueCriacao): EstoqueCriacao? {
+    fun criarEstoqueAtualizado(estoque : EstoqueCriacaoDto): EstoqueCriacaoDto? {
         return try {
-            EstoqueCriacao(
+            EstoqueCriacaoDto(
                 lote = estoque?.lote ?: "",
                 manipulado = estoque?.manipulado ?: false,
                 nome = estoque?.nome ?: "",
@@ -70,7 +70,7 @@ class SharedViewModel constructor() : ViewModel() {
     fun limparEstoque() {
         viewModelScope.launch {
             _estoque.emit(
-                EstoqueCriacao(
+                EstoqueCriacaoDto(
                     lote = "",
                     manipulado = false,
                     nome = "",

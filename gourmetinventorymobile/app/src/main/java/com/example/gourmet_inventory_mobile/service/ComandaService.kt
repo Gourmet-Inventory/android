@@ -1,16 +1,15 @@
 package com.example.gourmet_inventory_mobile.service
 
 import com.example.gourmet_inventory_mobile.model.Comanda
-import com.example.gourmet_inventory_mobile.model.estoque.Estoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacao
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ComandaService {
     @GET("/api/comandas")
@@ -24,14 +23,14 @@ interface ComandaService {
         @Body comanda: Comanda
     ): Response<Comanda>
 
-    @PUT("/api/comandas/{id}")
-    suspend fun updateComanda(
-        @Path("id") id: Long,
-        @Body updatedComanda: Comanda
-    ) : Response<Comanda>
+    @PATCH("/api/comandas/{comandaId}/status")
+    suspend fun updateComandaStatus(
+        @Path("comandaId") comandaId: Long,
+        @Query("status") status: String
+    ): Response<Comanda>
 
     @DELETE("/api/comandas/{id}")
     suspend fun deleteComanda(
         @Path("id") id: Long
-    ) : Response<Unit>
+    ): Response<Unit>
 }
