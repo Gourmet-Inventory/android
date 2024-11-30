@@ -432,7 +432,7 @@ fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> 
             ) {
                 Medidas.values().forEach { selectionOption ->
                     DropdownMenuItem(
-                        text = { Text(selectionOption.name) },
+                        text = { Text(selectionOption.nomeExibicao) },
                         onClick = {
                             onTipoMedidaChange(selectionOption.name)
                             expanded = false

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -91,7 +92,7 @@ fun PratoScreen(
         preco = prato.preco.toString()
         alergicosRestricoes = prato.alergicosRestricoes.toString()
         categoria = prato.categoria
-        receitaPrato = prato.receitaPrato.toString()
+//        receitaPrato = prato.receitaPrato.toString()
         foto = prato.foto ?: ""
         URLAssinada = prato.URLAssinada ?: ""
     }
@@ -128,6 +129,27 @@ fun PratoScreen(
                     text = descricao
                 )
 
+//                Row(
+//                    modifier = Modifier
+//                        .width(370.dp)
+//                        .padding(top = 20.dp),
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.Center
+//                ) {
+//                    Text(
+//                        fontSize = 22.sp,
+//                        modifier = Modifier
+//                            .width(330.dp),
+//                        text = "Adicionar Observação",
+//
+//                        )
+//                    Icon(
+//                        imageVector = Icons.Default.KeyboardArrowRight,
+//                        contentDescription = "Voltar",
+//                        modifier = Modifier.size(45.dp)
+//                    )
+//
+//                }
                 Row(
                     modifier = Modifier
                         .width(370.dp)
@@ -135,19 +157,12 @@ fun PratoScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        fontSize = 22.sp,
-                        modifier = Modifier
-                            .width(330.dp),
-                        text = "Adicionar Observação",
-
-                        )
+                    Spacer(modifier = Modifier.width(330.dp))
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowRight,
                         contentDescription = "Voltar",
                         modifier = Modifier.size(45.dp)
                     )
-
                 }
 
                 Row(

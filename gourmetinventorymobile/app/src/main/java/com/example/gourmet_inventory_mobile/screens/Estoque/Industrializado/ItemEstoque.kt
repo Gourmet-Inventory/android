@@ -102,7 +102,7 @@ fun ItemEstoqueScreen(
             marca = estoqueConsulta.marca
             localArmazenamento = estoqueConsulta.localArmazenamento
             quantidadeUnitaria = estoqueConsulta.unitario.toString()
-            tipoMedida = estoqueConsulta.tipoMedida.toString()
+            tipoMedida = estoqueConsulta.tipoMedida.nomeExibicao
             valorMedida = estoqueConsulta.valorMedida.toString()
             valorTotal = estoqueConsulta.valorTotal.toString()
             dataCadastro =
