@@ -467,14 +467,13 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable("itemEstoqueManipulado/{estoqueItem.idItem}") { backStackEntry ->
-                            val idItem = backStackEntry.arguments?.getString("estoqueItem.idItem")
-                                ?.toLongOrNull()
+                            val idItem = backStackEntry.arguments?.getString("estoqueItem.idItem")?.toLongOrNull()
 
                             idItem?.let { id ->
                                 val itemEstoque =
                                     (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
                                         ?.estoqueConsulta
-                                        ?.mapNotNull { it as? EstoqueManipuladoConsulta }
+                                        ?.mapNotNull { it as? EstoqueItemDiscriminator.Manipulado }
                                         ?.find { it.idItem == id }
 
                                 Log.d("MainActivity", "estoque: $itemEstoque")

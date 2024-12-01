@@ -54,12 +54,34 @@ class SharedViewModel constructor() : ViewModel() {
                 valorMedida = valorMedida,
             )
         )
+        Log.d("SharedViewModel", "Ingrediente adicionado: $receitaCriacao")
+    }
+
+    fun removerIngredienteCriacao(idItem: Long) {
+        this.receitaCriacao.removeIf { it.idItem == idItem }
+    }
+
+    fun adicionarIngredienteConsulta(idItem: Long, nome: String, tipoMedida: String, valorMedida: Double) {
+        receita.add(
+            IngredienteConsultaDto(
+                nome = nome,
+                tipoMedida = Medidas.valueOf(tipoMedida),
+                valorMedida = valorMedida,
+            )
+        )
+        Log.d("SharedViewModel", "Ingrediente adicionado: $receita")
+    }
+
+    fun removerIngredienteConsulta(receita: IngredienteConsultaDto) {
+        this.receita.remove(receita)
     }
 
     fun criarEstoqueManipuladoCriacao(estoque: EstoqueCriacaoDto): EstoqueManipuladoCriacao {
+        Log.d("SharedViewModel", "Criando EstoqueManipuladoCriacao")
+        Log.d("SharedViewModel", "Receita: ${receitaCriacao.size}")
         return EstoqueManipuladoCriacao(
             estoqueIngredienteCriacaoDto = estoque,
-            receita = receitaCriacao
+            receita = receitaCriacao.toList()
         )
     }
 

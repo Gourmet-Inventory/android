@@ -433,7 +433,7 @@ fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> 
                     DropdownMenuItem(
                         text = { Text(selectionOption.nomeExibicao) },
                         onClick = {
-                            onTipoMedidaChange(selectionOption.nomeExibicao)
+                            onTipoMedidaChange(selectionOption.toString())
                             expanded = false
                         }
                     )

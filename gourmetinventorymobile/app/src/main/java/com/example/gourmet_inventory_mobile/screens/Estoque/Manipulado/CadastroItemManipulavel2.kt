@@ -1,7 +1,8 @@
 package com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado
 
-import ItensReceita
+import ItensReceitaCadastro
 import SharedViewModel
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -38,6 +39,7 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,14 +55,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Medidas
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImplLocal
-import com.example.gourmet_inventory_mobile.screens.Estoque.AddButton
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.InputCadastro2
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.Passo2Criacao
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.TipoMedidaSelectBox
@@ -81,7 +81,7 @@ fun CadastroItemManipulavel2Screen(
     estoqueViewModel: EstoqueViewModel,
     sharedViewModel: SharedViewModel,
     onCadastroItemManipulavel2AnteriorClick: (EstoqueCriacaoDto?) -> Unit,
-    onCadastroItemManipulavelCadastrarClick: (EstoqueConsulta?) -> Unit,
+    onCadastroItemManipulavelCadastrarClick: (EstoqueManipuladoConsulta?) -> Unit,
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -116,8 +116,7 @@ fun CadastroItemManipulavel2Screen(
 
     val context = LocalContext.current
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    val viewModel = koinViewModel<EstoqueViewModel>()
-    val estoqueManipuladoState by viewModel.estoqueManipuladoCriacaoState.collectAsState()
+    val estoqueManipuladoState by estoqueViewModel.estoqueManipuladoCriacaoState.collectAsState()
     val estoqueConsultaState by estoqueViewModel.estoqueConsultaState.collectAsState()
 
     var valorMedidaErro by remember { mutableStateOf(false) }
@@ -125,12 +124,12 @@ fun CadastroItemManipulavel2Screen(
     var dataAvisoErro by remember { mutableStateOf(false) }
     var dataAvisoAnteriorErro by remember { mutableStateOf(false) }
 
-    fun criarEstoqueAtualizado(): EstoqueCriacaoDto? {
+    fun criarEstoqueAtualizado(manipulado: Boolean): EstoqueCriacaoDto? {
         Log.d("CadastroItem2Screen", "Criando EstoqueCriacao")
         return try {
             EstoqueCriacaoDto(
                 lote = estoque?.lote ?: "",
-                manipulado = estoque?.manipulado ?: false,
+                manipulado = manipulado ?: false,
                 nome = estoque?.nome ?: "",
                 categoria = estoque?.categoria ?: CategoriaEstoque.OUTROS,
                 tipoMedida = Medidas.valueOf(tipoMedida),
@@ -327,7 +326,7 @@ fun CadastroItemManipulavel2Screen(
                         if (estoqueConsultaState is EstoqueConsultaState.Loading) {
                             CircularProgressIndicator(color = White)
                         } else {
-                            Text(text = "Adicionar Ingrediente", color = Black)
+                            Text(text = "Adicionar Ingrediente", color = Black, fontFamily = JostBold)
                         }
                     }
                 }
@@ -340,7 +339,7 @@ fun CadastroItemManipulavel2Screen(
                         .height(170.dp)
                         .border(1.dp, color = Color.Black)
                 ) {
-                    ItensReceita(receitas = sharedViewModel.receita)
+                    ItensReceitaCadastro(receitas = sharedViewModel.receita, sharedViewModel = sharedViewModel)
                 }
 
                 Column(
@@ -384,13 +383,13 @@ fun CadastroItemManipulavel2Screen(
                             }
 
                             if (!valorMedidaErro && !dataCadastroErro && !dataAvisoErro && !dataAvisoAnteriorErro) {
-                                criarEstoqueAtualizado()?.let { novoEstoque ->
+                                criarEstoqueAtualizado(true)?.let { novoEstoque ->
                                     Log.d(
                                         "CadastroItemManipulavel2Screen",
                                         "Cadastrando Estoque: $novoEstoque"
                                     )
                                     sharedViewModel.atualizarEstoque(novoEstoque)
-                                    viewModel.cadastrarEstoqueManipulado(context, novoEstoque)
+                                    estoqueViewModel.cadastrarEstoqueManipulado(context, novoEstoque, sharedViewModel)
 //                                    viewModel.cadastrarEstoque(context, novoEstoque)
                                 }
                             }
@@ -408,29 +407,29 @@ fun CadastroItemManipulavel2Screen(
                         }
                     }
 
-//                    LaunchedEffect(estoqueState) {
-//                        if (estoqueState is EstoqueCriacaoState.Success) {
-//                            Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
-//                                .show()
-//                            sharedViewModel.limparEstoque()
-//                            onCadastroItemManipulavelCadastrarClick((estoqueState as EstoqueCriacaoState.Success).estoqueConsulta)
-//                        }
-//                    }
-//
-//                    LaunchedEffect(estoqueState) {
-//                        if (estoqueState is EstoqueCriacaoState.Error) {
-//                            Log.e(
-//                                "CadastroItemManipulavel2Screen",
-//                                "ERRO: " + (estoqueState as EstoqueCriacaoState.Error).message
-//                            )
-//                            Toast.makeText(context, "Erro ao cadastrar item", Toast.LENGTH_SHORT).show()
-//                        }
-//                    }
+                    LaunchedEffect(estoqueManipuladoState) {
+                        if (estoqueManipuladoState is EstoqueManipuladoCriacaoState.Success) {
+                            Toast.makeText(context, "Cadastro efetuado com sucesso!", Toast.LENGTH_SHORT)
+                                .show()
+                            sharedViewModel.limparEstoque()
+                            onCadastroItemManipulavelCadastrarClick((estoqueManipuladoState as EstoqueManipuladoCriacaoState.Success).estoqueConsulta)
+                        }
+                    }
+
+                    LaunchedEffect(estoqueManipuladoState) {
+                        if (estoqueManipuladoState is EstoqueManipuladoCriacaoState.Error) {
+                            Log.e(
+                                "CadastroItemManipulavel2Screen",
+                                "ERRO: " + (estoqueManipuladoState as EstoqueManipuladoCriacaoState.Error).message
+                            )
+                            Toast.makeText(context, "Erro ao cadastrar item", Toast.LENGTH_SHORT).show()
+                        }
+                    }
 
                     if (showDialog) {
                         AddReceita(
                             sharedViewModel = sharedViewModel,
-                            onListaEstoqueClick = { showDialog = false },
+                            context = context,
                             showDialog = showDialog,
                             onDismiss = { showDialog = false },
                             estoqueConsultaState = estoqueConsultaState
@@ -447,7 +446,7 @@ fun CadastroItemManipulavel2Screen(
 fun AddReceita(
     sharedViewModel: SharedViewModel,
     estoqueConsultaState: EstoqueConsultaState,
-    onListaEstoqueClick: (String) -> Unit,
+    context: Context,
     showDialog: Boolean,
     onDismiss: () -> Unit
 ) {
@@ -467,6 +466,7 @@ fun AddReceita(
                         modifier = Modifier
                             .padding(bottom = 16.dp)
                             .align(Alignment.CenterVertically),
+                        fontFamily = JostBold,
                     )
                 }
             },
@@ -552,15 +552,31 @@ fun AddReceita(
 
                     SmallFloatingActionButton(
                         onClick = {
-                            sharedViewModel.adicionarIngredienteCriacao(
-                                idItem = ingredientes.find { it.nome == ingrediente }?.idItem ?: 0L,
-                                tipoMedida = tipoMedida,
-                                valorMedida = valor.toDoubleOrNull() ?: 0.0
-                            )
+                            if (ingredientes.isNotEmpty() && tipoMedida.isNotEmpty() && valor.isNotEmpty()) {
+                                sharedViewModel.adicionarIngredienteConsulta(
+                                    idItem = ingredientes.find { it.nome == ingrediente }?.idItem
+                                        ?: 0L,
+                                    nome = ingrediente,
+                                    tipoMedida = tipoMedida,
+                                    valorMedida = valor.toDoubleOrNull() ?: 0.0
+                                )
+
+                                sharedViewModel.adicionarIngredienteCriacao(
+                                    idItem = ingredientes.find { it.nome == ingrediente }?.idItem
+                                        ?: 0L,
+                                    tipoMedida = tipoMedida,
+                                    valorMedida = valor.toDoubleOrNull() ?: 0.0
+                                )
+                                onDismiss()
+                            } else {
+                                Toast.makeText(context, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
+                            }
                         },
                         containerColor = GI_Laranja,
                         contentColor = White,
-                        modifier = Modifier.align(Alignment.CenterHorizontally).width(80.dp)
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .width(80.dp)
                     ) {
                         Icon(Icons.Filled.Add, contentDescription = "Adicionar")
                     }
