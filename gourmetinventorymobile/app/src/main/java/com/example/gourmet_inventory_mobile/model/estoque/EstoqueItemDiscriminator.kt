@@ -40,8 +40,8 @@ sealed class EstoqueItemDiscriminator{
         override val manipulado: Boolean,
         override val nome: String,
         val lote: String,
-        val categoria: String, // CategoriaEstoque (enum)
-        val tipoMedida: String, // Medidas (enum)
+        val categoria: CategoriaEstoque, // CategoriaEstoque (enum)
+        val tipoMedida: Medidas, // Medidas (enum)
         override val unitario: Int,
         val valorMedida: Double,
         val valorTotal: Double,

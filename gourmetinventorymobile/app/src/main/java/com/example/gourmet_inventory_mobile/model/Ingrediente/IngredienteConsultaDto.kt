@@ -1,7 +1,9 @@
 package com.example.gourmet_inventory_mobile.model.Ingrediente
 
 import com.example.gourmet_inventory_mobile.model.Medidas
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class IngredienteConsultaDto(
     val nome: String,
     val tipoMedida: Medidas,

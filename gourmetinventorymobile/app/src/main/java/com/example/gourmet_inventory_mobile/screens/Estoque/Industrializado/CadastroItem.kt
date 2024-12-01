@@ -44,10 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
 

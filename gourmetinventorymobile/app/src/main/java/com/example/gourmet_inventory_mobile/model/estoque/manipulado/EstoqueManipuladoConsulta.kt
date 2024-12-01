@@ -1,4 +1,4 @@
-package com.example.gourmet_inventory_mobile.model.estoque
+package com.example.gourmet_inventory_mobile.model.estoque.manipulado
 
 import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
 import java.time.LocalDate

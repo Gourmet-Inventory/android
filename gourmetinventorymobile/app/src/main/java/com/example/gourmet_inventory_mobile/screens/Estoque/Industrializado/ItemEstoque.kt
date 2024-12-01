@@ -30,9 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
+import com.example.gourmet_inventory_mobile.model.Medidas
 
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
@@ -102,7 +101,7 @@ fun ItemEstoqueScreen(
             marca = estoqueConsulta.marca
             localArmazenamento = estoqueConsulta.localArmazenamento
             quantidadeUnitaria = estoqueConsulta.unitario.toString()
-            tipoMedida = estoqueConsulta.tipoMedida.toString()
+            tipoMedida = estoqueConsulta.tipoMedida.nomeExibicao
             valorMedida = estoqueConsulta.valorMedida.toString()
             valorTotal = estoqueConsulta.valorTotal.toString()
             dataCadastro =

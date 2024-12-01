@@ -1,8 +1,10 @@
 package com.example.gourmet_inventory_mobile.service
 
-import com.example.gourmet_inventory_mobile.model.estoque.Estoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueIngredienteAtualizacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -25,7 +27,7 @@ interface EstoqueService {
     @PUT("/api/estoque-ingrediente/{id}")
     suspend fun updateEstoque(
         @Path("id") idEstoque: Long,
-        @Body estoque: Estoque
+        @Body estoque: EstoqueIngredienteAtualizacaoDto
     ) : Response<EstoqueConsulta>
 
     @DELETE("/api/estoque-ingrediente/{id}")
@@ -36,6 +38,6 @@ interface EstoqueService {
     @POST("/api/estoque-ingrediente/manipulado/{idEmpresa}")
     suspend fun createEstoqueManipulado(
         @Path("idEmpresa") idEmpresa: Long,
-        @Body estoque: EstoqueCriacaoDto
-    ): Response<EstoqueConsulta>
+        @Body estoque: EstoqueManipuladoCriacao
+    ): Response<EstoqueManipuladoConsulta>
 }
