@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
@@ -51,9 +50,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
@@ -434,7 +433,7 @@ fun TipoMedidaSelectBox(selectedOption: String, onTipoMedidaChange: (String) -> 
                     DropdownMenuItem(
                         text = { Text(selectionOption.nomeExibicao) },
                         onClick = {
-                            onTipoMedidaChange(selectionOption.name)
+                            onTipoMedidaChange(selectionOption.nomeExibicao)
                             expanded = false
                         }
                     )

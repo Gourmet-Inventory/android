@@ -1,16 +1,20 @@
 package com.example.gourmet_inventory_mobile.viewmodel
 
+import SharedViewModel
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
+import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepository
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +29,12 @@ sealed class EstoqueCriacaoState {
     object Loading : EstoqueCriacaoState()
     data class Success(val estoqueConsulta: EstoqueConsulta) : EstoqueCriacaoState()
     data class Error(val message: String) : EstoqueCriacaoState()
+}
+sealed class EstoqueManipuladoCriacaoState {
+    object Idle : EstoqueManipuladoCriacaoState()
+    object Loading : EstoqueManipuladoCriacaoState()
+    data class Success(val estoqueConsulta: EstoqueManipuladoConsulta) : EstoqueManipuladoCriacaoState()
+    data class Error(val message: String) : EstoqueManipuladoCriacaoState()
 }
 sealed class EstoqueConsultaState {
     object Idle : EstoqueConsultaState()
@@ -89,10 +99,17 @@ fun parseEstoqueItem(data: Map<String, Any>): EstoqueItemDiscriminator {
 
 class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewModel() {
 
+    val sharedViewModel = SharedViewModel()
+
     private val _estoqueConsultaState = MutableStateFlow<EstoqueConsultaState>(EstoqueConsultaState.Idle)
     val estoqueConsultaState: StateFlow<EstoqueConsultaState> = _estoqueConsultaState
+
     private val _estoqueCriacaoState = MutableStateFlow<EstoqueCriacaoState>(EstoqueCriacaoState.Idle)
     val estoqueCriacaoState: StateFlow<EstoqueCriacaoState> = _estoqueCriacaoState
+
+    private val _estoqueManipuladoCriacaoState = MutableStateFlow<EstoqueManipuladoCriacaoState>(EstoqueManipuladoCriacaoState.Idle)
+    val estoqueManipuladoCriacaoState: StateFlow<EstoqueManipuladoCriacaoState> = _estoqueManipuladoCriacaoState
+
     var data = mutableStateListOf<Any>()
         private set
     private val _deletarEstoqueState = MutableStateFlow<EstoqueDelecaoState>(EstoqueDelecaoState.Idle)
@@ -122,6 +139,48 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
                         "Response é bem sucedido e corpo da resposta não é nulo"
                     )
                     _estoqueCriacaoState.value = EstoqueCriacaoState.Success(response.body()!!)
+                } else {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response não é bem sucedido ou corpo da resposta é nulo: ${response}"
+                    )
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao cadastrar estoque")
+                }
+            } catch (e: Exception) {
+                Log.d("EstoqueViewModel", "Erro ao cadastrar estoque: ${e.message}")
+                _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao cadastrar estoque")
+            }
+        }
+    }
+
+    fun cadastrarEstoqueManipulado(context: Context, estoqueCriacaoDto: EstoqueCriacaoDto) {
+        _estoqueManipuladoCriacaoState.value = EstoqueManipuladoCriacaoState.Loading
+
+        viewModelScope.launch {
+            val user = DataStoreUtils(context).obterUsuario()?.first()
+            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacaoDto")
+            val idEmpresa = user?.empresa?.idEmpresa
+            Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")
+
+            val estoqueManipuladoCriacao = sharedViewModel.criarEstoqueManipuladoCriacao(estoqueCriacaoDto)
+
+            try {
+                val response = idEmpresa?.let {
+                    estoqueRepository.createEstoqueManipulado(it, estoqueManipuladoCriacao)
+                }
+
+                if (response == null) {
+                    Log.d("EstoqueViewModel", "Response é nulo")
+                    _estoqueManipuladoCriacaoState.value = EstoqueManipuladoCriacaoState.Error("Erro ao cadastrar estoque")
+                    return@launch
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response é bem sucedido e corpo da resposta não é nulo"
+                    )
+                    _estoqueManipuladoCriacaoState.value = EstoqueManipuladoCriacaoState.Success(response.body()!!)
+//                    _estoqueCriacaoState.value = EstoqueCriacaoState.Success(response.body()!!)
                 } else {
                     Log.d(
                         "EstoqueViewModel",
@@ -186,7 +245,8 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
 
             try {
                 val response = idEmpresa?.let {
-                    estoqueCriacaoDto.toEstoque(user.empresa).let { estoque ->
+//                    estoqueCriacaoDto.toEstoque(user.empresa).let { estoque ->
+                    estoqueCriacaoDto.toEstoqueAtualizacao().let { estoque ->
                         estoqueRepository.updateEstoque(idEstoque, estoque)
                     }
                 }

@@ -431,11 +431,6 @@ fun ItemListaEstoque(
                         onListaEstoqueClick("itemEstoque/${estoqueItem.idItem}")
                     }
                 }
-//                if (estoqueItem.manipulado) {
-//                    onListaEstoqueClick("itemEstoqueManipulado/${estoqueItem.idItem}")
-//                } else {
-//                    onListaEstoqueClick("itemEstoque/${estoqueItem.idItem}")
-//                }
             }),
         verticalAlignment = Alignment.CenterVertically
     ) {

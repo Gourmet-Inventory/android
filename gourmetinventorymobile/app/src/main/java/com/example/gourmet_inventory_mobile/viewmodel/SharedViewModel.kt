@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteConsultaDto
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +17,11 @@ import java.time.format.DateTimeFormatter
 
 class SharedViewModel constructor() : ViewModel() {
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+
     var receita = mutableStateListOf<IngredienteConsultaDto>()
+        private set
+
+    var receitaCriacao = mutableStateListOf<IngredienteCriacaoDto>()
         private set
 
     private val _estoque = MutableStateFlow(
@@ -33,8 +39,29 @@ class SharedViewModel constructor() : ViewModel() {
             marca = ""
         )
     )
-
     val estoque: StateFlow<EstoqueCriacaoDto> = _estoque.asStateFlow()
+
+//    val estoqueManipuladoCriacao = EstoqueManipuladoCriacao(
+//        estoqueIngredienteCriacaoDto = estoque.value,
+//        receita = receitaCriacao
+//    )
+
+    fun adicionarIngredienteCriacao(tipoMedida: String, valorMedida: Double, idItem: Long) {
+        receitaCriacao.add(
+            IngredienteCriacaoDto(
+                idItem = idItem,
+                tipoMedida = Medidas.valueOf(tipoMedida),
+                valorMedida = valorMedida,
+            )
+        )
+    }
+
+    fun criarEstoqueManipuladoCriacao(estoque: EstoqueCriacaoDto): EstoqueManipuladoCriacao {
+        return EstoqueManipuladoCriacao(
+            estoqueIngredienteCriacaoDto = estoque,
+            receita = receitaCriacao
+        )
+    }
 
     fun atualizarEstoque(novoEstoque: EstoqueCriacaoDto) {
         viewModelScope.launch {

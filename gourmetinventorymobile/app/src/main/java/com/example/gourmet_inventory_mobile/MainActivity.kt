@@ -23,9 +23,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gourmet_inventory_mobile.DI.appModule
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueManipuladoConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.Cardapio.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.Comanda.ComandaListScreen
@@ -364,6 +363,7 @@ class MainActivity : ComponentActivity() {
 
                         composable("cadastrarItemEstoqueManipulado2") {
                             CadastroItemManipulavel2Screen(
+                                estoqueViewModel = viewModelEstoque,
                                 sharedViewModel = sharedViewModel,
                                 onCadastroItemManipulavel2AnteriorClick = {
                                     navController.popBackStack()

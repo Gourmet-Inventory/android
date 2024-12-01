@@ -1,5 +1,6 @@
 import android.widget.Toast
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -8,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -35,8 +36,7 @@ import androidx.compose.ui.unit.Dp
 import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteConsultaDto
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueManipuladoConsulta
-import com.example.gourmet_inventory_mobile.screens.Estoque.ItemListaEstoque
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
@@ -112,7 +112,8 @@ fun ItemEstoqueManipuladoScreen(
     ) { padding ->
         Surface(
             color = Color.White,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(16.dp)
         ) {
             val context = LocalContext.current
@@ -154,7 +155,13 @@ fun ItemEstoqueManipuladoScreen(
                             topPadding = 22.dp
                         )
                     }
-                    item { InfoItemManipulado("Quantidade Unitária:", quantidadeUnitaria, topPadding = 22.dp) }
+                    item {
+                        InfoItemManipulado(
+                            "Quantidade Unitária:",
+                            quantidadeUnitaria,
+                            topPadding = 22.dp
+                        )
+                    }
                     item { InfoItemManipulado("Tipo Medida:", tipoMedida, topPadding = 22.dp) }
                     item { InfoItemManipulado("Valor Medida:", valorMedida, topPadding = 22.dp) }
                     item { InfoItemManipulado("Valor Total:", valorTotal, topPadding = 22.dp) }
@@ -292,7 +299,13 @@ fun ItemReceita(receita: IngredienteConsultaDto) {
             text = "${receita.valorMedida} ${receita.tipoMedida} - ${receita.nome}",
             fontSize = 19.sp,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Clip,
+            modifier = Modifier.horizontalScroll(rememberScrollState())
+        )
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Remover",
+            modifier = Modifier.size(30.dp)
         )
     }
 }
