@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
@@ -54,6 +55,7 @@ import com.example.gourmet_inventory_mobile.ui.theme.White
 import com.example.gourmet_inventory_mobile.utils.BottomBarGerente
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
+import com.example.gourmet_inventory_mobile.viewmodel.ItemDelecaoState
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
@@ -141,6 +143,8 @@ fun ListaComprasScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             var texto by remember { mutableStateOf("") }
+
+            val listaComprasState by  viewModel.deletarItemComprasState.collectAsState()
 
             val listaCompras = viewModel.data
             val isLoading = viewModel.isLoading
@@ -285,6 +289,15 @@ fun ListaComprasScreen(
                             }
                         )
                     }
+                }
+            }
+            LaunchedEffect(listaComprasState) {
+                if (listaComprasState is ItemDelecaoState.Success) {
+                    viewModel.getListaCompras(context)
+                    viewModel.setItemDelecaoState(ItemDelecaoState.Idle)
+                }
+                if (listaComprasState is ItemDelecaoState.Error) {
+                    Toast.makeText(context, "Erro ao deletar item", Toast.LENGTH_SHORT).show()
                 }
             }
         }

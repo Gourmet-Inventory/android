@@ -12,6 +12,7 @@ import com.example.gourmet_inventory_mobile.model.ItemListaCompras
 import com.example.gourmet_inventory_mobile.repository.ListaCompras.ListaComprasRepository
 import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -31,6 +32,7 @@ class ListaComprasViewModel(private val listaComprasRepository: ListaComprasRepo
 
     private val _deletarItemComprasState = MutableStateFlow<ItemDelecaoState>(ItemDelecaoState.Idle)
 
+    val deletarItemComprasState: StateFlow<ItemDelecaoState> = _deletarItemComprasState
 
     fun getListaCompras(context: Context) {
 
@@ -70,6 +72,10 @@ class ListaComprasViewModel(private val listaComprasRepository: ListaComprasRepo
         }
     }
 
+    fun setItemDelecaoState(state: ItemDelecaoState) {
+        _deletarItemComprasState.value = state
+    }
+
     fun deletarItemListaCompras(idItem: Long) {
 
         viewModelScope.launch {
@@ -79,6 +85,7 @@ class ListaComprasViewModel(private val listaComprasRepository: ListaComprasRepo
                 if (response.isSuccessful) {
                     _deletarItemComprasState.value = ItemDelecaoState.Success
                     Log.d("ListaComprasViewModel", "Item deletado com sucesso: $idItem")
+
                 } else {
                     // Se a resposta não for bem-sucedida, atualiza o estado para Error
                     _deletarItemComprasState.value = ItemDelecaoState.Error("Erro ao deletar item")
