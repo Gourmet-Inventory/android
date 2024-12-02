@@ -46,7 +46,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.ui.theme.Black
@@ -349,6 +349,7 @@ fun Editar2Screen(
                             Log.d("Editar2Screen", "ESTOQUE: $novoEstoque")
                             sharedViewModel.estoque.value?.let {
                                 Log.d("Editar2Screen", "ESTOQUE PARA REQUISICAO: $it")
+                                sharedViewModel
                                 viewModel.atualizarEstoque(context, idItem ,it)
                             }
                         }

@@ -215,14 +215,6 @@ class ComandaViewModel(private val comandaRepository: ComandaRepository) : ViewM
 
     fun updateComandaStatus(id: Long, status: String, context: Context) {
         _atualizarComandaState.value = ComandaAtualizacaoState.Loading
-        if (status == "Finalizada") {
-            Toast.makeText(
-                context,
-                "Comanda já finalizada",
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
 
         val resouce = context.resources
         val statusAtt =

@@ -3,8 +3,11 @@ package com.example.gourmet_inventory_mobile.repository.estoque
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.estoque.Estoque
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueConsulta
-import com.example.gourmet_inventory_mobile.model.estoque.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueIngredienteAtualizacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import retrofit2.Response
 import java.time.LocalDate
 
@@ -39,14 +42,14 @@ class EstoqueRepositoryImplLocal(): EstoqueRepository {
 
     override suspend fun createEstoqueManipulado(
         idEmpresa: Long,
-        estoque: EstoqueCriacaoDto
-    ): Response<EstoqueConsulta> {
+        estoque: EstoqueManipuladoCriacao
+    ): Response<EstoqueManipuladoConsulta> {
         TODO("Not yet implemented")
     }
 
     override suspend fun updateEstoque(
         idEmpresa: Long,
-        estoque: Estoque
+        estoque: EstoqueIngredienteAtualizacaoDto
     ): Response<EstoqueConsulta> {
         TODO("Not yet implemented")
     }

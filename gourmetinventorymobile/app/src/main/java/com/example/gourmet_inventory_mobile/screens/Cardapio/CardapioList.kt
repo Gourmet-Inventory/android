@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -44,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
 import com.example.gourmet_inventory_mobile.model.Prato
@@ -299,11 +301,15 @@ fun ItemPrato(
             )
         }
         Image(
-            painter = painterResource(id = R.drawable.pizza),
+            painter = rememberAsyncImagePainter(
+                model = prato.foto, // Imagem mockada
+                placeholder = painterResource(R.drawable.landscape_placeholder_svgrepo_com), // Placeholder enquanto carrega
+                error = painterResource(R.drawable.landscape_placeholder_svgrepo_com) // Imagem de erro se falhar
+            ),
             contentDescription = "Imagem do prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(150.dp)
+                .size(150.dp) // Ajuste o tamanho conforme necessário
         )
     }
     Divider(

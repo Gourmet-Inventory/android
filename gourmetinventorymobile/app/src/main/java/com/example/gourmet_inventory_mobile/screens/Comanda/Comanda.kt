@@ -269,12 +269,20 @@ fun ComandaViewScreen(
                     Button(
                         onClick = {
                             if (comanda != null) {
-                                viewModel.updateComandaStatus(comanda!!.id!!, comanda.status, context)
-                                onComandaViewClick("comandaList")
-                                Toast.makeText(
-                                    context,
-                                    "Comanda atualizada",
-                                    Toast.LENGTH_SHORT).show()
+                                if (comanda.status == "Finalizada") {
+                                    Toast.makeText(
+                                        context,
+                                        "Comanda já finalizada",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    viewModel.updateComandaStatus(comanda!!.id!!, comanda.status, context)
+                                    onComandaViewClick("comandaList")
+                                    Toast.makeText(
+                                        context,
+                                        "Comanda atualizada",
+                                        Toast.LENGTH_SHORT).show()
+                                }
                             } else {
                                 showDialog = true
                             }

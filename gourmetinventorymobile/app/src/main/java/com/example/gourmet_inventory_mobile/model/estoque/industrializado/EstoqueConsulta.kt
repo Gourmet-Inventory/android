@@ -1,7 +1,6 @@
-package com.example.gourmet_inventory_mobile.model.estoque
+package com.example.gourmet_inventory_mobile.model.estoque.industrializado
 
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
-import com.example.gourmet_inventory_mobile.model.Empresa
 import com.example.gourmet_inventory_mobile.model.Medidas
 import kotlinx.android.parcel.Parcelize
 import kotlinx.serialization.Contextual
@@ -10,23 +9,25 @@ import java.time.LocalDate
 
 @Serializable
 @Parcelize
-data class EstoqueCriacaoDto(
-    var lote: String,
-    var manipulado: Boolean,
-    var nome: String,
-    var categoria: CategoriaEstoque,
-    var tipoMedida: Medidas,
-    var unitario: Int,
-    var valorMedida: Double,
-    var localArmazenamento: String,
+data class EstoqueConsulta (
+    val idItem: Long,
+    val manipulado: Boolean,
+    val lote : String,
+    val nome: String,
+    val categoria: CategoriaEstoque,
+    val tipoMedida: Medidas,
+    val unitario: Int,
+    val valorMedida: Double,
+    val valorTotal: Double,
+    val localArmazenamento: String,
     @Contextual
-    var dtaCadastro: LocalDate,
+    val dtaCadastro: LocalDate,
     @Contextual
-    var dtaAviso: LocalDate,
-    var marca: String
+    val dtaAviso: LocalDate,
+    val marca: String
 ) : java.io.Serializable , android.os.Parcelable {
-    fun toEstoque(empresa: Empresa): Estoque {
-        return Estoque(
+    fun toEstoqueCriacao(): EstoqueCriacaoDto {
+        return EstoqueCriacaoDto(
             lote = this.lote,
             nome = this.nome,
             categoria = this.categoria,
@@ -37,8 +38,7 @@ data class EstoqueCriacaoDto(
             dtaCadastro = this.dtaCadastro,
             dtaAviso = this.dtaAviso,
             marca = this.marca,
-            manipulado = this.manipulado,
-            empresa = empresa
+            manipulado = this.manipulado
         )
     }
 }
