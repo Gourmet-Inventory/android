@@ -87,11 +87,19 @@ fun parseEstoqueItem(data: Map<String, Any>): EstoqueItemDiscriminator {
                 ?: throw IllegalArgumentException("Campo 'nome' ausente ou inválido."),
             lote = data["lote"] as? String
                 ?: throw IllegalArgumentException("Campo 'lote' ausente ou inválido."),
-            categoria = CategoriaEstoque.valueOf(
+//            categoria = CategoriaEstoque.valueOf(
+//                data["categoria"] as? String
+//                    ?: throw IllegalArgumentException("Campo 'categoria' ausente ou inválido.")
+//            ),
+//            tipoMedida = Medidas.valueOf(
+//                data["tipoMedida"] as? String
+//                    ?: throw IllegalArgumentException("Campo 'tipoMedida' ausente ou inválido.")
+//            ),
+            categoria = CategoriaEstoque.fromDisplayName(
                 data["categoria"] as? String
                     ?: throw IllegalArgumentException("Campo 'categoria' ausente ou inválido.")
             ),
-            tipoMedida = Medidas.valueOf(
+            tipoMedida = Medidas.fromDisplayName(
                 data["tipoMedida"] as? String
                     ?: throw IllegalArgumentException("Campo 'tipoMedida' ausente ou inválido.")
             ),
@@ -119,11 +127,11 @@ fun parseEstoqueItem(data: Map<String, Any>): EstoqueItemDiscriminator {
                 ?: throw IllegalArgumentException("Campo 'nome' ausente ou inválido."),
             lote = data["lote"] as? String
                 ?: throw IllegalArgumentException("Campo 'lote' ausente ou inválido."),
-            categoria = CategoriaEstoque.valueOf(
+            categoria = CategoriaEstoque.fromDisplayName(
                 data["categoria"] as? String
                     ?: throw IllegalArgumentException("Campo 'categoria' ausente ou inválido.")
             ),
-            tipoMedida = Medidas.valueOf(
+            tipoMedida = Medidas.fromDisplayName(
                 data["tipoMedida"] as? String
                     ?: throw IllegalArgumentException("Campo 'tipoMedida' ausente ou inválido.")
             ),

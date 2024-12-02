@@ -1,8 +1,11 @@
 package com.example.gourmet_inventory_mobile.model.estoque.manipulado
 
 import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
+@Serializable
 data class EstoqueManipuladoConsulta(
     val idItem: Long,
     val manipulado: Boolean,
@@ -14,7 +17,9 @@ data class EstoqueManipuladoConsulta(
     val valorMedida: Double,
     val valorTotal: Double,
     val localArmazenamento: String,
+    @Contextual
     val dtaCadastro: LocalDate,
+    @Contextual
     val dtaAviso: LocalDate,
     val descricao: String,
     val receita: ReceitaConsultaDto,

@@ -280,7 +280,7 @@ fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String)
     Box {
         Image(
             painter = rememberAsyncImagePainter(
-                model = prato.foto, // Imagem mockada
+                model = prato.URLAssinada, // Imagem mockada
                 placeholder = painterResource(R.drawable.landscape_placeholder_svgrepo_com), // Placeholder enquanto carrega
                 error = painterResource(R.drawable.landscape_placeholder_svgrepo_com) // Imagem de erro se falhar
             ),

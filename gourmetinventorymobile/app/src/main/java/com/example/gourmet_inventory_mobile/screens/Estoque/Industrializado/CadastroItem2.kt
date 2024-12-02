@@ -297,7 +297,7 @@ fun CadastroItem2Screen(
                         unitario = qtdUnitaria.toInt(),
                         valorMedida = valorMedida.toDouble(),
                         dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
-                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
                     )
                     sharedViewModel.atualizarEstoque(novoEstoque)
                     onCadastroItem2AnteriorClick(estoque)
@@ -576,7 +576,7 @@ fun InputCadastro2(
 
 @Composable
 fun Passo2Criacao(
-    onCadastroItemAnteriorClick: () -> Unit = {}
+    onCadastroItemAnteriorClick: () -> Unit
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
 

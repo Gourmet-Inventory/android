@@ -9,13 +9,13 @@ import java.time.LocalDate
 
 @Serializable
 @Parcelize
-data class EstoqueConsulta (
+data class EstoqueConsulta(
     val idItem: Long,
     val manipulado: Boolean,
-    val lote : String,
+    val lote: String,
     val nome: String,
-    val categoria: CategoriaEstoque,
-    val tipoMedida: Medidas,
+    val categoria: String,
+    val tipoMedida: String,
     val unitario: Int,
     val valorMedida: Double,
     val valorTotal: Double,
@@ -25,13 +25,13 @@ data class EstoqueConsulta (
     @Contextual
     val dtaAviso: LocalDate,
     val marca: String
-) : java.io.Serializable , android.os.Parcelable {
+) : java.io.Serializable, android.os.Parcelable {
     fun toEstoqueCriacao(): EstoqueCriacaoDto {
         return EstoqueCriacaoDto(
             lote = this.lote,
             nome = this.nome,
-            categoria = this.categoria,
-            tipoMedida = this.tipoMedida,
+            categoria = parseCategoria(this.categoria),
+            tipoMedida = parseMedida(this.tipoMedida),
             unitario = this.unitario,
             valorMedida = this.valorMedida,
             localArmazenamento = this.localArmazenamento,
@@ -41,4 +41,15 @@ data class EstoqueConsulta (
             manipulado = this.manipulado
         )
     }
+}
+fun parseCategoria(categoria: String): CategoriaEstoque {
+    return CategoriaEstoque.values().find {
+        it.nomeExibicao.equals(categoria, ignoreCase = true)
+    } ?: throw IllegalArgumentException("Categoria inválida: $categoria")
+}
+
+fun parseMedida(tipoMedida: String): Medidas {
+    return Medidas.values().find {
+        it.name.equals(tipoMedida, ignoreCase = true)
+    } ?: throw IllegalArgumentException("Medida inválida: $tipoMedida")
 }
