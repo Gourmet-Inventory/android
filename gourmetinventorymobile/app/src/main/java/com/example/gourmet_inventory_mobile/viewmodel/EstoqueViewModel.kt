@@ -62,7 +62,7 @@ fun parseEstoqueItem(data: Map<String, Any>): EstoqueItemDiscriminator {
             IngredienteConsultaDto(
                 nome = ingredienteMap["nome"] as? String
                     ?: throw IllegalArgumentException("Ingrediente 'nome' ausente ou inválido."),
-                tipoMedida = Medidas.valueOf(
+                tipoMedida = Medidas.fromDisplayName(
                     ingredienteMap["tipoMedida"] as? String
                         ?: throw IllegalArgumentException("Ingrediente 'tipoMedida' ausente ou inválido.")
                 ),

@@ -245,7 +245,7 @@ fun ItensCardapio(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 55.dp)
                 ) {
                     pratos.forEach { prato ->
                         ItemPrato(
@@ -331,10 +331,10 @@ fun ItemPratoPreview(modifier: Modifier = Modifier) {
             foto = "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.istockphoto.com%2Fbr%2Fvetor%2Fprato-de-comida-gm1162925797-319366292&psig=AOvVaw3Q6Z",
             alergicosRestricoes = listOf("Alergico 1", "Alergico 2"),
             categoria = "Categoria do prato",
-            receitaPrato = listOf(
-                Ingrediente(nome = "Ingrediente 1", tipoMedida = "Unidade", valorMedida = 1.0, exibirConca = "1 Unidade"),
-                Ingrediente(nome = "Ingrediente 2", tipoMedida = "Gramas", valorMedida = 100.0, exibirConca = "100 Gramas")
-            ),
+//            receitaPrato = listOf(
+//                Ingrediente(nome = "Ingrediente 1", tipoMedida = "Unidade", valorMedida = 1.0, exibirConca = "1 Unidade"),
+//                Ingrediente(nome = "Ingrediente 2", tipoMedida = "Gramas", valorMedida = 100.0, exibirConca = "100 Gramas")
+//            ),
             URLAssinada = null // Or provide a URL if available
         ),
         onCardapioClick = {}

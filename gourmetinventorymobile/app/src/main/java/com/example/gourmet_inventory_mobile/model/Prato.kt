@@ -14,7 +14,7 @@ data class Prato(
     val preco: Double,
     val alergicosRestricoes: List<String>,
     val categoria: String,
-    val receitaPrato: List<Ingrediente>,
+//    val receitaPrato: List<Ingrediente>,
     val foto: String?,
     val URLAssinada: String?
 ): Parcelable
