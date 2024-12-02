@@ -6,4 +6,6 @@ import retrofit2.Response
 
 interface ListaComprasRepository {
     suspend fun obterListaCompras(idEmpresa: Long): Response<List<ItemListaCompras>>
+
+    suspend fun deleteItemListaCompras(id: Long): Response<Unit>
 }

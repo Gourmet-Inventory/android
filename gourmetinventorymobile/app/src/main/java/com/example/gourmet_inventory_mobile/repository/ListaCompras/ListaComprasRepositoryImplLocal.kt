@@ -16,7 +16,6 @@ class ListaComprasRepositoryImplLocal(): ListaComprasRepository {
                 ItemListaCompras(
                     idItemLista = it.toLong(),
                     nome = "Nome $it",
-                    qtdMedia = it,
                     estoqueIngrediente = Estoque(
                         idItem = it.toLong(),
                         lote = "Lote $it",
@@ -37,5 +36,9 @@ class ListaComprasRepositoryImplLocal(): ListaComprasRepository {
                 )
             }
         )
+    }
+
+    override suspend fun deleteItemListaCompras(id: Long): Response<Unit> {
+        TODO("Not yet implemented")
     }
 }
