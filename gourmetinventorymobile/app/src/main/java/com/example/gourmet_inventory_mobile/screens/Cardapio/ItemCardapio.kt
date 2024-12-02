@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
@@ -102,7 +101,7 @@ fun PratoScreen(
         categoria = prato.categoria
 //        receitaPrato = prato.receitaPrato.toString()
         foto = prato.foto ?: ""
-        URLAssinada = prato.URLAssinada ?: ""
+        URLAssinada = prato.urlassinada ?: ""
     }
 
     Log.d("PratoScreen", "Prato: $listaPratosComanda")
@@ -268,7 +267,7 @@ fun PratoPreview() {
 //
 //            ),
             foto = "Foto do prato",
-            URLAssinada = "URL assinada",
+            urlassinada = "URL assinada",
             idPrato = 1
         )
     )
@@ -280,15 +279,25 @@ fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String)
     Box {
         Image(
             painter = rememberAsyncImagePainter(
-                model = prato.URLAssinada, // Imagem mockada
+                model = prato.urlassinada, // Imagem mockada
                 placeholder = painterResource(R.drawable.landscape_placeholder_svgrepo_com), // Placeholder enquanto carrega
-                error = painterResource(R.drawable.landscape_placeholder_svgrepo_com) // Imagem de erro se falhar
+//                error = painterResource(R.drawable.landscape_placeholder_svgrepo_com) // Imagem de erro se falhar
+                error =
+                /* Imagem mockada por nome/categoria */
+                when(prato.nome){
+                    "Spaghetti Carbonara" -> painterResource(id = R.drawable.carbonara)
+                    "Pizza" -> painterResource(id = R.drawable.pizzamarguerita)
+//                    "Macarrão Bolonhesa" -> painterResource(id = R.drawable.macarraobolonhesa)
+                    else -> painterResource(id = R.drawable.landscape_placeholder_svgrepo_com)
+                }
             ),
             contentDescription = "Imagem do prato",
             contentScale = ContentScale.Crop,
+//            modifier = Modifier
+//                .height(300.dp)
             modifier = Modifier
+                .fillMaxWidth()
                 .height(300.dp)
-                .align(Alignment.Center)
         )
         IconButton(
             onClick = { onPratoItemVoltarClick("Voltar") },

@@ -1,8 +1,6 @@
 package com.example.gourmet_inventory_mobile.repository.estoque
 
 import com.example.gourmet_inventory_mobile.model.Comanda
-import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
-import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Prato
 import retrofit2.Response
 
@@ -37,7 +35,7 @@ class ComandaRepositoryImplLocal(): ComandaRepository {
 //                                )
 //                            },
                             foto = "Foto $it",
-                            URLAssinada = "URLAssinada $it"
+                            urlassinada = "URLAssinada $it"
                         )
                     },
                      status = "Status $it",
@@ -71,7 +69,7 @@ class ComandaRepositoryImplLocal(): ComandaRepository {
 //                            )
 //                        },
                         foto = "Foto $it",
-                        URLAssinada = "URLAssinada $it"
+                        urlassinada = "URLAssinada $it"
                     )
                 },
                 status = "Status 1",
@@ -103,7 +101,7 @@ class ComandaRepositoryImplLocal(): ComandaRepository {
 //                        )
 //                    },
                     foto = "Foto $it",
-                    URLAssinada = "URLAssinada $it"
+                    urlassinada = "URLAssinada $it"
                 )
             },
             status = "Status 1",

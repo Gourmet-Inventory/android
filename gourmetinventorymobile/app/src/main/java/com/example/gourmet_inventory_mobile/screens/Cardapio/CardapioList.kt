@@ -47,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.gourmet_inventory_mobile.R
-import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
 import com.example.gourmet_inventory_mobile.model.Prato
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
@@ -302,9 +301,17 @@ fun ItemPrato(
         }
         Image(
             painter = rememberAsyncImagePainter(
-                model = prato.URLAssinada, // Imagem mockada
+                model = prato.urlassinada,
                 placeholder = painterResource(R.drawable.landscape_placeholder_svgrepo_com), // Placeholder enquanto carrega
-                error = painterResource(R.drawable.landscape_placeholder_svgrepo_com) // Imagem de erro se falhar
+//                error = painterResource(R.drawable.landscape_placeholder_svgrepo_com) // Imagem de erro se falhar
+                error =
+                /* Imagem mockada por nome/categoria */
+                    when(prato.nome){
+                        "Spaghetti Carbonara" -> painterResource(id = R.drawable.carbonara)
+                        "Pizza" -> painterResource(id = R.drawable.pizzamarguerita)
+//                        "Macarrão Bolonhesa" -> painterResource(id = R.drawable.macarraobolonhesa)
+                        else -> painterResource(id = R.drawable.landscape_placeholder_svgrepo_com)
+                    }
             ),
             contentDescription = "Imagem do prato",
             contentScale = ContentScale.Crop,
@@ -335,7 +342,7 @@ fun ItemPratoPreview(modifier: Modifier = Modifier) {
 //                Ingrediente(nome = "Ingrediente 1", tipoMedida = "Unidade", valorMedida = 1.0, exibirConca = "1 Unidade"),
 //                Ingrediente(nome = "Ingrediente 2", tipoMedida = "Gramas", valorMedida = 100.0, exibirConca = "100 Gramas")
 //            ),
-            URLAssinada = null // Or provide a URL if available
+            urlassinada = null // Or provide a URL if available
         ),
         onCardapioClick = {}
     )

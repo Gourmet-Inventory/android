@@ -651,7 +651,7 @@ fun AddReceita(
 //    }
 //}
 
-@Preview(showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun CadastroItemManipulavel2ScreenPreview(modifier: Modifier = Modifier) {
     CadastroItemManipulavel2Screen(
