@@ -9,6 +9,5 @@ import kotlinx.serialization.Serializable
 data class ItemListaCompras (
     val idItemLista: Long,
     val nome: String,
-    val qtdMedia: Int,
     val estoqueIngrediente: Estoque
 )

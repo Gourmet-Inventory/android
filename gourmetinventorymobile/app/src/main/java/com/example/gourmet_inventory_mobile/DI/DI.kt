@@ -84,8 +84,8 @@ val appModule = module {
     }
 
     single<ListaComprasRepository> {
-//        ListaComprasRepositoryImpl(get())
-        ListaComprasRepositoryImplLocal()
+        ListaComprasRepositoryImpl(get())
+//        ListaComprasRepositoryImplLocal()
     }
 
     viewModel<ListaComprasViewModel> {

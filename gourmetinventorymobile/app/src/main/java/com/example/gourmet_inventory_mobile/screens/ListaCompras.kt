@@ -58,6 +58,36 @@ import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 
+@Composable
+fun ListaComprasSearchBox(searchText: String, onSearchTextChanged: (String) -> Unit) {
+    OutlinedTextField(
+        value = searchText,
+        onValueChange = onSearchTextChanged,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(75.dp)
+            .padding(10.dp)
+            .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
+        placeholder = {
+            Text(
+                text = "Pesquisar",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = Black,
+                ),
+            )
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Ícone de pesquisa"
+            )
+        },
+        shape = RoundedCornerShape(5.dp),
+    )
+}
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListaComprasScreen(
@@ -124,91 +154,58 @@ fun ListaComprasScreen(
 //                item.nome.contains(texto, ignoreCase = true)
 //            }
 
-            val itens = remember {
-                mutableStateListOf(
-                    *listOf(
-                        ItemListaCompras(
-                            idItemLista = Long.MAX_VALUE,
-                            nome = "Queijo Prato",
-                            qtdMedia = 500,
-                            estoqueIngrediente = Estoque(
-                                idItem = Long.MIN_VALUE,
-                                lote = "Q1",
-                                empresa = Empresa(
-                                    idEmpresa = 1,
-                                    nomeFantasia = "Empresa"
-                                ),
-                                nome = "Queijo Prato",
-                                categoria = CategoriaEstoque.QUEIJOS_E_FRIOS,
-                                tipoMedida = Medidas.GRAMAS,
-                                unitario = 0,
-                                valorMedida = 10.0,
-                                valorTotal = 0.0,
-                                localArmazenamento = "Geladeira",
-                                dtaCadastro = LocalDate.now(),
-                                dtaAviso = LocalDate.now().plusMonths(1),
-                                marca = "Italac"
-                            )
-                        ),
-                        ItemListaCompras(
-                            idItemLista = Long.MAX_VALUE - 1,
-                            nome = "Presunto",
-                            qtdMedia = 300,
-                            estoqueIngrediente = Estoque(
-                                idItem = Long.MIN_VALUE + 1,
-                                lote = "P1",
-                                empresa = Empresa(
-                                    idEmpresa = 2,
-                                    nomeFantasia = "Empresa 2"
-                                ),
-                                nome = "Presunto",
-                                categoria = CategoriaEstoque.QUEIJOS_E_FRIOS,
-                                tipoMedida = Medidas.GRAMAS,
-                                unitario = 0,
-                                valorMedida = 15.0,
-                                valorTotal = 0.0,
-                                localArmazenamento = "Geladeira",
-                                dtaCadastro = LocalDate.now(),
-                                dtaAviso = LocalDate.now().plusMonths(1),
-                                marca = "Sadia"
-                            )
-                        )
-                    ).toTypedArray()
-                )
-            }
-
 //            val itens = remember {
 //                mutableStateListOf(
-//                    *List(10) {
+//                    *listOf(
 //                        ItemListaCompras(
-//                            idItemLista = it.toLong(),
-//                            nome = "Nome $it",
-//                            qtdMedia = it,
+//                            idItemLista = Long.MAX_VALUE,
+//                            nome = "Queijo Prato",
 //                            estoqueIngrediente = Estoque(
-//                                idItem = it.toLong(),
-//                                lote = "Lote $it",
+//                                idItem = Long.MIN_VALUE,
+//                                lote = "Q1",
 //                                empresa = Empresa(
-//                                    idEmpresa = it.toLong(),
+//                                    idEmpresa = 1,
 //                                    nomeFantasia = "Empresa"
 //                                ),
-//                                nome = "Nome $it",
-//                                categoria = CategoriaEstoque.OUTROS,
+//                                nome = "Queijo Prato",
+//                                categoria = CategoriaEstoque.QUEIJOS_E_FRIOS,
 //                                tipoMedida = Medidas.GRAMAS,
-//                                unitario = it,
-//                                valorMedida = it.toDouble(),
-//                                valorTotal = it.toDouble(),
-//                                localArmazenamento = "LocalArmazenamento $it",
+//                                unitario = 0,
+//                                valorMedida = 10.0,
+//                                valorTotal = 0.0,
+//                                localArmazenamento = "Geladeira",
 //                                dtaCadastro = LocalDate.now(),
-//                                dtaAviso = LocalDate.now(),
-//                                marca = "Marca $it"
+//                                dtaAviso = LocalDate.now().plusMonths(1),
+//                                marca = "Italac"
+//                            )
+//                        ),
+//                        ItemListaCompras(
+//                            idItemLista = Long.MAX_VALUE - 1,
+//                            nome = "Presunto",
+//                            estoqueIngrediente = Estoque(
+//                                idItem = Long.MIN_VALUE + 1,
+//                                lote = "P1",
+//                                empresa = Empresa(
+//                                    idEmpresa = 2,
+//                                    nomeFantasia = "Empresa 2"
+//                                ),
+//                                nome = "Presunto",
+//                                categoria = CategoriaEstoque.QUEIJOS_E_FRIOS,
+//                                tipoMedida = Medidas.GRAMAS,
+//                                unitario = 0,
+//                                valorMedida = 15.0,
+//                                valorTotal = 0.0,
+//                                localArmazenamento = "Geladeira",
+//                                dtaCadastro = LocalDate.now(),
+//                                dtaAviso = LocalDate.now().plusMonths(1),
+//                                marca = "Sadia"
 //                            )
 //                        )
-//                    }.toTypedArray()
+//                    ).toTypedArray()
 //                )
 //            }
-//            val itens = remember {
-//                mutableStateListOf<ItemListaCompras>()
-//            }
+//
+
 
             Box(
                 modifier = Modifier
@@ -239,7 +236,7 @@ fun ListaComprasScreen(
                         texto = novoTexto
                     }
 
-                    if (itens.isEmpty()) {
+                    if (listaCompras.isEmpty()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -279,12 +276,12 @@ fun ListaComprasScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         ItensListaCompras(
-                            listaCompras = itens.toList(),
+                            listaCompras = listaCompras.toList(),
                             onListaComprasClick = { idItem ->
                                 onListaComprasClick("itemEstoque/$idItem")
                             },
-                            onDeleteListItem = {
-                                itens.remove(it)
+                            onDeleteListItem = { itemToDelete ->
+                                viewModel.deletarItemListaCompras(itemToDelete.idItemLista)
                             }
                         )
                     }
@@ -292,36 +289,6 @@ fun ListaComprasScreen(
             }
         }
     }
-}
-
-
-@Composable
-fun ListaComprasSearchBox(searchText: String, onSearchTextChanged: (String) -> Unit) {
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = onSearchTextChanged,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(75.dp)
-            .padding(10.dp)
-            .background(color = GI_CianoClaro, shape = RoundedCornerShape(5.dp)),
-        placeholder = {
-            Text(
-                text = "Pesquisar",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = Black,
-                ),
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = "Ícone de pesquisa"
-            )
-        },
-        shape = RoundedCornerShape(5.dp),
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -352,9 +319,10 @@ fun ItensListaCompras(
 
                             LaunchedEffect(swipeToDismissBoxState.currentValue) {
                                 if (swipeToDismissBoxState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-                                    onDeleteListItem(itemLista)
+                                    onDeleteListItem(itemLista) // Certifique-se de que o ID está sendo passado
                                 }
                             }
+
 
                             SwipeToDismissBox(
                                 state = swipeToDismissBoxState,
@@ -449,7 +417,7 @@ fun ItemListaCompras(
             }
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = "${itemLista.qtdMedia} ${itemLista.estoqueIngrediente.tipoMedida.abreviacao}",
+                text = "${itemLista.estoqueIngrediente.valorTotal} ${itemLista.estoqueIngrediente.tipoMedida.abreviacao}",
                 modifier = Modifier.padding(end = 16.dp)
             )
         }
