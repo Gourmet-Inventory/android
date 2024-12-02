@@ -10,5 +10,12 @@ enum class Medidas(val abreviacao: String, val nomeExibicao: String) {
     LITRO("l", "Litro"),
     A_GOSTO("a gosto", "A Gosto"),
     PITADA("pit.", "Pitada"),
-    UNIDADE("unid.", "Unidade")
+    UNIDADE("unid.", "Unidade");
+
+    companion object {
+    fun fromDisplayName(displayName: String): Medidas {
+        return values().find { it.nomeExibicao.equals(displayName, ignoreCase = true) }
+            ?: throw IllegalArgumentException("Medida inválida: $displayName")
+    }
+}
 }

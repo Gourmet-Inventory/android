@@ -41,12 +41,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.Prato
+import com.example.gourmet_inventory_mobile.repository.estoque.ComandaRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
@@ -67,6 +71,7 @@ fun PratoScreen(
     val listaPratosComanda = viewModel.listaPratosComanda
 
     var contagemPratos by remember { mutableStateOf("1") }
+
     // Função para adicionar o prato atual à lista de comanda
     fun adicionarPratoNaComanda() {
         val quantidade = contagemPratos.toIntOrNull() ?: 1
@@ -74,7 +79,10 @@ fun PratoScreen(
             viewModel.adicionarPrato(prato)
         }
         onClickPratoItem("cardapio")
-        Log.d("PratoScreen", "Adicionados $quantidade pratos. Total: ${listaPratosComanda.value.size}")
+        Log.d(
+            "PratoScreen",
+            "Adicionados $quantidade pratos. Total: ${listaPratosComanda.value.size}"
+        )
     }
 
     var nome by remember { mutableStateOf("") }
@@ -100,11 +108,12 @@ fun PratoScreen(
     Log.d("PratoScreen", "Prato: $listaPratosComanda")
 
     Scaffold(
-        topBar = { FotoTop(onClickPratoItem, onPratoItemVoltarClick) }
+        topBar = { FotoTop(onClickPratoItem, onPratoItemVoltarClick, prato) }
     ) { padding ->
         Surface(
             color = Color.White,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(padding)
         ) {
             Column(
@@ -120,15 +129,7 @@ fun PratoScreen(
                     text = nome,
                     fontFamily = JostBold
                 )
-
-                Text(
-                    fontSize = 18.sp,
-                    modifier = Modifier
-                        .width(365.dp)
-                        .padding(top = 10.dp),
-                    text = descricao
-                )
-
+                
 //                Row(
 //                    modifier = Modifier
 //                        .width(370.dp)
@@ -155,20 +156,29 @@ fun PratoScreen(
                         .width(370.dp)
                         .padding(top = 20.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Start
                 ) {
-                    Spacer(modifier = Modifier.width(330.dp))
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
-                        contentDescription = "Voltar",
-                        modifier = Modifier.size(45.dp)
-                    )
+                    if (descricao.isNotEmpty()) {
+                        Text(
+                            fontSize = 22.sp,
+                            modifier = Modifier
+                                .width(330.dp),
+                            text = descricao,
+                        )
+                    } else {
+                        Spacer(modifier = Modifier.width(330.dp))
+                    }
+//                    Icon(
+//                        imageVector = Icons.Default.KeyboardArrowRight,
+//                        contentDescription = "Voltar",
+//                        modifier = Modifier.size(45.dp)
+//                    )
                 }
 
                 Row(
                     modifier = Modifier
                         .width(300.dp)
-                        .padding(top = 120.dp, bottom = 10.dp),
+                        .padding(top = 180.dp, bottom = 10.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -179,7 +189,8 @@ fun PratoScreen(
                         modifier = Modifier
                             .size(60.dp)
                             .clickable {
-                                contagemPratos = if (contagemPratos.toInt() == 0) "0" else (contagemPratos.toInt() - 1).toString()
+                                contagemPratos =
+                                    if (contagemPratos.toInt() == 0) "0" else (contagemPratos.toInt() - 1).toString()
                             }
                     )
                     Text(
@@ -237,27 +248,47 @@ fun PratoScreen(
 }
 
 
-//@Preview
-//@Composable
-//fun PratoPreview() {
-//    PratoScreen(
-//        navController = NavController(LocalContext.current),
-//        onClickPratoItem = { },
-//        onPratoItemVoltarClick = { }
-//    )
-//}
+@Preview(showBackground = true)
+@Composable
+fun PratoPreview() {
+    PratoScreen(
+        navController = NavController(LocalContext.current),
+        onClickPratoItem = { },
+        onPratoItemVoltarClick = { },
+        viewModel = ComandaViewModel(
+            ComandaRepositoryImplLocal(),
+        ),
+        prato = Prato(
+            nome = "Prato",
+            descricao = "Descrição do prato",
+            preco = 20.0,
+            alergicosRestricoes = listOf("Alergicos", "Restrições"),
+            categoria = "Categoria",
+            receitaPrato = listOf(
+
+            ),
+            foto = "Foto do prato",
+            URLAssinada = "URL assinada",
+            idPrato = 1
+        )
+    )
+}
 
 
 @Composable
-fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String) -> Unit) {
+fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String) -> Unit, prato: Prato) {
     Box {
         Image(
-            painter = painterResource(id = R.drawable.pizza),
-            contentDescription = "Prato",
+            painter = rememberAsyncImagePainter(
+                model = prato.URLAssinada, // Imagem mockada
+                placeholder = painterResource(R.drawable.landscape_placeholder_svgrepo_com), // Placeholder enquanto carrega
+                error = painterResource(R.drawable.landscape_placeholder_svgrepo_com) // Imagem de erro se falhar
+            ),
+            contentDescription = "Imagem do prato",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .fillMaxWidth()
                 .height(300.dp)
+                .align(Alignment.Center)
         )
         IconButton(
             onClick = { onPratoItemVoltarClick("Voltar") },

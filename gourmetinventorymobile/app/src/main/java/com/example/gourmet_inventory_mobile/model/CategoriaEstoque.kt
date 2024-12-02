@@ -2,38 +2,45 @@ package com.example.gourmet_inventory_mobile.model
 
 import android.annotation.SuppressLint
 
-enum class CategoriaEstoque() {
-    VEGETAIS_FRESCOS(),
-    FRUTAS_FRESCAS(),
-    LEGUMES(),
-    CARNES_VERMELHAS(),
-    AVES(),
-    PEIXES_E_FRUTOS_DO_MAR(),
-    GRAOS_E_CEREAIS(),
-    LATICINIOS_E_DERIVADOS(),
-    OVOS(),
-    OLEAGINOSAS(),
-    LEGUMINOSAS_SECAS(),
-    ERVAS_FRESCAS(),
-    ESPECIARIAS_SECAS,
-    OLEOS_E_GORDURAS(),
-    MASSAS(),
-    ENLATADOS_E_CONSERVAS(),
-    BEBIDAS(),
-    RAIZES_E_TUBERCULOS(),
-    CONGELADOS(),
-    DOCES_E_SOBREMESAS(),
-    MOLHOS_E_CONDIMENTOS(),
-    PRODUTOS_INDUSTRIALIZADOS(),
-    FARINHAS_E_AMIDOS(),
-    PAES_E_BOLOS(),
-    QUEIJOS_E_FRIOS(),
-    ACUCARES_E_ADOCANTES(),
-    SUPLEMENTOS_E_INGREDIENTES_ESPECIAIS(),
-    PRODUTOS_DE_PADARIA_E_CONFEITARIA(),
-    FERMENTOS_E_LEVEDURAS(),
-    INGREDIENTES_PARA_BEBIDAS(),
-    OUTROS();
+enum class CategoriaEstoque(val nomeExibicao: String, val porcentagemPerda: Double) {
+    VEGETAIS_FRESCOS("Vegetais Frescos", 10.0),
+    FRUTAS_FRESCAS("Frutas Frescas", 15.0),
+    LEGUMES("Legumes", 8.0),
+    CARNES_VERMELHAS("Carnes Vermelhas", 12.0),
+    AVES("Aves", 10.0),
+    PEIXES_E_FRUTOS_DO_MAR("Peixes e Frutos do Mar", 25.0),
+    GRAOS_E_CEREAIS("Grãos e Cereais", 5.0),
+    LATICINIOS_E_DERIVADOS("Laticínios e Derivados", 20.0),
+    OVOS("Ovos", 5.0),
+    OLEAGINOSAS("Oleaginosas (Nozes, Castanhas, Amêndoas)", 3.0),
+    LEGUMINOSAS_SECAS("Leguminosas Secas", 2.0),
+    ERVAS_FRESCAS("Ervas Frescas", 20.0),
+    ESPECIARIAS_SECAS("Especiarias Secas", 1.0),
+    OLEOS_E_GORDURAS("Óleos e Gorduras", 2.0),
+    MASSAS("Massas", 4.0),
+    ENLATADOS_E_CONSERVAS("Enlatados e Conservas", 1.0),
+    BEBIDAS("Bebidas", 2.0),
+    RAIZES_E_TUBERCULOS("Raízes e Tubérculos", 10.0),
+    CONGELADOS("Congelados", 6.0),
+    DOCES_E_SOBREMESAS("Doces e Sobremesas", 3.0),
+    MOLHOS_E_CONDIMENTOS("Molhos e Condimentos", 1.0),
+    PRODUTOS_INDUSTRIALIZADOS("Produtos Industrializados", 2.0),
+    FARINHAS_E_AMIDOS("Farinhas e Amidos", 3.0),
+    PAES_E_BOLOS("Pães e Bolos", 10.0),
+    QUEIJOS_E_FRIOS("Queijos e Frios", 15.0),
+    ACUCARES_E_ADOCANTES("Açúcares e Adoçantes", 1.0),
+    SUPLEMENTOS_E_INGREDIENTES_ESPECIAIS("Suplementos e Ingredientes Especiais", 5.0),
+    PRODUTOS_DE_PADARIA_E_CONFEITARIA("Produtos de Padaria e Confeitaria", 8.0),
+    FERMENTOS_E_LEVEDURAS("Fermentos e Leveduras", 2.0),
+    INGREDIENTES_PARA_BEBIDAS("Ingredientes para Bebidas", 2.0),
+    OUTROS("Outros", 5.0);
+
+    companion object {
+        fun fromDisplayName(displayName: String): CategoriaEstoque {
+            return values().find { it.nomeExibicao.equals(displayName, ignoreCase = true) }
+                ?: throw IllegalArgumentException("Categoria inválida: $displayName")
+        }
+    }
 
 //    var nomeExibicao: String? = null
 //    var porcentagemPerda = 0.0
