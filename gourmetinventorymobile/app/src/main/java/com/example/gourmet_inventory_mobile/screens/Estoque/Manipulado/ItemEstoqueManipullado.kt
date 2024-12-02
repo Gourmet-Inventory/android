@@ -155,20 +155,8 @@ fun ItemEstoqueManipuladoScreen(
                 ) {
                     item { InfoItemManipulado("Lote:", lote) }
                     item { InfoItemManipulado("Categoria:", categoria, topPadding = 22.dp) }
-                    item {
-                        InfoItemManipulado(
-                            "Local Armazenamento:",
-                            localArmazenamento,
-                            topPadding = 22.dp
-                        )
-                    }
-                    item {
-                        InfoItemManipulado(
-                            "Quantidade Unitária:",
-                            quantidadeUnitaria,
-                            topPadding = 22.dp
-                        )
-                    }
+                    item { InfoItemManipulado("Local Armazenamento:", localArmazenamento, topPadding = 22.dp) }
+                    item {InfoItemManipulado("Quantidade Unitária:", quantidadeUnitaria, topPadding = 22.dp) }
                     item { InfoItemManipulado("Tipo Medida:", tipoMedida, topPadding = 22.dp) }
                     item { InfoItemManipulado("Valor Medida:", valorMedida, topPadding = 22.dp) }
                     item { InfoItemManipulado("Valor Total:", valorTotal, topPadding = 22.dp) }

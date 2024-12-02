@@ -1,6 +1,7 @@
 package com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado
 
 import SharedViewModel
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -46,41 +48,61 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gourmet_inventory_mobile.R
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
+import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
+import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
+import com.example.gourmet_inventory_mobile.repository.estoque.EstoqueRepositoryImplLocal
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.CategoriaEstoqueSelectBox
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.LocalArmazenamentoSelectBoxCadastrar
 import com.example.gourmet_inventory_mobile.ui.theme.Black
 import com.example.gourmet_inventory_mobile.ui.theme.GI_AzulMarinho
-import com.example.gourmet_inventory_mobile.ui.theme.GI_Laranja
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.ui.theme.White
-
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueCriacaoState
+import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
+import java.time.LocalDate
 
 @Composable
-fun CadastroItemManipulavelScreen(
+fun EdicaoItemManipulavelScreen(
+    estoqueViewModel: EstoqueViewModel,
+    estoque: EstoqueItemDiscriminator.Manipulado,
     sharedViewModel: SharedViewModel,
-    onCadastroItemManipuladoVoltarClick: () -> Unit = {},
-    onCadastroItemManipuladoProximoClick: () -> Unit = {}
+    onEdicaoItemManipuladoVoltarClick: () -> Unit = {},
+    onEdicaoItemManipuladoProximoClick: () -> Unit = {}
 ) {
     val estoque by sharedViewModel.estoque.collectAsState()
 
-    var nome by remember {
-        mutableStateOf(estoque.nome)
-    }
-    var lote by remember {
-        mutableStateOf(estoque.lote)
-    }
-    var categoria by remember {
-        mutableStateOf(estoque.categoria.toString())
-    }
-    var selectedCategory by remember { mutableStateOf(if (estoque.categoria == null) CategoriaEstoque.OUTROS.name else estoque.categoria) }
+    val estoqueEdicao by sharedViewModel.estoque.collectAsState()
 
+    val estoqueState by estoqueViewModel.estoqueCriacaoState.collectAsState()
+
+    //Variaveis de edição
+    val nomeEntada = if (estoqueEdicao.nome == "") estoque.nome else estoqueEdicao.nome
+    var nome by remember { mutableStateOf(nomeEntada) }
+    val loteEntrada = if (estoqueEdicao.lote.isBlank()) estoque.lote else estoqueEdicao.lote
+    var lote by remember { mutableStateOf(loteEntrada) }
+    val categoriaEntrada =
+        if (estoqueEdicao.categoria == CategoriaEstoque.OUTROS) estoque.categoria else estoqueEdicao.categoria
+    var categoria by remember { mutableStateOf(categoriaEntrada) }
+    val localArmazenamentoEntrada =
+        if (estoqueEdicao.localArmazenamento.isBlank()) estoque.localArmazenamento else estoqueEdicao.localArmazenamento
     var localArmazenamento by remember {
-        mutableStateOf(estoque.localArmazenamento)
+        mutableStateOf(localArmazenamentoEntrada)
     }
+    var marcaEntrada = if (estoqueEdicao.marca == "") estoque.marca else estoqueEdicao.marca
+    var marca by remember { mutableStateOf(estoque.marca) }
+    val selectedCategoryEntrada =
+        if (estoqueEdicao.categoria == null) CategoriaEstoque.OUTROS.nomeExibicao else estoqueEdicao.categoria
+    var selectedCategory by remember { mutableStateOf(selectedCategoryEntrada) }
 
-    var marca by remember {
-        mutableStateOf(estoque.marca)
-    }
+    //Variavel de exibição de componente
+    val formularioExibicao by remember { mutableStateOf("Formulario1") }
+
+    //Variáveis de erro
+    var valorMedidaErro by remember { mutableStateOf(false) }
+    var dataCadastroErro by remember { mutableStateOf(false) }
+    var dataAvisoErro by remember { mutableStateOf(false) }
+    var dataAvisoAnteriorErro by remember { mutableStateOf(false) }
 
     Surface(
         color = Color.White,
@@ -90,7 +112,7 @@ fun CadastroItemManipulavelScreen(
             item {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize() ,
+                        .fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Row(
@@ -101,7 +123,7 @@ fun CadastroItemManipulavelScreen(
                     ) {
                         IconButton(onClick = {
                             sharedViewModel.limparEstoque()
-                            onCadastroItemManipuladoVoltarClick()
+                            onEdicaoItemManipuladoVoltarClick()
                         }) {
                             Icon(
                                 imageVector = Icons.Default.KeyboardArrowLeft,
@@ -121,7 +143,7 @@ fun CadastroItemManipulavelScreen(
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            text = "Cadastrar Item",
+                            text = "Editar Item",
                             modifier = Modifier,
                             color = Black,
                             textAlign = TextAlign.Center,
@@ -137,24 +159,35 @@ fun CadastroItemManipulavelScreen(
                             fontSize = 18.sp
                         )
                     )
-                    InputCadastroManipulavel(titulo = "Nome",valorCampo = nome,
-                        mudaValor = { novoValor ->
-                        nome = novoValor })
 
-                    InputCadastroManipulavel(titulo = "Lote",valorCampo = lote,
-                        mudaValor = { novoValor ->
-                        lote = novoValor })
+                    if (formularioExibicao == "Formulario1") {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+//                            .padding(top = 20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            InputEdicaoManipulavel(titulo = "Nome", valorCampo = nome,
+                                mudaValor = { novoValor ->
+                                    nome = novoValor
+                                })
 
-                    CategoriaEstoqueSelectBox(
-                        selectedOption = CategoriaEstoque.valueOf(selectedCategory.toString()),
-                        onCategoriaEstoqueChange = { newCategory ->
-                            selectedCategory = CategoriaEstoque.valueOf(newCategory)
-                        }
-                    )
+                            InputEdicaoManipulavel(titulo = "Lote", valorCampo = lote,
+                                mudaValor = { novoValor ->
+                                    lote = novoValor
+                                })
 
-                    InputCadastroManipulavel(titulo = "Marca",valorCampo = marca,
-                        mudaValor = { novoValor ->
-                        marca = novoValor })
+                            CategoriaEstoqueSelectBox(
+                                selectedOption = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                                onCategoriaEstoqueChange = { newCategory ->
+                                    selectedCategory = CategoriaEstoque.valueOf(newCategory)
+                                }
+                            )
+
+                            InputEdicaoManipulavel(titulo = "Marca", valorCampo = marca,
+                                mudaValor = { novoValor ->
+                                    marca = novoValor
+                                })
 
 //                    StyledSelectBox(
 //                        selectedLocalArmazenamento = localArmazenamento,
@@ -162,12 +195,15 @@ fun CadastroItemManipulavelScreen(
 //                            localArmazenamento = novoValor
 //                        }
 //                    )
-                    LocalArmazenamentoSelectBoxCadastrar(
-                        selectedOption = localArmazenamento,
-                        onLocalArmazenamentoChange = { novoValor ->
-                            localArmazenamento = novoValor
+                            LocalArmazenamentoSelectBoxCadastrar(
+                                selectedOption = localArmazenamento,
+                                onLocalArmazenamentoChange = { novoValor ->
+                                    localArmazenamento = novoValor
+                                }
+                            )
+
                         }
-                    )
+                    }
 
                     ImagemPassoMaipulavel1(onCadastroItemProximoClick = {
                         val novoEstoque = estoque.copy(
@@ -178,21 +214,72 @@ fun CadastroItemManipulavelScreen(
                             localArmazenamento = localArmazenamento
                         )
                         sharedViewModel.atualizarEstoque(novoEstoque)
-                        onCadastroItemManipuladoProximoClick()
+                        onEdicaoItemManipuladoProximoClick()
                     })
 
                     Button(
                         onClick = {
-                            val novoEstoque = estoque.copy(
-                                nome = nome,
-                                lote = lote,
-                                categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
-                                marca = marca,
-                                localArmazenamento = localArmazenamento
-                            )
+                            if (formularioExibicao == "Formulario1") {
+                                val novoEstoque = estoque.copy(
+                                    nome = nome,
+                                    lote = lote,
+                                    categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                                    marca = marca,
+                                    localArmazenamento = localArmazenamento
+                                )
 
-                            sharedViewModel.atualizarEstoque(novoEstoque)
-                            onCadastroItemManipuladoProximoClick()
+                                sharedViewModel.atualizarEstoque(novoEstoque)
+                                onEdicaoItemManipuladoProximoClick()
+                            } else {
+//                                // Verifica se há erros
+//                                valorMedidaErro =
+//                                    valorMedida.toDoubleOrNull()?.let { it < 0 } ?: true
+//                                dataCadastroErro = try {
+//                                    LocalDate.parse(dataCadastro, dateFormatter); false
+//                                } catch (e: Exception) {
+//                                    true
+//                                }
+//                                dataAvisoErro = try {
+//                                    LocalDate.parse(dataAviso, dateFormatter); false
+//                                } catch (e: Exception) {
+//                                    true
+//                                }
+//                                dataAvisoAnteriorErro = try {
+//                                    val avisoDate = LocalDate.parse(dataAviso, dateFormatter)
+//                                    val cadastroDate = LocalDate.parse(dataCadastro, dateFormatter)
+//                                    avisoDate.isBefore(cadastroDate)
+//                                } catch (e: Exception) {
+//                                    false
+//                                }
+//
+//                                if (!valorMedidaErro && !dataCadastroErro && !dataAvisoErro && !dataAvisoAnteriorErro) {
+////                            sharedViewModel.criarEstoqueAtualizado(
+////                                estoqueEditar.copy(
+////                                    unitario = qtdUnitaria.toInt(),
+////                                    valorMedida = valorMedida.toDouble(),
+////                                    dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+////                                    dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+////                                    localArmazenamento = estoqueEditar.localArmazenamento,
+////                                    tipoMedida = Medidas.valueOf(tipoMedida)
+////                                )
+////                            )
+//                                    val novoEstoque = estoqueEditar.copy(
+//                                        unitario = qtdUnitaria.toInt(),
+//                                        valorMedida = valorMedida.toDouble(),
+//                                        dtaCadastro = LocalDate.parse(dataCadastro, dateFormatter),
+//                                        dtaAviso = LocalDate.parse(dataAviso, dateFormatter),
+//                                        localArmazenamento = estoqueEditar.localArmazenamento,
+//                                        tipoMedida = Medidas.valueOf(tipoMedida)
+//                                    )
+//                                    sharedViewModel.atualizarEstoque(novoEstoque)
+//                                    Log.d("Editar2Screen", "ESTOQUE: $novoEstoque")
+//                                    sharedViewModel.estoque.value?.let {
+//                                        Log.d("Editar2Screen", "ESTOQUE PARA REQUISICAO: $it")
+//                                        sharedViewModel
+//                                        viewModel.atualizarEstoque(context, idItem, it)
+//                                    }
+//                                }
+                            }
                         },
                         modifier = Modifier
                             .height(55.dp)
@@ -203,44 +290,66 @@ fun CadastroItemManipulavelScreen(
                             contentColor = colorResource(id = R.color.white)
                         )
                     ) {
-                        Text(
-                            text = "Próximo",
-                            color = White,
-                            fontSize = 18.sp
-                        )
+                        if (formularioExibicao == "Formulario1") {
+                            Text(
+                                text = "Próximo",
+                                color = White,
+                                fontSize = 18.sp
+                            )
+                        } else {
+                            if (estoqueState is EstoqueCriacaoState.Loading) {
+                                CircularProgressIndicator(color = GI_AzulMarinho)
+                            } else {
+                                Text(
+                                    text = "Salvar",
+                                    color = White,
+                                    fontSize = 18.sp
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//                .padding(top = 100.dp),
-//            contentAlignment = androidx.compose.ui.Alignment.BottomCenter
-//        ) {
-//            DownBarCadastroItemScreen(
-//                onCadastroItemAcao1Click = onCadastroItemAcao1Click,
-//                onCadastroItemAcao2Click = onCadastroItemAcao2Click,
-//                onCadastroItemAcao3Click = onCadastroItemAcao3Click,
-//                onCadastroItemAcao4Click = onCadastroItemAcao4Click
-//            )
-//        }
     }
 }
 
 @Preview
 @Composable
-fun CadastroManipulavelScreen() {
-    CadastroItemManipulavelScreen(
+fun EdicaoManipulavelScreen() {
+    EdicaoItemManipulavelScreen(
         sharedViewModel = SharedViewModel(),
-        onCadastroItemManipuladoVoltarClick = {},
-        onCadastroItemManipuladoProximoClick = {}
+        onEdicaoItemManipuladoVoltarClick = {},
+        onEdicaoItemManipuladoProximoClick = {},
+        estoque = EstoqueItemDiscriminator.Manipulado(
+            nome = "Nome",
+            lote = "Lote",
+            categoria = CategoriaEstoque.OUTROS,
+            localArmazenamento = "Local",
+            manipulado = true,
+            idItem = 1,
+            tipoMedida = Medidas.UNIDADE,
+            unitario = 1,
+            valorMedida = 1.0,
+            valorTotal = 1.0,
+            dtaAviso = LocalDate.now().plusDays(1),
+            dtaCadastro = LocalDate.now(),
+            descricao = "Descrição",
+            receita =
+            ReceitaConsultaDto(
+                idReceita = 1,
+                receita = listOf()
+            )
+        ),
+        estoqueViewModel = EstoqueViewModel(
+            EstoqueRepositoryImplLocal()
+        )
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StyledSelectBox(
+fun EdicaoStyledSelectBox(
     selectedLocalArmazenamento: String,
     onLocalArmazenamentoSelected: (String) -> Unit
 ) {
@@ -248,18 +357,18 @@ fun StyledSelectBox(
     var selectedOption by remember { mutableStateOf(if (selectedLocalArmazenamento == "") "Selecione um local" else selectedLocalArmazenamento) }
     val options = listOf("Cozinha", "Armário", "Geladeira", "Freezer")
 
-    Row (
+    Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
 
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .size(width = 350.dp, height = 100.dp)
 
-        ){
+        ) {
             Text(
                 modifier = Modifier
                     .padding(top = 10.dp)
@@ -316,24 +425,24 @@ fun StyledSelectBox(
 }
 
 @Composable
-fun InputCadastroManipulavel(
+fun InputEdicaoManipulavel(
     titulo: String,
     valorCampo: String,
     mudaValor: (String) -> Unit
 ) {
 
-    Row (
+    Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
             .height(110.dp)
 
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .size(width = 350.dp, height = 100.dp)
 
-        ){
+        ) {
             Text(
                 modifier = Modifier
                     .padding(top = 10.dp)
@@ -362,76 +471,10 @@ fun InputCadastroManipulavel(
     }
 }
 
-//@Composable
-//fun DownBarCadastroItemScreen(
-//    onCadastroItemAcao1Click: () -> Unit = {},
-//    onCadastroItemAcao2Click: () -> Unit = {},
-//    onCadastroItemAcao3Click: () -> Unit = {},
-//    onCadastroItemAcao4Click: () -> Unit = {}
-//) {
-//    val context = LocalContext.current
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(color = GI_AzulMarinho)
-//            .heightIn(70.dp),
-////        horizontalArrangement = Arrangement.SpaceEvenly,
-//        horizontalArrangement = Arrangement.SpaceAround,
-//        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.fornecedores_db),
-//            contentDescription = "Ação 1",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onCadastroItemAcao1Click()
-//                }
-//        )
-////        Spacer(modifier = Modifier.height(60.dp))
-//        Image(
-//            painter = painterResource(id = R.drawable.opened_box),
-//            contentDescription = "Ação 2",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onCadastroItemAcao2Click()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = cart),
-//            contentDescription = "Ação 3",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(30.dp)
-//                .clickable {
-//                    onCadastroItemAcao3Click()
-//                }
-//        )
-//        Image(
-//            painter = painterResource(id = R.drawable.account_icon),
-//            contentDescription = "Ação 4",
-//            contentScale = ContentScale.Crop,
-//            modifier = Modifier
-//                .height(35.dp)
-//                .clickable {
-//                    onCadastroItemAcao4Click()
-//                }
-//        )
-//    }
-//}
-
-//@Preview
-//@Composable
-//fun DownBarCadastroItemScreenPreview() {
-//    DownBarCadastroItemScreen()
-//}
-
 @Composable
-fun ImagemPassoMaipulavel1(
-    onCadastroItemProximoClick: () -> Unit = {}
+fun ExibirFormEdicaoManipulado(
+    formularioExibicao: String,
+    onFormularioExibicaoChange: (String) -> Unit
 ) {
     var selectedOptionIndex by remember { mutableStateOf(1) }
 
@@ -444,15 +487,20 @@ fun ImagemPassoMaipulavel1(
     ) {
         RadioButton(
             colors = RadioButtonDefaults.colors(
-//                selectedColor = GI_Laranja,
                 unselectedColor = Black,
             ),
             selected = selectedOptionIndex == 1,
-            onClick = { selectedOptionIndex = 1 }
+            onClick = {
+                selectedOptionIndex = 1
+                onFormularioExibicaoChange("Option1")
+            }
         )
         RadioButton(
             selected = selectedOptionIndex == 0,
-            onClick = { onCadastroItemProximoClick() }
+            onClick = {
+                selectedOptionIndex = 0
+                onFormularioExibicaoChange("Option2")
+            }
         )
     }
 }

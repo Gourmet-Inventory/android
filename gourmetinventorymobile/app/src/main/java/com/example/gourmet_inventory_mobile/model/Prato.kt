@@ -1,7 +1,6 @@
 package com.example.gourmet_inventory_mobile.model
 
 import android.os.Parcelable
-import com.example.gourmet_inventory_mobile.model.Ingrediente.Ingrediente
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -16,7 +15,7 @@ data class Prato(
     val categoria: String,
 //    val receitaPrato: List<Ingrediente>,
     val foto: String?,
-    val URLAssinada: String?
+    val urlassinada: String?
 ): Parcelable
 
 data class PratoResponse(val pratos: List<Prato>)
