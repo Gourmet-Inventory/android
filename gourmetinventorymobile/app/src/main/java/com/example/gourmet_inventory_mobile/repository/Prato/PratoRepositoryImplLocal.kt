@@ -17,15 +17,15 @@ class PratoRepositoryImplLocal(): PratoRepository {
                     preco = it.toDouble(),
                     alergicosRestricoes = listOf("Alergicos $it", "Restrições $it"),
                     categoria = "Categoria $it",
-                    receitaPrato =
-                        List(2){
-                            Ingrediente(
-                                nome = "Ingrediente $it",
-                                tipoMedida = Medidas.LITRO.toString(),
-                                valorMedida = it.toDouble(),
-                                exibirConca = "ExibirConca $it"
-                            )
-                        },
+//                    receitaPrato =
+//                        List(2){
+//                            Ingrediente(
+//                                nome = "Ingrediente $it",
+//                                tipoMedida = Medidas.LITRO.toString(),
+//                                valorMedida = it.toDouble(),
+//                                exibirConca = "ExibirConca $it"
+//                            )
+//                        },
                     foto = "Foto $it",
                     URLAssinada = "URLAssinada $it"
                 )

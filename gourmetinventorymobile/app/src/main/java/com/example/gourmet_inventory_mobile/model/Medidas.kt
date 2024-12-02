@@ -13,9 +13,16 @@ enum class Medidas(val abreviacao: String, val nomeExibicao: String) {
     UNIDADE("unid.", "Unidade");
 
     companion object {
-    fun fromDisplayName(displayName: String): Medidas {
-        return values().find { it.nomeExibicao.equals(displayName, ignoreCase = true) }
-            ?: throw IllegalArgumentException("Medida inválida: $displayName")
+        fun fromDisplayName(displayName: String): Medidas {
+            return values().find { it.nomeExibicao.equals(displayName, ignoreCase = true) }
+                ?: throw IllegalArgumentException("Medida inválida: $displayName")
+        }
     }
-}
+    fun String.toMedidas(): Medidas? {
+        return try {
+            Medidas.valueOf(this.uppercase()) // Tenta encontrar o enum equivalente
+        } catch (e: IllegalArgumentException) {
+            null // Retorna null se não encontrar
+        }
+    }
 }

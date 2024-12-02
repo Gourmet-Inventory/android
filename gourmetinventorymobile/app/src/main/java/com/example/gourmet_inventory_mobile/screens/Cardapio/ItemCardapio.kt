@@ -264,9 +264,9 @@ fun PratoPreview() {
             preco = 20.0,
             alergicosRestricoes = listOf("Alergicos", "Restrições"),
             categoria = "Categoria",
-            receitaPrato = listOf(
-
-            ),
+//            receitaPrato = listOf(
+//
+//            ),
             foto = "Foto do prato",
             URLAssinada = "URL assinada",
             idPrato = 1

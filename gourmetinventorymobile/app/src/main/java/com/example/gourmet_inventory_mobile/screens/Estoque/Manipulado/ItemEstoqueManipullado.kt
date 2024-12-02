@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -44,6 +45,7 @@ import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminat
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
+import com.example.gourmet_inventory_mobile.ui.theme.JostBold
 import com.example.gourmet_inventory_mobile.utils.DrawScrollableView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -127,7 +129,7 @@ fun ItemEstoqueManipuladoScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp),
+                        .padding(top = 10.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -142,14 +144,14 @@ fun ItemEstoqueManipuladoScreen(
                         text = "MANIPULADO",
                         fontSize = 20.sp,
                         modifier = Modifier.padding(
-                            bottom = 50.dp
+                            bottom = 30.dp
                         )
                     )
                 }
 
                 LazyColumn(
                     modifier = Modifier
-                        .height(250.dp)
+                        .height(310.dp)
                 ) {
                     item { InfoItemManipulado("Lote:", lote) }
                     item { InfoItemManipulado("Categoria:", categoria, topPadding = 22.dp) }
@@ -180,7 +182,7 @@ fun ItemEstoqueManipuladoScreen(
                         .padding(start = 20.dp, end = 20.dp, top = 20.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Receita:", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+                    Text(text = "Receita:", fontFamily = JostBold, fontSize = 20.sp)
                 }
 
                 Box(
@@ -257,17 +259,25 @@ fun ItemEstoqueManipuladoScreen(
 
 @Composable
 fun InfoItemManipulado(label: String, value: String, topPadding: Dp = 0.dp) {
-    Row(
+    Column (
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = topPadding, start = 20.dp, end = 20.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.Start
     ) {
-        Text(text = label, fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
-        Text(text = value, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(text = label, fontSize = 20.sp, modifier = Modifier.padding(bottom = 5.dp))
+        Text(text = value, fontFamily = JostBold, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        if (label != "Data Aviso:") {
+            Divider(
+                color = Color.Gray,
+                thickness = 1.dp, // Espessura da linha
+                modifier = Modifier
+                    .padding(horizontal = 0.dp, vertical = 5.dp)
+            )
 
+        }
     }
-
 
 }
 
