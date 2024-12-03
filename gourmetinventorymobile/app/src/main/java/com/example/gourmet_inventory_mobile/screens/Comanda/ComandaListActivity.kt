@@ -69,7 +69,7 @@ fun ComandaListScreen(
     val context = LocalContext.current
     var currentUser: User? by remember { mutableStateOf(null) }
     LaunchedEffect(Unit) {
-        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+        currentUser = DataStoreUtils(context = context).obterUsuario()
     }
 
     val resourses = context.resources
@@ -258,6 +258,8 @@ fun ItensComanda(
     comandas: List<Comanda>,
     onComandaClick: (String) -> Unit,
 ) {
+//    val filteredComandas = comandas.filter { it.status != "Finalizada" }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -350,7 +352,7 @@ fun ItemComanda(
                     .padding(top = 10.dp, bottom = 10.dp),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Text(text = comanda.mesa, fontSize = 18.sp)
+                Text(text = "Measa: ${comanda.mesa}", fontSize = 18.sp)
                 Text(text = comanda.status, fontSize = 18.sp)
             }
         }

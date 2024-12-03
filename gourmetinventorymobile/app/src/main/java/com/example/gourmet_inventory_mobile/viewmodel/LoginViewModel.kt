@@ -53,7 +53,7 @@ class LoginViewModel (private val usuarioRepository: UsuarioRepository): ViewMod
                     Log.d("LoginViewModel", "User: $user")
 
                     //salvar o usuario no dataStore
-                    DataStoreUtils(context).salvarUsusario(user)
+                    DataStoreUtils(context).salvarUsuario(user)
                     //salvar o token no dataStore
                     DataStoreUtils(context).salvarToken(loginResponse.token)
                     _loginState.value = LoginState.Success(user)

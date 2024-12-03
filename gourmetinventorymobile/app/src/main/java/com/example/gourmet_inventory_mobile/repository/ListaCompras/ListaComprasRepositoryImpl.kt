@@ -12,5 +12,7 @@ class ListaComprasRepositoryImpl(private val serviceListaCompras: ListaComprasSe
         return serviceListaCompras.getListaCompras(idEmpresa)
     }
 
-
+    override suspend fun deleteItemListaCompras(id: Long): Response<Unit> {
+        return serviceListaCompras.deleteItem(id)
+    }
 }

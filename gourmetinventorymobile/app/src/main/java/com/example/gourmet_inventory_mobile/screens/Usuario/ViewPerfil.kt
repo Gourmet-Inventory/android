@@ -75,7 +75,7 @@ fun ViewPerfilScreen(
 
     LaunchedEffect(Unit) {
         cargoSelecionado = DataStoreUtils(context = context).obterCargo().firstOrNull() ?: ""
-        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+        currentUser = DataStoreUtils(context = context).obterUsuario()
     }
 
     nome = currentUser?.name ?: ""
@@ -162,6 +162,7 @@ fun ViewPerfilScreen(
                         onClick = {
                             coroutineScope.launch {
                                 DataStoreUtils(context = context).limparDados()
+                                Log.d("ViewPerfilScreen", "Saindo da Gourmet: $currentUser")
                                 onViewPerfil("login")
                             }
                         },

@@ -8,7 +8,7 @@
     <string name="garcom">normal</string>
 
     <string name="comandaStatus0">Enviada</string>
-    <string name="comandaStatus1">Pronta</string>
+    <string name="comandaStatus1">Pronto</string>
     <string name="comandaStatus2">Entregue</string>
     <string name="comandaStatus3">Finalizada</string>
 
