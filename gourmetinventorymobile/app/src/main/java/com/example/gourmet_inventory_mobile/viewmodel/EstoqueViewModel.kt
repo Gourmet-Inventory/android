@@ -171,7 +171,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
 
         viewModelScope.launch {
-            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val user = DataStoreUtils(context).obterUsuario()
             Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacaoDto")
             val idEmpresa = user?.empresa?.idEmpresa
             Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")
@@ -210,7 +210,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         _estoqueManipuladoCriacaoState.value = EstoqueManipuladoCriacaoState.Loading
 
         viewModelScope.launch {
-            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val user = DataStoreUtils(context).obterUsuario()
             Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacaoDto")
             val idEmpresa = user?.empresa?.idEmpresa
             Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")
@@ -254,7 +254,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         _estoqueConsultaState.value = EstoqueConsultaState.Loading
 
         viewModelScope.launch {
-            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val user = DataStoreUtils(context).obterUsuario()
             val idEmpresa = user?.empresa?.idEmpresa
 
             try {
@@ -295,7 +295,7 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
         Log.d("EstoqueViewModel", "AtualizarEstoque: $estoqueCriacaoDto")
 
         viewModelScope.launch {
-            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val user = DataStoreUtils(context).obterUsuario()
             Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacaoDto")
             val idEmpresa = user?.empresa?.idEmpresa
             Log.d("EstoqueViewModel", "ID Empresa: $idEmpresa")

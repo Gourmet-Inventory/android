@@ -8,6 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -36,20 +37,36 @@ class DataStoreUtils(private val context: Context) : ViewModel() {
         }
     }
 
-    suspend fun obterUsuario(): Flow<User>? {
-        val preferences = context.dataStore.data.firstOrNull() ?: return null
-        val jsonString = preferences[USER_DATA_KEY] ?: return null
+    //    suspend fun obterUsuario(): Flow<User>? {
+//        val preferences = context.dataStore.data.firstOrNull() ?: return null
+//        val jsonString = preferences[USER_DATA_KEY] ?: return null
+//
+//        return try {
+//            flow {
+//                emit(Json.decodeFromString<User>(jsonString))
+//            }
+//        } catch (e: SerializationException) {
+//            null
+//        }
+//    }
+    suspend fun obterUsuario(): User? {
+        val json = context.dataStore.data
+            .map { preferences -> preferences[USER_DATA_KEY] ?: "" }
+            .first() // Obtem o valor diretamente
 
-        return try {
-            flow {
-                emit(Json.decodeFromString<User>(jsonString))
+        return if (json.isNotEmpty()) {
+            try {
+                Json.decodeFromString<User>(json)
+            } catch (e: Exception) {
+                // Log de erro ou tratativa caso o JSON seja inválido
+                null
             }
-        } catch (e: SerializationException) {
+        } else {
             null
         }
     }
 
-    suspend fun salvarUsusario(user: User) {
+    suspend fun salvarUsuario(user: User) {
         val jsonString = Json.encodeToString(user)
         context.dataStore.edit { prefs ->
             prefs[USER_DATA_KEY] = jsonString
@@ -58,10 +75,11 @@ class DataStoreUtils(private val context: Context) : ViewModel() {
 
     suspend fun limparDados() {
         context.dataStore.edit { preferences ->
-            preferences.remove(TOKEN_KEY)
-            preferences.remove(USER_DATA_KEY)
+            preferences[TOKEN_KEY] = ""
+            preferences[USER_DATA_KEY] = ""
         }
     }
+
 
     suspend fun salvarCargo(role: String) {
         Log.d("DataStoreUtils", "Salvando cargo: $role")

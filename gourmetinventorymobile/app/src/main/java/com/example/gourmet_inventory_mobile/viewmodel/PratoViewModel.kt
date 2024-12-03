@@ -23,7 +23,7 @@ class PratoViewModel(private val pratoRepository: PratoRepository): ViewModel() 
     fun getPratos(context: Context) {
 
         viewModelScope.launch {
-            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val user = DataStoreUtils(context).obterUsuario()
             val idEmpresa = user?.empresa?.idEmpresa
 
             isLoading = true

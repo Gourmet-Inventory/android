@@ -66,7 +66,7 @@ fun ListaFornecedoresScreen(
     var currentUser: User? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
-        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+        currentUser = DataStoreUtils(context = context).obterUsuario()
     }
 
     Scaffold(

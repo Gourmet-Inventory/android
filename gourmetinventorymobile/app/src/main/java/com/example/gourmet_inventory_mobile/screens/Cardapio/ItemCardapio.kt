@@ -285,8 +285,8 @@ fun FotoTop(onClickPratoItem: (String) -> Unit, onPratoItemVoltarClick: (String)
                 error =
                 /* Imagem mockada por nome/categoria */
                 when(prato.nome){
-                    "Spaghetti Carbonara" -> painterResource(id = R.drawable.carbonara)
-                    "Pizza" -> painterResource(id = R.drawable.pizzamarguerita)
+//                    "Spaghetti Carbonara" -> painterResource(id = R.drawable.carbonara)
+//                    "Pizza Margherita" -> painterResource(id = R.drawable.pizzamarguerita)
 //                    "Macarrão Bolonhesa" -> painterResource(id = R.drawable.macarraobolonhesa)
                     else -> painterResource(id = R.drawable.landscape_placeholder_svgrepo_com)
                 }

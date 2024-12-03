@@ -23,6 +23,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.gourmet_inventory_mobile.DI.appModule
+import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.CadastroItem2Screen
@@ -43,12 +44,14 @@ import com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado.CadastroI
 import com.example.gourmet_inventory_mobile.screens.Usuario.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.Fornecedor.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
+import com.example.gourmet_inventory_mobile.utils.DataStoreUtils
 import com.example.gourmet_inventory_mobile.viewmodel.ComandaViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueConsultaState
 import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
+import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -78,182 +81,215 @@ class MainActivity : ComponentActivity() {
                     val viewModelListaCompras = koinViewModel<ListaComprasViewModel>()
                     val viewModelPrato = koinViewModel<PratoViewModel>()
                     val viewModelComanda = koinViewModel<ComandaViewModel>()
+                    var user: User? = null
+                    var startDestination by remember { mutableStateOf<String?>(null) }
 
-                    NavHost(navController = navController, startDestination = "login") {
+                    LaunchedEffect(Unit) {
+                        val dataStore = DataStoreUtils(appContext)
+                        val user = dataStore.obterUsuario()
 
-                        composable("perfil") {
-                            EscolhaPerfilScreen(onPerfilClick = { perfil ->
-                                val destination =
-                                    if (perfil == resources.getString(R.string.garcom)) {
-                                        "cardapio"
-                                    } else {
-                                        "listaEstoque"
-                                    }
-                                navController.navigate(destination)
-                            })
+                        startDestination = when {
+                            user == null || user.toString().isBlank() -> "login"
+                            user.cargo == getString(R.string.gerente) -> "perfil"
+                            else -> "cardapio"
                         }
 
-                        composable("login") {
-                            LoginScreen(onLoginClick = { user ->
+                        Log.d("MainActivity", "user: $user, startDestination: $startDestination")
+                    }
+
+                    // Exibe apenas o NavHost após a definição de startDestination
+                    if (startDestination != null) {
+                        NavHost(
+                            navController = navController,
+                            startDestination = startDestination!!
+                        ) {
+
+                            composable("perfil") {
+                                EscolhaPerfilScreen(onPerfilClick = { perfil ->
+                                    val destination =
+                                        if (perfil == resources.getString(R.string.garcom)) {
+                                            "cardapio"
+                                        } else {
+                                            "listaEstoque"
+                                        }
+                                    navController.navigate(destination)
+                                })
+                            }
+
+                            composable("login") {
+//                            Log.d("MainActivity", "login: $user")
+
+                                LoginScreen(onLoginClick = { user ->
 //                                navController.currentBackStackEntry?.savedStateHandle?.set(
 //                                    "user", user
 //                                )
-                                if (user.cargo == resources.getString(R.string.garcom)) {
-                                    navController.navigate("cardapio")
-                                } else {
-                                    navController.navigate("perfil")
+                                    if (user.cargo == resources.getString(R.string.garcom)) {
+                                        navController.navigate("cardapio")
+                                    } else {
+                                        navController.navigate("perfil")
+                                    }
+                                })
+                            }
+
+                            composable("cardapio") {
+                                val context = LocalContext.current
+                                LaunchedEffect(Unit) {
+                                    viewModelPrato.getPratos(context)
                                 }
-                            })
-                        }
 
-                        composable("cardapio") {
-                            val context = LocalContext.current
-                            LaunchedEffect(Unit) {
-                                viewModelPrato.getPratos(context)
+                                CardapioListScreen(
+                                    pratoViewModel = viewModelPrato,
+                                    navController = navController,
+                                    onCardapioClick = { route ->
+                                        navController.navigate(route)
+                                    },
+                                    comandaViewModel = viewModelComanda
+                                )
                             }
 
-                            CardapioListScreen(
-                                pratoViewModel = viewModelPrato,
-                                navController = navController,
-                                onCardapioClick = { route ->
-                                    navController.navigate(route)
-                                },
-                                comandaViewModel = viewModelComanda
-                            )
-                        }
-
-                        composable("comandaList") {
-                            LaunchedEffect(Unit) {
-                                viewModelComanda.data.clear()
-                                viewModelComanda.getComandas()
+                            composable("comandaList") {
+                                LaunchedEffect(Unit) {
+                                    viewModelComanda.data.clear()
+                                    viewModelComanda.getComandas()
+                                }
+                                ComandaListScreen(
+                                    navController = navController,
+                                    onComandaClick = { route ->
+                                        navController.navigate(route)
+                                    },
+                                )
                             }
-                            ComandaListScreen(
-                                navController = navController,
-                                onComandaClick = { route ->
-                                    navController.navigate(route)
-                                },
-                            )
-                        }
 
-                        composable("cardapioItem/{idPrato}") { backStackEntry ->
-                            val idPrato =
-                                backStackEntry.arguments?.getString("idPrato")?.toIntOrNull()
+                            composable("cardapioItem/{idPrato}") { backStackEntry ->
+                                val idPrato =
+                                    backStackEntry.arguments?.getString("idPrato")?.toIntOrNull()
 
-                            idPrato?.let { id ->
-                                val prato = viewModelPrato.data.find { it.idPrato == id.toLong() }
+                                idPrato?.let { id ->
+                                    val prato =
+                                        viewModelPrato.data.find { it.idPrato == id.toLong() }
 
-                                prato?.let { prato ->
-                                    PratoScreen(
-                                        prato = prato,
-                                        navController = navController,
-                                        onClickPratoItem = { route ->
+                                    prato?.let { prato ->
+                                        PratoScreen(
+                                            prato = prato,
+                                            navController = navController,
+                                            onClickPratoItem = { route ->
+                                                navController.navigate(route)
+                                            },
+                                            onPratoItemVoltarClick = {
+                                                clickedAction = "Voltar"
+                                                navController.popBackStack()
+                                            },
+                                            viewModel = viewModelComanda
+                                        )
+                                    }
+                                }
+
+
+                            }
+
+
+                            composable("viewPerfil") {
+                                ViewPerfilScreen(
+                                    navController = navController,
+                                    onViewPerfil = { route ->
+                                        if (route == "login") {
+                                            navController.navigate("login") {
+                                                popUpTo("root") {
+                                                    inclusive = true
+                                                } // Remove as telas da pilha de navegação
+                                            }
+                                        } else {
                                             navController.navigate(route)
-                                        },
-                                        onPratoItemVoltarClick = {
-                                            clickedAction = "Voltar"
-                                            navController.popBackStack()
-                                        },
-                                        viewModel = viewModelComanda
-                                    )
-                                }
-                            }
-
-
-                        }
-
-
-                        composable("viewPerfil") {
-                            ViewPerfilScreen(
-                                navController = navController,
-                                onViewPerfil = { route ->
-                                    navController.navigate(route)
-                                }
-                            )
-                        }
-
-                        composable("listaFornecedor") {
-                            ListaFornecedoresScreen(
-                                navController = navController,
-                                fornecedorId = null,
-                                onListaFornecedoresClick = { route ->
-                                    navController.navigate(route)
-                                }
-                            )
-                        }
-
-                        composable("fornecedorView/{idFornecedor}") { backStackEntry ->
-                            val idFornecedor =
-                                backStackEntry.arguments?.getString("idFornecedor")?.toIntOrNull()
-                            val viewModel = koinViewModel<FornViewModel>()
-
-                            idFornecedor?.let { id ->
-                                val fornecedor =
-                                    viewModel.data.find { it.idFornecedor == id.toLong() }
-
-                                fornecedor?.let { forn ->
-                                    VizuFornScreen(
-                                        fornecedor = forn,
-                                        onVizuFornVoltarClick = {
-                                            navController.popBackStack()
                                         }
-                                    )
+                                    }
+                                )
+                            }
+
+                            composable("listaFornecedor") {
+                                ListaFornecedoresScreen(
+                                    navController = navController,
+                                    fornecedorId = null,
+                                    onListaFornecedoresClick = { route ->
+                                        navController.navigate(route)
+                                    }
+                                )
+                            }
+
+                            composable("fornecedorView/{idFornecedor}") { backStackEntry ->
+                                val idFornecedor =
+                                    backStackEntry.arguments?.getString("idFornecedor")
+                                        ?.toIntOrNull()
+                                val viewModel = koinViewModel<FornViewModel>()
+
+                                idFornecedor?.let { id ->
+                                    val fornecedor =
+                                        viewModel.data.find { it.idFornecedor == id.toLong() }
+
+                                    fornecedor?.let { forn ->
+                                        VizuFornScreen(
+                                            fornecedor = forn,
+                                            onVizuFornVoltarClick = {
+                                                navController.popBackStack()
+                                            }
+                                        )
+                                    }
                                 }
                             }
-                        }
 
-                        composable("listaEstoque") {
-                            val context = LocalContext.current
-                            LaunchedEffect(Unit) {
-                                viewModelEstoque.obterListaEstoque(context)
-                            }
-                            ListaEstoqueScreen(
-                                navController = navController,
-                                viewModel = viewModelEstoque,
-                                onListaEstoqueClick = { route ->
-                                    Log.d("MainActivity", "route: $route")
-                                    navController.navigate(route)
+                            composable("listaEstoque") {
+                                val context = LocalContext.current
+                                LaunchedEffect(Unit) {
+                                    viewModelEstoque.obterListaEstoque(context)
                                 }
-                            )
-                        }
-
-                        composable("listaCompras") {
-                            LaunchedEffect(Unit) {
-                                viewModelListaCompras.getListaCompras(appContext)
+                                ListaEstoqueScreen(
+                                    navController = navController,
+                                    viewModel = viewModelEstoque,
+                                    onListaEstoqueClick = { route ->
+                                        Log.d("MainActivity", "route: $route")
+                                        navController.navigate(route)
+                                    }
+                                )
                             }
-                            ListaComprasScreen(
-                                navController = navController,
-                                viewModel = viewModelListaCompras,
-                                onListaComprasClick = { route ->
-                                    navController.navigate(route)
+
+                            composable("listaCompras") {
+                                LaunchedEffect(Unit) {
+                                    viewModelListaCompras.getListaCompras(appContext)
                                 }
-                            )
+                                ListaComprasScreen(
+                                    navController = navController,
+                                    viewModel = viewModelListaCompras,
+                                    onListaComprasClick = { route ->
+                                        navController.navigate(route)
+                                    }
+                                )
 
-                        }
+                            }
 
-                        composable("comandaView/{idComanda}") { backStackEntry ->
-                            val idComanda =
-                                backStackEntry.arguments?.getString("idComanda")?.toIntOrNull()
-                            Log.d("MainActivity", "idComanda: $idComanda")
+                            composable("comandaView/{idComanda}") { backStackEntry ->
+                                val idComanda =
+                                    backStackEntry.arguments?.getString("idComanda")?.toIntOrNull()
+                                Log.d("MainActivity", "idComanda: $idComanda")
 
 //                            LaunchedEffect(idComanda) {
 //                                viewModelComanda.getComandas()
 //                            }
 
-                            val comanda = viewModelComanda.data.find { it.id == idComanda?.toLong() }
-                            Log.d("MainActivity", "comanda: $comanda")
+                                val comanda =
+                                    viewModelComanda.data.find { it.id == idComanda?.toLong() }
+                                Log.d("MainActivity", "comanda: $comanda")
 
-                            ComandaViewScreen(
-                                comanda = comanda,
-                                viewModel = viewModelComanda,
-                                navController = navController,
-                                onComandaViewClick = { route ->
-                                    navController.navigate(route)
-                                },
-                                onComandaViewVoltarClick = {
-                                    navController.popBackStack()
-                                }
-                            )
-                        }
+                                ComandaViewScreen(
+                                    comanda = comanda,
+                                    viewModel = viewModelComanda,
+                                    navController = navController,
+                                    onComandaViewClick = { route ->
+                                        navController.navigate(route)
+                                    },
+                                    onComandaViewVoltarClick = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
 
 //                        composable("itemEstoque") {
 //                            ItemEstoqueScreen(
@@ -288,213 +324,219 @@ class MainActivity : ComponentActivity() {
 //                                    )
 //                                }
 
-                        composable("deleteConfirmacao/{idItem}") { backStackEntry ->
-                            // Obtém o idItem como String e converte para Long (ou Int, dependendo do seu modelo)
-                            val idItem =
-                                backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
+                            composable("deleteConfirmacao/{idItem}") { backStackEntry ->
+                                // Obtém o idItem como String e converte para Long (ou Int, dependendo do seu modelo)
+                                val idItem =
+                                    backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
 
-                            if (idItem != null) {
-                                DeleteCnfirmacaoScreen(
-                                    viewModel = viewModelEstoque, // Certifique-se de passar a instância correta da ViewModel
-                                    idItem = idItem, // Passa o ID do item para a tela de confirmação
-                                    onDeleteConfirmacaoConfirmarClick = {
-                                        // Chame a função de deletar do ViewModel
-                                        viewModelEstoque.deletarEstoque(idItem)
+                                if (idItem != null) {
+                                    DeleteCnfirmacaoScreen(
+                                        viewModel = viewModelEstoque, // Certifique-se de passar a instância correta da ViewModel
+                                        idItem = idItem, // Passa o ID do item para a tela de confirmação
+                                        onDeleteConfirmacaoConfirmarClick = {
+                                            // Chame a função de deletar do ViewModel
+                                            viewModelEstoque.deletarEstoque(idItem)
 
-                                        // Navegar para a lista de estoque após a exclusão
-                                        navController.navigate("listaEstoque")
+                                            // Navegar para a lista de estoque após a exclusão
+                                            navController.navigate("listaEstoque")
+                                        },
+                                        onDeleteConfirmacaoCancelarClick = {
+                                            navController.popBackStack()
+                                        }
+                                    )
+                                } else {
+                                    Log.d("MainActivity", "ID do item inválido")
+                                    navController.popBackStack() // Volta para a tela anterior se o ID for inválido
+                                }
+                            }
+
+
+                            composable("cadastrarItemEstoque") {
+                                CadastroItemScreen(
+                                    sharedViewModel = sharedViewModel,
+                                    onCadastroItemProximoClick = {
+                                        Log.d(
+                                            "MainActivity - onCadastroItemProximoClick()",
+                                            "estoque: ${sharedViewModel.estoque.value}"
+                                        )
+                                        navController.navigate("cadastrarItemEstoque2")
                                     },
-                                    onDeleteConfirmacaoCancelarClick = {
+                                    onCadastroItemVoltarClick = {
                                         navController.popBackStack()
                                     }
                                 )
-                            } else {
-                                Log.d("MainActivity", "ID do item inválido")
-                                navController.popBackStack() // Volta para a tela anterior se o ID for inválido
                             }
-                        }
 
-
-                        composable("cadastrarItemEstoque") {
-                            CadastroItemScreen(
-                                sharedViewModel = sharedViewModel,
-                                onCadastroItemProximoClick = {
-                                    Log.d(
-                                        "MainActivity - onCadastroItemProximoClick()",
-                                        "estoque: ${sharedViewModel.estoque.value}"
-                                    )
-                                    navController.navigate("cadastrarItemEstoque2")
-                                },
-                                onCadastroItemVoltarClick = {
-                                    navController.popBackStack()
-                                }
-                            )
-                        }
-
-                        composable("cadastrarItemEstoque2") {
-                            CadastroItem2Screen(
-                                estoque = estoque,
-                                onCadastroItem2AnteriorClick = {
-                                    navController.popBackStack()
-                                },
-                                onCadastroItemCadastrarClick = { estoqueConsulta ->
-                                    navController.navigate("listaEstoque")
-//                                    { popUpTo("cadastrarItemEstoque2") { inclusive = true } }
-                                },
-                                sharedViewModel = sharedViewModel
-                            )
-                        }
-
-                        composable("cadastrarItemEstoqueManilpulado") {
-                            CadastroItemManipulavelScreen(
-                                sharedViewModel = sharedViewModel,
-                                onCadastroItemManipuladoProximoClick = {
-                                    Log.d(
-                                        "MainActivity - onCadastroItemProximoClick()",
-                                        "estoque: ${sharedViewModel.estoque.value}"
-                                    )
-                                    navController.navigate("cadastrarItemEstoqueManipulado2")
-                                },
-                                onCadastroItemManipuladoVoltarClick = {
-                                    navController.popBackStack()
-                                }
-                            )
-                        }
-
-                        composable("cadastrarItemEstoqueManipulado2") {
-                            CadastroItemManipulavel2Screen(
-                                estoqueViewModel = viewModelEstoque,
-                                sharedViewModel = sharedViewModel,
-                                onCadastroItemManipulavel2AnteriorClick = {
-                                    navController.popBackStack()
-                                },
-                                onCadastroItemManipulavelCadastrarClick = { estoqueConsulta ->
-                                    navController.navigate("listaEstoque")
-//                                    { popUpTo("cadastrarItemEstoque2") { inclusive = true } }
-                                },
-                            )
-                        }
-
-                        composable("editarItemEstoque/{idItem}") { backStackEntry ->
-                            val idItem =
-                                backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
-
-                            idItem?.let { id ->
-//                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
-                                val listaEstoque =
-                                    (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta
-                                        ?: emptyList()
-
-                                val itemEstoque =
-                                    (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
-                                        ?.estoqueConsulta
-                                        ?.mapNotNull { it as? EstoqueItemDiscriminator.Industrializado }
-                                        ?.find { it.idItem == id.toLong() }
-                                Log.d("MainActivity", "editarItemEstoque - estoque: $itemEstoque")
-
-                                itemEstoque?.let { estoque ->
-                                    EditarScreen(
-                                        estoque = estoque,
-                                        sharedViewModel = sharedViewModel,
-                                        onEditarItemVoltarClick = {
-                                            clickedAction = "Voltar"
-                                            navController.popBackStack()
-                                        },
-                                        onEditarItemProximoClick = {
-                                            navController.navigate("editarItemEstoque2/$idItem")
-                                        }
-                                    )
-                                }
-                            }
-                        }
-
-
-                        composable("editarItemEstoque2/{idItem}") { backStackEntry ->
-                            val idItem =
-                                backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
-                            if (idItem != null) {
-                                Editar2Screen(
-                                    estoqueViewModel = viewModelEstoque,
-                                    onEditarItem2SalvarClick = {
-                                        clickedAction = "Salvar"
-                                        navController.navigate("listaEstoque")
-                                    },
-                                    onEditarItem2AnteriorClick = {
-                                        clickedAction = "Anterior"
+                            composable("cadastrarItemEstoque2") {
+                                CadastroItem2Screen(
+                                    estoque = estoque,
+                                    onCadastroItem2AnteriorClick = {
                                         navController.popBackStack()
                                     },
-                                    sharedViewModel = sharedViewModel,
-                                    idItem = idItem
+                                    onCadastroItemCadastrarClick = { estoqueConsulta ->
+                                        navController.navigate("listaEstoque")
+//                                    { popUpTo("cadastrarItemEstoque2") { inclusive = true } }
+                                    },
+                                    sharedViewModel = sharedViewModel
                                 )
                             }
-                        }
 
-                        composable("itemEstoque/{estoqueItem.idItem}") { backStackEntry ->
-                            val idItem =
-                                backStackEntry.arguments?.getString("estoqueItem.idItem")
-                                    ?.toIntOrNull()
+                            composable("cadastrarItemEstoqueManilpulado") {
+                                CadastroItemManipulavelScreen(
+                                    sharedViewModel = sharedViewModel,
+                                    onCadastroItemManipuladoProximoClick = {
+                                        Log.d(
+                                            "MainActivity - onCadastroItemProximoClick()",
+                                            "estoque: ${sharedViewModel.estoque.value}"
+                                        )
+                                        navController.navigate("cadastrarItemEstoqueManipulado2")
+                                    },
+                                    onCadastroItemManipuladoVoltarClick = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
 
-                            idItem?.let { id ->
-//                                val itemEstoque =
-//                                    viewModelEstoque.data.find { it.idItem == id.toLong() }
-                                val itemEstoque =
-                                    (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
-                                        ?.estoqueConsulta
-                                        ?.mapNotNull { it as? EstoqueItemDiscriminator.Industrializado }
-                                        ?.find { it.idItem == id.toLong() }
+                            composable("cadastrarItemEstoqueManipulado2") {
+                                CadastroItemManipulavel2Screen(
+                                    estoqueViewModel = viewModelEstoque,
+                                    sharedViewModel = sharedViewModel,
+                                    onCadastroItemManipulavel2AnteriorClick = {
+                                        navController.popBackStack()
+                                    },
+                                    onCadastroItemManipulavelCadastrarClick = { estoqueConsulta ->
+                                        navController.navigate("listaEstoque")
+//                                    { popUpTo("cadastrarItemEstoque2") { inclusive = true } }
+                                    },
+                                )
+                            }
 
-                                Log.d("MainActivity", "itemEstoque - estoque: $itemEstoque")
-                                Log.d("MainActivity", "idItem: $idItem")
+                            composable("editarItemEstoque/{idItem}") { backStackEntry ->
+                                val idItem =
+                                    backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
 
-                                itemEstoque?.let { estoqueConsulta ->
-                                    ItemEstoqueScreen(
-                                        estoqueConsulta = estoqueConsulta,
-                                        onItemEstoqueClick = {
-                                            clickedAction = "Voltar"
+                                idItem?.let { id ->
+//                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
+                                    val listaEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta
+                                            ?: emptyList()
+
+                                    val itemEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
+                                            ?.estoqueConsulta
+                                            ?.mapNotNull { it as? EstoqueItemDiscriminator.Industrializado }
+                                            ?.find { it.idItem == id.toLong() }
+                                    Log.d(
+                                        "MainActivity",
+                                        "editarItemEstoque - estoque: $itemEstoque"
+                                    )
+
+                                    itemEstoque?.let { estoque ->
+                                        EditarScreen(
+                                            estoque = estoque,
+                                            sharedViewModel = sharedViewModel,
+                                            onEditarItemVoltarClick = {
+                                                clickedAction = "Voltar"
+                                                navController.popBackStack()
+                                            },
+                                            onEditarItemProximoClick = {
+                                                navController.navigate("editarItemEstoque2/$idItem")
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+
+                            composable("editarItemEstoque2/{idItem}") { backStackEntry ->
+                                val idItem =
+                                    backStackEntry.arguments?.getString("idItem")?.toLongOrNull()
+                                if (idItem != null) {
+                                    Editar2Screen(
+                                        estoqueViewModel = viewModelEstoque,
+                                        onEditarItem2SalvarClick = {
+                                            clickedAction = "Salvar"
                                             navController.navigate("listaEstoque")
                                         },
-                                        onItemEstoqueViewEditarClick = {
-                                            clickedAction = "Editar"
-                                            navController.navigate("editarItemEstoque/$idItem")
+                                        onEditarItem2AnteriorClick = {
+                                            clickedAction = "Anterior"
+                                            navController.popBackStack()
                                         },
-                                        onItemEstoqueViewExcluirClick = {
-                                            clickedAction = "Excluir"
-                                            navController.navigate("deleteConfirmacao/${idItem}")
-                                        }
+                                        sharedViewModel = sharedViewModel,
+                                        idItem = idItem
                                     )
                                 }
                             }
-                        }
 
-                        composable("itemEstoqueManipulado/{estoqueItem.idItem}") { backStackEntry ->
-                            val idItem = backStackEntry.arguments?.getString("estoqueItem.idItem")?.toLongOrNull()
+                            composable("itemEstoque/{estoqueItem.idItem}") { backStackEntry ->
+                                val idItem =
+                                    backStackEntry.arguments?.getString("estoqueItem.idItem")
+                                        ?.toIntOrNull()
 
-                            idItem?.let { id ->
-                                val itemEstoque =
-                                    (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
-                                        ?.estoqueConsulta
-                                        ?.mapNotNull { it as? EstoqueItemDiscriminator.Manipulado }
-                                        ?.find { it.idItem == id }
+                                idItem?.let { id ->
+//                                val itemEstoque =
+//                                    viewModelEstoque.data.find { it.idItem == id.toLong() }
+                                    val itemEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
+                                            ?.estoqueConsulta
+                                            ?.mapNotNull { it as? EstoqueItemDiscriminator.Industrializado }
+                                            ?.find { it.idItem == id.toLong() }
 
-                                Log.d("MainActivity", "estoque: $itemEstoque")
-                                Log.d("MainActivity", "idItem: $idItem")
+                                    Log.d("MainActivity", "itemEstoque - estoque: $itemEstoque")
+                                    Log.d("MainActivity", "idItem: $idItem")
 
-                                itemEstoque?.let { estoqueConsulta ->
-                                    ItemEstoqueManipuladoScreen(
-                                        estoqueConsulta = estoqueConsulta,
-                                        onItemEstoqueClick = {
-                                            clickedAction = "Voltar"
-                                            navController.navigate("listaEstoque")
-                                        },
-                                        onItemEstoqueViewEditarClick = {
-                                            clickedAction = "Editar"
-                                            navController.navigate("editarItemEstoque/$idItem")
-                                        },
-                                        onItemEstoqueViewExcluirClick = {
-                                            clickedAction = "Excluir"
-                                            navController.navigate("deleteConfirmacao/$idItem")
-                                        }
-                                    )
+                                    itemEstoque?.let { estoqueConsulta ->
+                                        ItemEstoqueScreen(
+                                            estoqueConsulta = estoqueConsulta,
+                                            onItemEstoqueClick = {
+                                                clickedAction = "Voltar"
+                                                navController.navigate("listaEstoque")
+                                            },
+                                            onItemEstoqueViewEditarClick = {
+                                                clickedAction = "Editar"
+                                                navController.navigate("editarItemEstoque/$idItem")
+                                            },
+                                            onItemEstoqueViewExcluirClick = {
+                                                clickedAction = "Excluir"
+                                                navController.navigate("deleteConfirmacao/${idItem}")
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            composable("itemEstoqueManipulado/{estoqueItem.idItem}") { backStackEntry ->
+                                val idItem =
+                                    backStackEntry.arguments?.getString("estoqueItem.idItem")
+                                        ?.toLongOrNull()
+
+                                idItem?.let { id ->
+                                    val itemEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
+                                            ?.estoqueConsulta
+                                            ?.mapNotNull { it as? EstoqueItemDiscriminator.Manipulado }
+                                            ?.find { it.idItem == id }
+
+                                    Log.d("MainActivity", "estoque: $itemEstoque")
+                                    Log.d("MainActivity", "idItem: $idItem")
+
+                                    itemEstoque?.let { estoqueConsulta ->
+                                        ItemEstoqueManipuladoScreen(
+                                            estoqueConsulta = estoqueConsulta,
+                                            onItemEstoqueClick = {
+                                                clickedAction = "Voltar"
+                                                navController.navigate("listaEstoque")
+                                            },
+                                            onItemEstoqueViewEditarClick = {
+                                                clickedAction = "Editar"
+                                                navController.navigate("editarItemEstoque/$idItem")
+                                            },
+                                            onItemEstoqueViewExcluirClick = {
+                                                clickedAction = "Excluir"
+                                                navController.navigate("deleteConfirmacao/$idItem")
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }

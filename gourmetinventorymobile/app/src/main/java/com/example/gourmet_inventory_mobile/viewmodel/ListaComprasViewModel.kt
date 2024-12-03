@@ -37,7 +37,7 @@ class ListaComprasViewModel(private val listaComprasRepository: ListaComprasRepo
     fun getListaCompras(context: Context) {
 
         viewModelScope.launch {
-            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val user = DataStoreUtils(context).obterUsuario()
             val idEmpresa = user?.empresa?.idEmpresa
 
             isLoading = true

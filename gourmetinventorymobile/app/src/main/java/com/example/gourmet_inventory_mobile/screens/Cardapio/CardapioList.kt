@@ -77,7 +77,7 @@ fun CardapioListScreen(
 
     var currentUser: User? by remember { mutableStateOf(null) }
     LaunchedEffect(Unit) {
-        currentUser = DataStoreUtils(context = context).obterUsuario()?.first()
+        currentUser = DataStoreUtils(context = context).obterUsuario()
     }
 
     val resourses = context.resources
@@ -275,6 +275,7 @@ fun ItemPrato(
             modifier = Modifier
                 .weight(1f)
         ) {
+            //Nome
             Text(
                 text = prato.nome,
                 fontSize = 20.sp,
@@ -286,12 +287,14 @@ fun ItemPrato(
                     .padding(start = 8.dp),
                 textAlign = TextAlign.Start
             )
+            //Descrição
             Text(
                 text = prato.descricao,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(start = 8.dp, top = 4.dp),
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
             )
+            //Preço
             Text(
                 text = "R$" + prato.preco.toString(),
                 fontSize = 18.sp,
@@ -307,8 +310,8 @@ fun ItemPrato(
                 error =
                 /* Imagem mockada por nome/categoria */
                     when(prato.nome){
-                        "Spaghetti Carbonara" -> painterResource(id = R.drawable.carbonara)
-                        "Pizza" -> painterResource(id = R.drawable.pizzamarguerita)
+//                        "Spaghetti Carbonara" -> painterResource(id = R.drawable.carbonara)
+//                        "Pizza Margherita" -> painterResource(id = R.drawable.pizzamarguerita)
 //                        "Macarrão Bolonhesa" -> painterResource(id = R.drawable.macarraobolonhesa)
                         else -> painterResource(id = R.drawable.landscape_placeholder_svgrepo_com)
                     }

@@ -148,7 +148,7 @@ class ComandaViewModel(private val comandaRepository: ComandaRepository) : ViewM
 
         Log.d("ComandaViewModel", "Comanda atual: ${_comandaAtual.value}")
         viewModelScope.launch {
-            val user = DataStoreUtils(context).obterUsuario()?.first()
+            val user = DataStoreUtils(context).obterUsuario()
             val idEmpresa = user?.id
             Log.d("ComandaViewModel", "User ID: $user")
 
