@@ -6,6 +6,7 @@ import com.example.gourmet_inventory_mobile.model.estoque.Estoque
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueIngredienteAtualizacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoAtualizacao
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import retrofit2.Response
@@ -51,6 +52,13 @@ class EstoqueRepositoryImplLocal(): EstoqueRepository {
         idEmpresa: Long,
         estoque: EstoqueIngredienteAtualizacaoDto
     ): Response<EstoqueConsulta> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateEstoqueManipulado(
+        idEstoque: Long,
+        estoque: EstoqueManipuladoAtualizacao
+    ): Response<EstoqueManipuladoConsulta> {
         TODO("Not yet implemented")
     }
 

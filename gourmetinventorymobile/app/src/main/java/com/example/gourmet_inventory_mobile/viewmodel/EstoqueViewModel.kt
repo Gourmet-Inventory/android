@@ -304,7 +304,9 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
                 val response = idEmpresa?.let {
 //                    estoqueCriacaoDto.toEstoque(user.empresa).let { estoque ->
                     estoqueCriacaoDto.toEstoqueAtualizacao().let { estoque ->
-                        estoqueRepository.updateEstoque(idEstoque, estoque)
+                        estoque?.let {
+                            it1 -> estoqueRepository.updateEstoque(idEstoque, it1)
+                        }
                     }
                 }
 
@@ -319,6 +321,50 @@ class EstoqueViewModel(private val estoqueRepository: EstoqueRepository) : ViewM
                         "Response é bem sucedido e corpo da resposta não é nulo"
                     )
                     _estoqueCriacaoState.value = EstoqueCriacaoState.Success(response.body()!!)
+                } else {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response não é bem sucedido ou corpo da resposta é nulo"
+                    )
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+                }
+            } catch (e: Exception) {
+                Log.d("EstoqueViewModel", "Erro ao atualizar estoque: ${e.message}")
+                _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+            }
+        }
+    }
+
+    fun atualizarEstoqueManipulado(context: Context, idEstoque: Long, estoqueCriacaoDto: EstoqueCriacaoDto, sharedViewModel: SharedViewModel) {
+        _estoqueCriacaoState.value = EstoqueCriacaoState.Loading
+        Log.d("EstoqueViewModel", "AtualizarEstoqueManipulado: $estoqueCriacaoDto")
+
+        viewModelScope.launch {
+            val user = DataStoreUtils(context).obterUsuario()
+            Log.d("EstoqueViewModel", "EstoqueCriacao: $estoqueCriacaoDto")
+
+            try {
+                val response = idEstoque?.let {
+                    estoqueCriacaoDto.toEstoqueAtualizacao().let { estoque ->
+                        estoque?.let {
+                            sharedViewModel.criarEstoqueManipuladoAtualizacao(estoque).let {
+                                it1 -> estoqueRepository.updateEstoqueManipulado(idEstoque, it1)
+                            }
+                        }
+                    }
+                }
+
+                if (response == null) {
+                    Log.d("EstoqueViewModel", "Response é nulo")
+                    _estoqueCriacaoState.value = EstoqueCriacaoState.Error("Erro ao atualizar estoque")
+                    return@launch
+                }
+                if (response.isSuccessful && response.body() != null) {
+                    Log.d(
+                        "EstoqueViewModel",
+                        "Response é bem sucedido e corpo da resposta não é nulo"
+                    )
+                    _estoqueManipuladoCriacaoState.value = EstoqueManipuladoCriacaoState.Success(response.body()!!)
                 } else {
                     Log.d(
                         "EstoqueViewModel",

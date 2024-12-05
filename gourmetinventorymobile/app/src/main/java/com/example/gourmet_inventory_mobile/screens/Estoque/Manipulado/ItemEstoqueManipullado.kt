@@ -1,3 +1,4 @@
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,11 +39,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import com.example.gourmet_inventory_mobile.model.CategoriaEstoque
 import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteConsultaDto
-import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
 import com.example.gourmet_inventory_mobile.model.Receita.ReceitaConsultaDto
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
-import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 
 import com.example.gourmet_inventory_mobile.ui.theme.GI_Verde
 import com.example.gourmet_inventory_mobile.ui.theme.JostBold
@@ -53,18 +52,10 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun ItemEstoqueManipuladoScreen(
     estoqueConsulta: EstoqueItemDiscriminator.Manipulado?,
-    onItemEstoqueClick: (String) -> Unit,
-    onItemEstoqueViewEditarClick: () -> Unit,
-    onItemEstoqueViewExcluirClick: () -> Unit,
+    onItemManipuladoEstoqueClick: (String) -> Unit,
+    onItemEstoqueManipuladoViewEditarClick: () -> Unit,
+    onItemEstoqueManipuladoViewExcluirClick: () -> Unit,
 ) {
-//    val receita = listOf(
-//        Receita(50.0, "GRAMAS", "TOMATEEEEEEEEEEEE"),
-//        Receita(50.0, "GRAMAS", "TOMATE"),
-//        Receita(50.0, "GRAMAS", "TOMATE"),
-//        Receita(50.0, "GRAMAS", "TOMATE"),
-//        Receita(50.0, "GRAMAS", "TOMATE"),
-//        Receita(50.0, "GRAMAS", "TOMATE")
-//    )
 
     var lote by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
@@ -101,7 +92,7 @@ fun ItemEstoqueManipuladoScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(
-                    onClick = { onItemEstoqueClick("Voltar") },
+                    onClick = { onItemManipuladoEstoqueClick("Voltar") },
                     modifier = Modifier
                         .size(50.dp)
                 ) {
@@ -155,8 +146,20 @@ fun ItemEstoqueManipuladoScreen(
                 ) {
                     item { InfoItemManipulado("Lote:", lote) }
                     item { InfoItemManipulado("Categoria:", categoria, topPadding = 22.dp) }
-                    item { InfoItemManipulado("Local Armazenamento:", localArmazenamento, topPadding = 22.dp) }
-                    item {InfoItemManipulado("Quantidade Unitária:", quantidadeUnitaria, topPadding = 22.dp) }
+                    item {
+                        InfoItemManipulado(
+                            "Local Armazenamento:",
+                            localArmazenamento,
+                            topPadding = 22.dp
+                        )
+                    }
+                    item {
+                        InfoItemManipulado(
+                            "Quantidade Unitária:",
+                            quantidadeUnitaria,
+                            topPadding = 22.dp
+                        )
+                    }
                     item { InfoItemManipulado("Tipo Medida:", tipoMedida, topPadding = 22.dp) }
                     item { InfoItemManipulado("Valor Medida:", valorMedida, topPadding = 22.dp) }
                     item { InfoItemManipulado("Valor Total:", valorTotal, topPadding = 22.dp) }
@@ -192,7 +195,7 @@ fun ItemEstoqueManipuladoScreen(
                 ) {
                     Button(
                         onClick = {
-                            onItemEstoqueViewEditarClick()
+                            onItemEstoqueManipuladoViewEditarClick()
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = GI_Verde,
@@ -205,7 +208,7 @@ fun ItemEstoqueManipuladoScreen(
                         shape = RoundedCornerShape(4.dp)
                     ) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Default.Edit,
+                            imageVector = Icons.Default.Edit,
                             contentDescription = "Editar"
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -213,7 +216,7 @@ fun ItemEstoqueManipuladoScreen(
                     }
                     Button(
                         onClick = {
-                            onItemEstoqueViewExcluirClick()
+                            onItemEstoqueManipuladoViewExcluirClick()
                             Toast.makeText(
                                 context,
                                 "Item Excluído com sucesso",
@@ -247,7 +250,7 @@ fun ItemEstoqueManipuladoScreen(
 
 @Composable
 fun InfoItemManipulado(label: String, value: String, topPadding: Dp = 0.dp) {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = topPadding, start = 20.dp, end = 20.dp),
@@ -255,7 +258,13 @@ fun InfoItemManipulado(label: String, value: String, topPadding: Dp = 0.dp) {
         horizontalAlignment = Alignment.Start
     ) {
         Text(text = label, fontSize = 20.sp, modifier = Modifier.padding(bottom = 5.dp))
-        Text(text = value, fontFamily = JostBold, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(
+            text = value,
+            fontFamily = JostBold,
+            fontSize = 20.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
         if (label != "Data Aviso:") {
             Divider(
                 color = Color.Gray,
@@ -309,7 +318,12 @@ fun ItemReceita(receita: IngredienteConsultaDto) {
 }
 
 @Composable
-fun ItensReceitaCadastro(receitas: List<IngredienteConsultaDto>, sharedViewModel: SharedViewModel) {
+fun ItensReceitaCadastro(
+    receitas: List<IngredienteConsultaDto>,
+    sharedViewModel: SharedViewModel,
+    edicao: Boolean
+) {
+    Log.d("ItensReceitaCadastro", "Receitas: $receitas")
     DrawScrollableView(
         modifier = Modifier
             .fillMaxHeight(),
@@ -321,7 +335,12 @@ fun ItensReceitaCadastro(receitas: List<IngredienteConsultaDto>, sharedViewModel
                 verticalArrangement = Arrangement.Top
             ) {
                 receitas.forEach() { receitaItem ->
-                    ItemReceitaCriacao(receita = receitaItem, sharedViewModel = sharedViewModel)
+                    ItemReceitaCriacao(
+                        receita = receitas,
+                        receitaItem = receitaItem,
+                        sharedViewModel = sharedViewModel,
+                        edicao = edicao
+                    )
                 }
             }
         }
@@ -329,7 +348,13 @@ fun ItensReceitaCadastro(receitas: List<IngredienteConsultaDto>, sharedViewModel
 }
 
 @Composable
-fun ItemReceitaCriacao(receita: IngredienteConsultaDto, sharedViewModel: SharedViewModel) {
+fun ItemReceitaCriacao(
+    receita: List<IngredienteConsultaDto>,
+    receitaItem: IngredienteConsultaDto,
+    sharedViewModel: SharedViewModel,
+    edicao: Boolean
+) {
+    Log.d("ItemReceitaCriacao", "Receita: $receitaItem")
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -337,7 +362,7 @@ fun ItemReceitaCriacao(receita: IngredienteConsultaDto, sharedViewModel: SharedV
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "${receita.valorMedida} ${receita.tipoMedida.abreviacao} - ${receita.nome}",
+            text = "${receitaItem.valorMedida} ${receitaItem.tipoMedida.abreviacao} - ${receitaItem.nome}",
             fontSize = 19.sp,
             maxLines = 1,
             overflow = TextOverflow.Clip,
@@ -349,10 +374,18 @@ fun ItemReceitaCriacao(receita: IngredienteConsultaDto, sharedViewModel: SharedV
             modifier = Modifier
                 .size(30.dp)
                 .clickable {
-                    sharedViewModel.removerIngredienteConsulta(receita)
-                    val index = sharedViewModel.receita.indexOf(receita)
-                    val idItem = sharedViewModel.receitaCriacao.getOrNull(index)?.idItem ?: 0L
-                    sharedViewModel.removerIngredienteCriacao(idItem)
+                    if (edicao) {
+                        sharedViewModel.removerIngredienteConsultaAtualizacao(receitaItem, receita)
+                        val index = sharedViewModel.receitaAtualizacaoConsulta.indexOf(receitaItem)
+
+                        val idItem = sharedViewModel.receitaCriacao.getOrNull(index)?.idItem ?: 0L
+                        sharedViewModel.removerIngredienteAtualizacaoCriacao(idItem)
+                    } else {
+                        sharedViewModel.removerIngredienteConsulta(receitaItem)
+                        val index = sharedViewModel.receita.indexOf(receitaItem)
+                        val idItem = sharedViewModel.receitaCriacao.getOrNull(index)?.idItem ?: 0L
+                        sharedViewModel.removerIngredienteCriacao(idItem)
+                    }
                 }
         )
     }
@@ -364,9 +397,9 @@ fun ItemManipuladoPreview() {
     val ingredienteConsultaDto = IngredienteConsultaDto("Ingrediente 1", Medidas.UNIDADE, 50.0)
 
     ItemEstoqueManipuladoScreen(
-        onItemEstoqueClick = {},
-        onItemEstoqueViewEditarClick = {},
-        onItemEstoqueViewExcluirClick = {},
+        onItemManipuladoEstoqueClick = {},
+        onItemEstoqueManipuladoViewEditarClick = {},
+        onItemEstoqueManipuladoViewExcluirClick = {},
         estoqueConsulta = EstoqueItemDiscriminator.Manipulado(
             idItem = 1,
             manipulado = true,

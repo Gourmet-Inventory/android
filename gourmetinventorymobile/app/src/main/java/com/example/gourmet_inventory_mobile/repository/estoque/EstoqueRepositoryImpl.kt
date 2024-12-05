@@ -3,6 +3,7 @@ package com.example.gourmet_inventory_mobile.repository.estoque
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueIngredienteAtualizacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoAtualizacao
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import com.example.gourmet_inventory_mobile.service.EstoqueService
@@ -32,6 +33,13 @@ class EstoqueRepositoryImpl(private val serviceEstoque: EstoqueService) : Estoqu
         estoque: EstoqueIngredienteAtualizacaoDto
     ): Response<EstoqueConsulta> {
         return serviceEstoque.updateEstoque(idEstoque, estoque)
+    }
+
+    override suspend fun updateEstoqueManipulado(
+        idEstoque: Long,
+        estoque: EstoqueManipuladoAtualizacao
+    ): Response<EstoqueManipuladoConsulta> {
+        return serviceEstoque.updateEstoqueManipulado(idEstoque, estoque)
     }
 
     override suspend fun deleteEstoque(id: Long): Response<Unit> {

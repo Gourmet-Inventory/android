@@ -25,40 +25,44 @@ data class EstoqueCriacaoDto(
     var dtaCadastro: LocalDate,
     @Contextual
     var dtaAviso: LocalDate,
-    var marca: String
+    var marca: String?
 ) : java.io.Serializable , android.os.Parcelable {
 
-    fun toEstoque(empresa: Empresa): Estoque {
-        return Estoque(
-            lote = this.lote,
-            nome = this.nome,
-            categoria = this.categoria,
-            tipoMedida = this.tipoMedida,
-            unitario = this.unitario,
-            valorMedida = this.valorMedida,
-            localArmazenamento = this.localArmazenamento,
-            dtaCadastro = this.dtaCadastro,
-            dtaAviso = this.dtaAviso,
-            marca = this.marca,
-            manipulado = this.manipulado,
-            empresa = empresa
-        )
+    fun toEstoque(empresa: Empresa): Estoque? {
+        return this.marca?.let {
+            Estoque(
+                lote = this.lote,
+                nome = this.nome,
+                categoria = this.categoria,
+                tipoMedida = this.tipoMedida,
+                unitario = this.unitario,
+                valorMedida = this.valorMedida,
+                localArmazenamento = this.localArmazenamento,
+                dtaCadastro = this.dtaCadastro,
+                dtaAviso = this.dtaAviso,
+                marca = it,
+                manipulado = this.manipulado,
+                empresa = empresa
+            )
+        }
     }
 
-    fun toEstoqueAtualizacao(): EstoqueIngredienteAtualizacaoDto {
-        return EstoqueIngredienteAtualizacaoDto(
-            lote = this.lote,
-            nome = this.nome,
-            categoria = this.categoria,
-            tipoMedida = this.tipoMedida,
-            unitario = this.unitario,
-            valorMedida = this.valorMedida,
-            localArmazenamento = this.localArmazenamento,
-            dtaCadastro = this.dtaCadastro,
-            dtaAviso = this.dtaAviso,
-            marca = this.marca,
-            descricao = "",
-            valorTotal = this.unitario * this.valorMedida
-        )
+    fun toEstoqueAtualizacao(): EstoqueIngredienteAtualizacaoDto? {
+        return this.marca?.let {
+            EstoqueIngredienteAtualizacaoDto(
+                lote = this.lote,
+                nome = this.nome,
+                categoria = this.categoria,
+                tipoMedida = this.tipoMedida,
+                unitario = this.unitario,
+                valorMedida = this.valorMedida,
+                localArmazenamento = this.localArmazenamento,
+                dtaCadastro = this.dtaCadastro,
+                dtaAviso = this.dtaAviso,
+                marca = it,
+                descricao = "",
+                valorTotal = this.unitario * this.valorMedida
+            )
+        }
     }
 }

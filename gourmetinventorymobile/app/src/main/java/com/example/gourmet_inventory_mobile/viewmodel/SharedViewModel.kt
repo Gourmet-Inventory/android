@@ -7,6 +7,8 @@ import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteConsult
 import com.example.gourmet_inventory_mobile.model.Ingrediente.IngredienteCriacaoDto
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.Medidas
+import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueIngredienteAtualizacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoAtualizacao
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +24,12 @@ class SharedViewModel constructor() : ViewModel() {
         private set
 
     var receitaCriacao = mutableStateListOf<IngredienteCriacaoDto>()
+        private set
+
+    var receitaAtualizacaoConsulta = mutableStateListOf<IngredienteConsultaDto>()
+        private set
+
+    var receitaAtualizacaoCriacao = mutableStateListOf<IngredienteCriacaoDto>()
         private set
 
     private val _estoque = MutableStateFlow(
@@ -41,27 +49,35 @@ class SharedViewModel constructor() : ViewModel() {
     )
     val estoque: StateFlow<EstoqueCriacaoDto> = _estoque.asStateFlow()
 
-//    val estoqueManipuladoCriacao = EstoqueManipuladoCriacao(
-//        estoqueIngredienteCriacaoDto = estoque.value,
-//        receita = receitaCriacao
-//    )
-
-    fun adicionarIngredienteCriacao(tipoMedida: String, valorMedida: Double, idItem: Long) {
-        receitaCriacao.add(
-            IngredienteCriacaoDto(
-                idItem = idItem,
-                tipoMedida = Medidas.valueOf(tipoMedida),
-                valorMedida = valorMedida,
+    //Adicona um ingrediente a receita para criação de um estoque manipulado
+    fun adicionarIngredienteCriacao(tipoMedida: String, valorMedida: Double, idItem: Long, edicao: Boolean) {
+        if (edicao){
+            receitaAtualizacaoCriacao.add(
+                IngredienteCriacaoDto(
+                    idItem = idItem,
+                    tipoMedida = Medidas.valueOf(tipoMedida),
+                    valorMedida = valorMedida,
+                )
             )
-        )
+        } else {
+            receitaCriacao.add(
+                IngredienteCriacaoDto(
+                    idItem = idItem,
+                    tipoMedida = Medidas.valueOf(tipoMedida),
+                    valorMedida = valorMedida,
+                )
+            )
+        }
         Log.d("SharedViewModel", "Ingrediente adicionado: $receitaCriacao")
     }
 
-    fun removerIngredienteCriacao(idItem: Long) {
-        this.receitaCriacao.removeIf { it.idItem == idItem }
-    }
-
-    fun adicionarIngredienteConsulta(idItem: Long, nome: String, tipoMedida: String, valorMedida: Double) {
+    //Adiciona um ingrediente a receita para a lista de visualização dos ingredientes
+    fun adicionarIngredienteConsulta(
+        idItem: Long,
+        nome: String,
+        tipoMedida: String,
+        valorMedida: Double
+    ) {
         receita.add(
             IngredienteConsultaDto(
                 nome = nome,
@@ -72,10 +88,61 @@ class SharedViewModel constructor() : ViewModel() {
         Log.d("SharedViewModel", "Ingrediente adicionado: $receita")
     }
 
+    //Remove um ingrediente da receita para criação de um estoque manipulado
+    fun removerIngredienteCriacao(idItem: Long) {
+        this.receitaCriacao.removeIf { it.idItem == idItem }
+    }
+
+    //Remove um ingrediente da receita de visualização dos ingredientes
     fun removerIngredienteConsulta(receita: IngredienteConsultaDto) {
         this.receita.remove(receita)
     }
 
+    //Adiciona um ingrediente a receita para a lista de visualização dos ingredientes que vão ser atualizados
+    fun adicionarIngredienteConsultaAtualizacao(
+        idItem: Long,
+        nome: String,
+        tipoMedida: String,
+        valorMedida: Double
+    ) {
+        if (receitaAtualizacaoConsulta.isEmpty()) {
+            receitaAtualizacaoConsulta.addAll(receita)
+            receitaAtualizacaoConsulta.add(
+                IngredienteConsultaDto(
+                    nome = nome,
+                    tipoMedida = Medidas.valueOf(tipoMedida),
+                    valorMedida = valorMedida,
+                )
+            )
+        } else {
+            receitaAtualizacaoConsulta.add(
+                IngredienteConsultaDto(
+                    nome = nome,
+                    tipoMedida = Medidas.valueOf(tipoMedida),
+                    valorMedida = valorMedida,
+                )
+            )
+        }
+        Log.d("SharedViewModel", "Ingrediente adicionado: $receita")
+    }
+
+    //Remover um ingrediente da receita para a lista de visualização dos ingredientes que vão ser atualizados
+    fun removerIngredienteConsultaAtualizacao(receitaItem: IngredienteConsultaDto, receitas: List<IngredienteConsultaDto>) {
+        if (receitaAtualizacaoConsulta.isEmpty()) {
+            receitaAtualizacaoConsulta.addAll(receitas)
+        }
+        this.receitaAtualizacaoConsulta.remove(receitaItem)
+    }
+
+    //Remove um ingrediente da receita de visualização dos ingredientes que vão ser atualizados
+    fun removerIngredienteAtualizacaoCriacao(idItem: Long) {
+        if (receitaAtualizacaoCriacao.isEmpty()) {
+            receitaAtualizacaoCriacao.addAll(receitaCriacao)
+        }
+        this.receitaAtualizacaoCriacao.removeIf { it.idItem == idItem }
+    }
+
+    //Cria um estoque manipulado com a receita de ingredientes para criação
     fun criarEstoqueManipuladoCriacao(estoque: EstoqueCriacaoDto): EstoqueManipuladoCriacao {
         Log.d("SharedViewModel", "Criando EstoqueManipuladoCriacao")
         Log.d("SharedViewModel", "Receita: ${receitaCriacao.size}")
@@ -85,6 +152,17 @@ class SharedViewModel constructor() : ViewModel() {
         )
     }
 
+    //Cria um estoque manipulado com a receita de ingredientes para atualização
+    fun criarEstoqueManipuladoAtualizacao(estoque: EstoqueIngredienteAtualizacaoDto): EstoqueManipuladoAtualizacao {
+        Log.d("SharedViewModel", "Criando EstoqueManipuladoCriacao")
+        Log.d("SharedViewModel", "Receita: ${receitaCriacao.size}")
+        return EstoqueManipuladoAtualizacao(
+            estoqueIngredienteAtualizacaoDto = estoque,
+            receita = receitaAtualizacaoCriacao.toList()
+        )
+    }
+
+    //Mantém o estoque atualizado para a requisição
     fun atualizarEstoque(novoEstoque: EstoqueCriacaoDto) {
         viewModelScope.launch {
             _estoque.emit(
@@ -95,7 +173,8 @@ class SharedViewModel constructor() : ViewModel() {
         Log.d("SharedViewModel", "Estoque atualizado: $novoEstoque")
     }
 
-    fun criarEstoqueAtualizado(estoque : EstoqueCriacaoDto): EstoqueCriacaoDto? {
+    //Cria um estoque atualizado para a requisição
+    fun criarEstoqueAtualizado(estoque: EstoqueCriacaoDto): EstoqueCriacaoDto? {
         return try {
             EstoqueCriacaoDto(
                 lote = estoque?.lote ?: "",
@@ -107,7 +186,7 @@ class SharedViewModel constructor() : ViewModel() {
                 valorMedida = estoque?.valorMedida ?: 0.0,
                 localArmazenamento = estoque?.localArmazenamento ?: "",
                 dtaCadastro = LocalDate.parse(estoque?.dtaCadastro.toString(), dateFormatter),
-                dtaAviso = LocalDate.parse(estoque?.dtaAviso.toString() , dateFormatter),
+                dtaAviso = LocalDate.parse(estoque?.dtaAviso.toString(), dateFormatter),
                 marca = estoque?.marca ?: ""
             )
         } catch (e: Exception) {
@@ -116,6 +195,7 @@ class SharedViewModel constructor() : ViewModel() {
         }
     }
 
+    //Limpa o estoque
     fun limparEstoque() {
         viewModelScope.launch {
             _estoque.emit(
@@ -133,6 +213,10 @@ class SharedViewModel constructor() : ViewModel() {
                     marca = ""
                 )
             )
+//            receitaCriacao.clear()
+//            receita.clear()
+            receitaAtualizacaoCriacao.clear()
+            receitaAtualizacaoConsulta.clear()
         }
     }
 }

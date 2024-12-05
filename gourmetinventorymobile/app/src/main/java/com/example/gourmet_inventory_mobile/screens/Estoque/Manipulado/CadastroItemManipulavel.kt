@@ -152,9 +152,11 @@ fun CadastroItemManipulavelScreen(
                         }
                     )
 
-                    InputCadastroManipulavel(titulo = "Marca",valorCampo = marca,
-                        mudaValor = { novoValor ->
-                        marca = novoValor })
+                    marca?.let {
+                        InputCadastroManipulavel(titulo = "Marca",valorCampo = it,
+                            mudaValor = { novoValor ->
+                                marca = novoValor })
+                    }
 
 //                    StyledSelectBox(
 //                        selectedLocalArmazenamento = localArmazenamento,

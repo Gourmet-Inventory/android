@@ -25,7 +25,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gourmet_inventory_mobile.DI.appModule
 import com.example.gourmet_inventory_mobile.model.Usuario.User
 import com.example.gourmet_inventory_mobile.model.estoque.EstoqueItemDiscriminator
-import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 import com.example.gourmet_inventory_mobile.screens.Estoque.Industrializado.CadastroItem2Screen
 import com.example.gourmet_inventory_mobile.screens.Cardapio.CardapioListScreen
 import com.example.gourmet_inventory_mobile.screens.Comanda.ComandaListScreen
@@ -41,6 +40,8 @@ import com.example.gourmet_inventory_mobile.screens.Usuario.LoginScreen
 import com.example.gourmet_inventory_mobile.screens.Cardapio.PratoScreen
 import com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado.CadastroItemManipulavel2Screen
 import com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado.CadastroItemManipulavelScreen
+import com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado.EdicaoItemManipulavel2Screen
+import com.example.gourmet_inventory_mobile.screens.Estoque.Manipulado.EdicaoItemManipulavelScreen
 import com.example.gourmet_inventory_mobile.screens.Usuario.ViewPerfilScreen
 import com.example.gourmet_inventory_mobile.screens.Fornecedor.VizuFornScreen
 import com.example.gourmet_inventory_mobile.ui.theme.GourmetinventorymobileTheme
@@ -51,7 +52,6 @@ import com.example.gourmet_inventory_mobile.viewmodel.EstoqueViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.FornViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.ListaComprasViewModel
 import com.example.gourmet_inventory_mobile.viewmodel.PratoViewModel
-import kotlinx.coroutines.flow.first
 import org.koin.android.ext.koin.androidContext
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.context.GlobalContext.startKoin
@@ -523,18 +523,92 @@ class MainActivity : ComponentActivity() {
                                     itemEstoque?.let { estoqueConsulta ->
                                         ItemEstoqueManipuladoScreen(
                                             estoqueConsulta = estoqueConsulta,
-                                            onItemEstoqueClick = {
+                                            onItemManipuladoEstoqueClick = {
                                                 clickedAction = "Voltar"
                                                 navController.navigate("listaEstoque")
                                             },
-                                            onItemEstoqueViewEditarClick = {
+                                            onItemEstoqueManipuladoViewEditarClick = {
                                                 clickedAction = "Editar"
-                                                navController.navigate("editarItemEstoque/$idItem")
+                                                navController.navigate("editarItemEstoqueManipulado/$idItem")
                                             },
-                                            onItemEstoqueViewExcluirClick = {
+                                            onItemEstoqueManipuladoViewExcluirClick = {
                                                 clickedAction = "Excluir"
                                                 navController.navigate("deleteConfirmacao/$idItem")
                                             }
+                                        )
+                                    }
+                                }
+                            }
+                            composable("editarItemEstoqueManipulado/{idItem}") { backStackEntry ->
+                                val idItem =
+                                    backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
+
+                                idItem?.let { id ->
+//                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
+                                    val listaEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta
+                                            ?: emptyList()
+
+                                    val itemEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
+                                            ?.estoqueConsulta
+                                            ?.mapNotNull { it as? EstoqueItemDiscriminator.Manipulado }
+                                            ?.find { it.idItem == id.toLong() }
+                                    Log.d(
+                                        "MainActivity",
+                                        "editarItemEstoqueManipulado - estoque: $itemEstoque"
+                                    )
+
+                                    itemEstoque?.let { estoque ->
+                                        EdicaoItemManipulavelScreen(
+                                            estoque = estoque,
+                                            sharedViewModel = sharedViewModel,
+                                            onEdicaoItemManipuladoVoltarClick = {
+                                                clickedAction = "Voltar"
+                                                navController.popBackStack()
+                                            },
+                                            onEdicaoItemManipuladoProximoClick = {
+                                                navController.navigate("editarItemEstoqueManipulado2/$idItem")
+                                            },
+                                            estoqueViewModel = viewModelEstoque
+                                        )
+                                    }
+                                }
+                            }
+
+                            composable("editarItemEstoqueManipulado2/{idItem}") { backStackEntry ->
+                                val idItem =
+                                    backStackEntry.arguments?.getString("idItem")?.toIntOrNull()
+
+                                idItem?.let { id ->
+//                                val estoque = (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta?.find { it.idItem == id.toLong() }
+                                    val listaEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)?.estoqueConsulta
+                                            ?: emptyList()
+
+                                    val itemEstoque =
+                                        (viewModelEstoque.estoqueConsultaState.value as? EstoqueConsultaState.Success)
+                                            ?.estoqueConsulta
+                                            ?.mapNotNull { it as? EstoqueItemDiscriminator.Manipulado }
+                                            ?.find { it.idItem == id.toLong() }
+                                    Log.d(
+                                        "MainActivity",
+                                        "editarItemEstoqueManipulado2 - estoque: $itemEstoque"
+                                    )
+
+                                    itemEstoque?.let { estoque ->
+                                        EdicaoItemManipulavel2Screen(
+                                            estoqueViewModel = viewModelEstoque,
+                                            sharedViewModel = sharedViewModel,
+                                            onCadastroItemManipulavel2AnteriorClick = {
+                                                clickedAction = "Voltar"
+                                                navController.popBackStack()
+                                            },
+                                            onCadastroItemManipulavelCadastrarClick = {
+                                                clickedAction = "Salvar"
+                                                navController.navigate("listaEstoque")
+                                            },
+                                            idItem = id.toLong()
                                         )
                                     }
                                 }

@@ -3,6 +3,7 @@ package com.example.gourmet_inventory_mobile.service
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueCriacaoDto
 import com.example.gourmet_inventory_mobile.model.estoque.industrializado.EstoqueIngredienteAtualizacaoDto
+import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoAtualizacao
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoConsulta
 import com.example.gourmet_inventory_mobile.model.estoque.manipulado.EstoqueManipuladoCriacao
 import retrofit2.Response
@@ -29,6 +30,12 @@ interface EstoqueService {
         @Path("id") idEstoque: Long,
         @Body estoque: EstoqueIngredienteAtualizacaoDto
     ) : Response<EstoqueConsulta>
+
+    @PUT("/atualizar-estoque-manipulado/{id}")
+    suspend fun updateEstoqueManipulado(
+        @Path("id") idEstoque: Long,
+        @Body estoque: EstoqueManipuladoAtualizacao
+    ) : Response<EstoqueManipuladoConsulta>
 
     @DELETE("/api/estoque-ingrediente/{id}")
     suspend fun deleteEstoque(

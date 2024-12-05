@@ -339,7 +339,12 @@ fun CadastroItemManipulavel2Screen(
                         .height(170.dp)
                         .border(1.dp, color = Color.Black)
                 ) {
-                    ItensReceitaCadastro(receitas = sharedViewModel.receita, sharedViewModel = sharedViewModel)
+                    ItensReceitaCadastro(
+                        receitas = sharedViewModel.receitaAtualizacaoConsulta.ifEmpty { sharedViewModel.receita },
+//                        receitas = if(sharedViewModel.receitaAtualizacaoConsulta.isNotEmpty()) sharedViewModel.receitaAtualizacaoConsulta else sharedViewModel.receita,
+                        sharedViewModel = sharedViewModel,
+                        edicao = false
+                    )
                 }
 
                 Column(
@@ -432,7 +437,8 @@ fun CadastroItemManipulavel2Screen(
                             context = context,
                             showDialog = showDialog,
                             onDismiss = { showDialog = false },
-                            estoqueConsultaState = estoqueConsultaState
+                            estoqueConsultaState = estoqueConsultaState,
+                            edicao = false
                         )
                     }
                 }
@@ -448,7 +454,8 @@ fun AddReceita(
     estoqueConsultaState: EstoqueConsultaState,
     context: Context,
     showDialog: Boolean,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    edicao: Boolean
 ) {
     if (showDialog) {
         AlertDialog(
@@ -553,19 +560,29 @@ fun AddReceita(
                     SmallFloatingActionButton(
                         onClick = {
                             if (ingredientes.isNotEmpty() && tipoMedida.isNotEmpty() && valor.isNotEmpty()) {
-                                sharedViewModel.adicionarIngredienteConsulta(
-                                    idItem = ingredientes.find { it.nome == ingrediente }?.idItem
-                                        ?: 0L,
-                                    nome = ingrediente,
-                                    tipoMedida = tipoMedida,
-                                    valorMedida = valor.toDoubleOrNull() ?: 0.0
-                                )
-
+                                if (edicao) {
+                                    sharedViewModel.adicionarIngredienteConsultaAtualizacao(
+                                        idItem = ingredientes.find { it.nome == ingrediente }?.idItem
+                                            ?: 0L,
+                                        nome = ingrediente,
+                                        tipoMedida = tipoMedida,
+                                        valorMedida = valor.toDoubleOrNull() ?: 0.0
+                                    )
+                                } else{
+                                    sharedViewModel.adicionarIngredienteConsulta(
+                                        idItem = ingredientes.find { it.nome == ingrediente }?.idItem
+                                            ?: 0L,
+                                        nome = ingrediente,
+                                        tipoMedida = tipoMedida,
+                                        valorMedida = valor.toDoubleOrNull() ?: 0.0
+                                    )
+                                }
                                 sharedViewModel.adicionarIngredienteCriacao(
                                     idItem = ingredientes.find { it.nome == ingrediente }?.idItem
                                         ?: 0L,
                                     tipoMedida = tipoMedida,
-                                    valorMedida = valor.toDoubleOrNull() ?: 0.0
+                                    valorMedida = valor.toDoubleOrNull() ?: 0.0,
+                                    edicao = edicao
                                 )
                                 onDismiss()
                             } else {

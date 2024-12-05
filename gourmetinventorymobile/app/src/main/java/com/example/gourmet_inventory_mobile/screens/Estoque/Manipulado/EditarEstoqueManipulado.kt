@@ -184,10 +184,12 @@ fun EdicaoItemManipulavelScreen(
                                 }
                             )
 
-                            InputEdicaoManipulavel(titulo = "Marca", valorCampo = marca,
-                                mudaValor = { novoValor ->
-                                    marca = novoValor
-                                })
+                            marca?.let {
+                                InputEdicaoManipulavel(titulo = "Marca", valorCampo = it,
+                                    mudaValor = { novoValor ->
+                                        marca = novoValor
+                                    })
+                            }
 
 //                    StyledSelectBox(
 //                        selectedLocalArmazenamento = localArmazenamento,

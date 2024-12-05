@@ -74,11 +74,13 @@ fun CadastroItemScreen(
     var errors by remember { mutableStateOf(CadastroItemErrors()) }
 
     fun handleProximoClick() {
-        errors = CadastroItemErrors(
-            nome = nome.isBlank(),
-            lote = lote.isBlank(),
-            marca = marca.isBlank()
-        )
+        errors = marca?.let {
+            CadastroItemErrors(
+                nome = nome.isBlank(),
+                lote = lote.isBlank(),
+                marca = it.isBlank()
+            )
+        }!!
 
 //        if (!errors.nome && !errors.lote && !errors.marca) {
 //            val novoEstoque = estoque.copy(
@@ -157,36 +159,40 @@ fun CadastroItemScreen(
                         }
                     )
 
-                    InputCadastro("Marca", marca, { novoValor ->
-                        marca = novoValor
-                        errors = errors.copy(marca = marca.isBlank())
-                    }, errors.marca, "Campo obrigatório")
+                    marca?.let {
+                        InputCadastro("Marca", it, { novoValor ->
+                            marca = novoValor
+                            errors = errors.copy(marca = marca!!.isBlank())
+                        }, errors.marca, "Campo obrigatório")
+                    }
 
                     // Componente de ImagemPasso1
-                    ImagemPasso1(
-                        nome = nome,
-                        lote = lote,
-                        categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
-                        marca = marca,
-                        onCadastroItemProximoClick = {
-                            val novoEstoque = estoque.copy(
-                                nome = nome,
-                                lote = lote,
-                                categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
-                                marca = marca
-                            )
-                            sharedViewModel.atualizarEstoque(novoEstoque)
-                            onCadastroItemProximoClick()
-                        },
-                        atualizaErros = { erros ->
-                            errors = CadastroItemErrors(
-                                nome = erros.nome,
-                                lote = erros.lote,
-                                marca = erros.marca
-                            )
-                        },
-                        estoque = estoque
-                    )
+                    marca?.let {
+                        ImagemPasso1(
+                            nome = nome,
+                            lote = lote,
+                            categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                            marca = it,
+                            onCadastroItemProximoClick = {
+                                val novoEstoque = estoque.copy(
+                                    nome = nome,
+                                    lote = lote,
+                                    categoria = CategoriaEstoque.valueOf(selectedCategory.toString()),
+                                    marca = marca
+                                )
+                                sharedViewModel.atualizarEstoque(novoEstoque)
+                                onCadastroItemProximoClick()
+                            },
+                            atualizaErros = { erros ->
+                                errors = CadastroItemErrors(
+                                    nome = erros.nome,
+                                    lote = erros.lote,
+                                    marca = erros.marca
+                                )
+                            },
+                            estoque = estoque
+                        )
+                    }
 
                     // Botão Próximo
                     Button(
